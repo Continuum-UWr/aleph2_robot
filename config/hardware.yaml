@@ -1,0 +1,6 @@
+aleph2:
+  hardware_interface:
+     loop_rate: 10
+     joints:
+       - joint1
+       - joint2

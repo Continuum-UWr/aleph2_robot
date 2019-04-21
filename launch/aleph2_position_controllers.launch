@@ -1,0 +1,12 @@
+<launch>
+    <rosparam file="$(find aleph2_hardware_interface)/config/hardware.yaml" command="load"/>
+    <rosparam file="$(find aleph2_hardware_interface)/config/controllers.yaml" command="load"/>
+    <rosparam file="$(find aleph2_hardware_interface)/config/joint_limits.yaml" command="load"/>
+    <node name="aleph2_hardware_interface" pkg="aleph2_hardware_interface" type="aleph2_hardware_interface_node" output="screen"/>
+    <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" ns="/"
+        args="
+            /aleph2/controller/state
+            /aleph2/controller/position/joint1
+            /aleph2/controller/position/joint2
+        "/>
+</launch>
