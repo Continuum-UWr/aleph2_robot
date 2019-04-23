@@ -1,4 +1,5 @@
 #include <aleph2_hardware_interface/aleph2_hardware_interface.h>
+#include <controller_manager/controller_manager.h>
 
 int main(int argc, char** argv)
 {
