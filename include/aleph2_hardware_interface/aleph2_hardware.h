@@ -3,19 +3,12 @@
 
 #include <hardware_interface/joint_state_interface.h>
 #include <hardware_interface/joint_command_interface.h>
-#include <hardware_interface/robot_hw.h>
-#include <joint_limits_interface/joint_limits.h>
 #include <joint_limits_interface/joint_limits_interface.h>
-#include <joint_limits_interface/joint_limits_rosparam.h>
-#include <joint_limits_interface/joint_limits_urdf.h>
-#include <controller_manager/controller_manager.h>
-#include <boost/scoped_ptr.hpp>
 #include <ros/ros.h>
 
 namespace aleph2_hardware_interface
 {
-    /// \brief Hardware interface for a robot
-    class Aleph2Hardware : public hardware_interface::RobotHW 
+    class Aleph2Hardware
     {
         protected:
             // Interfaces
@@ -50,8 +43,8 @@ namespace aleph2_hardware_interface
             std::vector<double> joint_upper_limits_;
             std::vector<double> joint_effort_limits_;
 
-    }; // class
+    };
 
-} // namespace
+}
 
 #endif

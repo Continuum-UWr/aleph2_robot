@@ -3,20 +3,18 @@ project(aleph2_hardware_interface)
 
 add_compile_options(-std=c++11)
 
-find_package(catkin REQUIRED COMPONENTS
+find_package( catkin REQUIRED COMPONENTS
     hardware_interface
     joint_limits_interface
     controller_manager
     roscpp
 )
 
-find_package(Boost )
-
 catkin_package(
     INCLUDE_DIRS
         include/
     LIBRARIES
-        ${PROJECT_NAME}
+        aleph2_hardware_interface
     CATKIN_DEPENDS
         hardware_interface
         joint_limits_interface
@@ -28,24 +26,28 @@ include_directories(
   include/
   ${catkin_INCLUDE_DIRS})
 
-add_library(${PROJECT_NAME} src/${PROJECT_NAME}.cpp)
-#add_dependencies(aleph2_hardware_interface aleph2cpp)
-target_link_libraries(${PROJECT_NAME}
-#	${aleph2cpp_LIBRARIES}
-	${catkin_LIBRARIES})
+  
+# Hardware interface
+add_library( aleph2_hardware_interface 
+    src/aleph2_hardware_interface.cpp )
 
-add_executable(${PROJECT_NAME}_node 
-    src/${PROJECT_NAME}_node.cpp)
+target_link_libraries( aleph2_hardware_interface
+    ${catkin_LIBRARIES} )
 
-add_dependencies(${PROJECT_NAME}_node 
-    ${PROJECT_NAME})
 
-target_link_libraries(${PROJECT_NAME}_node
-    ${PROJECT_NAME}
-    ${catkin_LIBRARIES})
+# Controller Manager
+add_executable( controller_manager
+    nodes/controller_manager.cpp )
+
+add_dependencies( controller_manager 
+    aleph2_hardware_interface )
+
+target_link_libraries( controller_manager
+    aleph2_hardware_interface
+    ${catkin_LIBRARIES} )
 
     
-install(DIRECTORY include/${PROJECT_NAME}/
+install( DIRECTORY include/${PROJECT_NAME}/
     DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
     FILES_MATCHING PATTERN "*.h"
-    PATTERN ".svn" EXCLUDE)
+    PATTERN ".svn" EXCLUDE )

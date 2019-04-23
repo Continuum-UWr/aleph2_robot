@@ -23,29 +23,28 @@ using joint_limits_interface::PositionJointSoftLimitsInterface;
 
 namespace aleph2_hardware_interface
 {
-    static const double POSITION_STEP_FACTOR = 10;
-    static const double VELOCITY_STEP_FACTOR = 10;
+    //static const double POSITION_STEP_FACTOR = 10;
+    //static const double VELOCITY_STEP_FACTOR = 10;
 
-    class Aleph2HardwareInterface: public aleph2_hardware_interface::Aleph2Hardware
+    class Aleph2HardwareInterface: public hardware_interface::RobotHW, public aleph2_hardware_interface::Aleph2Hardware
     {
         public:
-            Aleph2HardwareInterface(ros::NodeHandle& nh);
+            Aleph2HardwareInterface();
             ~Aleph2HardwareInterface();
-            void init();
-            void update(const ros::TimerEvent& e);
+            void init(ros::NodeHandle& robot_hw_nh);
             void read();
-            void write(ros::Duration elapsed_time);
+            void write();
 
         protected:
             //ROBOTcpp::ROBOT ROBOT;
-            ros::NodeHandle nh_;
-            ros::Timer non_realtime_loop_;
-            ros::Duration control_period_;
-            ros::Duration elapsed_time_;
+            //ros::NodeHandle nh_;
+            //ros::Timer non_realtime_loop_;
+            //ros::Duration control_period_;
+            //ros::Duration elapsed_time_;
             PositionJointInterface positionJointInterface;
             PositionJointSoftLimitsInterface positionJointSoftLimitsInterface;
-            double loop_hz_;
-            boost::shared_ptr<controller_manager::ControllerManager> controller_manager_;
+            //double loop_hz_;
+            //boost::shared_ptr<controller_manager::ControllerManager> controller_manager_;
             double p_error_, v_error_, e_error_;
     };
 
