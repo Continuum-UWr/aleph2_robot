@@ -27,23 +27,19 @@ namespace aleph2_hardware_interface
 
         // Initialize Controller 
         for (int i = 0; i < num_joints_; ++i) {
-            ROS_INFO_STREAM("Joint: " << joint_names_[i]);
-
             // Create joint state interface
             JointStateHandle joint_state_handle(joint_names_[i], &joint_position_[i], &joint_velocity_[i], &joint_effort_[i]);
             joint_state_interface_.registerHandle(joint_state_handle);
 
             // Create effort joint interface
             JointHandle joint_effort_handle(joint_state_handle, &joint_effort_command_[i]);
+            effort_joint_interface_.registerHandle(joint_effort_handle);
+
+            // Create effort joint limits interface
             JointLimits joint_limits;
             getJointLimits(joint_names_[i], robot_hw_nh, joint_limits);
-
-            ROS_INFO_STREAM("Limits: " << joint_limits.min_position << " " << joint_limits.max_position);
-
             EffortJointSaturationHandle joint_effort_limits_handle(joint_effort_handle, joint_limits);
-
             effort_joint_limits_interface_.registerHandle(joint_effort_limits_handle);
-            effort_joint_interface_.registerHandle(joint_effort_handle);
         }
 
         registerInterface(&joint_state_interface_);
