@@ -19,12 +19,11 @@ int main(int argc, char** argv)
     
     while (ros::ok())
     {
-        //ROS_INFO("DUPA");
         ros::Time current_time = ros::Time::now();
 
         aleph2.read();
         cm.update(current_time, current_time - last_update);
-        aleph2.write();
+        aleph2.write(current_time - last_update);
 
         last_update = current_time;
         rate.sleep();

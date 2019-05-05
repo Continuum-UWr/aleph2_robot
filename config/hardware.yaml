@@ -1,5 +1,7 @@
 aleph2:
   hardware_interface:
      joints:
-       - joint1
-       - joint2
+       - name: gimbal1_pan
+         type: rubi_stepper
+         position_topic: rubi/gimbal1/current_pan_position
+         velocity_topic: rubi/gimbal1/pan_velocity

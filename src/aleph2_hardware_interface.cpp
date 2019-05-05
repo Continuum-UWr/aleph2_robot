@@ -6,6 +6,7 @@ using namespace hardware_interface;
 using joint_limits_interface::JointLimits;
 using joint_limits_interface::SoftJointLimits;
 using joint_limits_interface::EffortJointSaturationHandle;
+using joint_limits_interface::VelocityJointSaturationHandle;
 
 namespace aleph2_hardware_interface
 {
@@ -13,45 +14,74 @@ namespace aleph2_hardware_interface
     Aleph2HardwareInterface::~Aleph2HardwareInterface() {}
 
     void Aleph2HardwareInterface::init(ros::NodeHandle& robot_hw_nh) {
-        // Get joint names
-        robot_hw_nh.getParam("hardware_interface/joints", joint_names_);
-        num_joints_ = joint_names_.size();
+        XmlRpc::XmlRpcValue hardware;
+        robot_hw_nh.getParam("hardware_interface/joints", hardware);
+        ROS_ASSERT(hardware.getType() == XmlRpc::XmlRpcValue::TypeArray);
+        
+        num_joints_ = hardware.size();
 
         // Resize vectors
+        joint_names_.resize(num_joints_);
         joint_position_.resize(num_joints_);
         joint_velocity_.resize(num_joints_);
         joint_effort_.resize(num_joints_);
-        joint_position_command_.resize(num_joints_);
         joint_velocity_command_.resize(num_joints_);
-        joint_effort_command_.resize(num_joints_);
 
-        // Initialize Controller 
-        for (int i = 0; i < num_joints_; ++i) {
-            // Create joint state interface
-            JointStateHandle joint_state_handle(joint_names_[i], &joint_position_[i], &joint_velocity_[i], &joint_effort_[i]);
-            joint_state_interface_.registerHandle(joint_state_handle);
+        for( int i = 0; i < num_joints_; ++i )
+        {
+            ROS_ASSERT(hardware[i].getType() == XmlRpc::XmlRpcValue::TypeStruct);
 
-            // Create effort joint interface
-            JointHandle joint_effort_handle(joint_state_handle, &joint_effort_command_[i]);
-            effort_joint_interface_.registerHandle(joint_effort_handle);
+            ROS_ASSERT(hardware[i].hasMember("name"));
+            ROS_ASSERT(hardware[i]["name"].getType() == XmlRpc::XmlRpcValue::TypeString);
 
-            // Create effort joint limits interface
-            JointLimits joint_limits;
-            getJointLimits(joint_names_[i], robot_hw_nh, joint_limits);
-            EffortJointSaturationHandle joint_effort_limits_handle(joint_effort_handle, joint_limits);
-            effort_joint_limits_interface_.registerHandle(joint_effort_limits_handle);
+            joint_names_[i] = static_cast<std::string>(hardware[i]["name"]);
+
+            ROS_ASSERT(hardware[i].hasMember("type"));
+            ROS_ASSERT(hardware[i]["type"].getType() == XmlRpc::XmlRpcValue::TypeString);
+
+            if( hardware[i]["type"] == "rubi_stepper" )
+            {
+                // Create joint state handle
+                JointStateHandle joint_state_handle(joint_names_[i], &joint_position_[i], &joint_velocity_[i], &joint_effort_[i]);
+
+                // Create joint velocity handle
+                JointHandle joint_velocity_handle(joint_state_handle, &joint_velocity_command_[i]);
+
+                // Create joint velocity limits handle
+                JointLimits joint_limits;
+                getJointLimits(joint_names_[i], robot_hw_nh, joint_limits);
+                VelocityJointSaturationHandle joint_velocity_limits_handle(joint_velocity_handle, joint_limits);
+
+                // Register handles
+                joint_state_interface_.registerHandle(joint_state_handle);
+                velocity_joint_interface_.registerHandle(joint_velocity_handle);
+                velocity_joint_limits_interface_.registerHandle(joint_velocity_limits_handle);
+
+                ROS_ASSERT(hardware[i].hasMember("position_topic"));
+                ROS_ASSERT(hardware[i]["position_topic"].getType() == XmlRpc::XmlRpcValue::TypeString);
+                ROS_ASSERT(hardware[i].hasMember("velocity_topic"));
+                ROS_ASSERT(hardware[i]["velocity_topic"].getType() == XmlRpc::XmlRpcValue::TypeString);
+
+                
+            }
+            else
+            {
+                ROS_ERROR_STREAM("Incorrect joint type: " << hardware[i]["type"]);
+                ROS_ASSERT(false);
+            }
         }
 
         registerInterface(&joint_state_interface_);
-        registerInterface(&effort_joint_interface_);
-        registerInterface(&effort_joint_limits_interface_);
+        registerInterface(&velocity_joint_interface_);
+        registerInterface(&velocity_joint_limits_interface_);
     }
 
     void Aleph2HardwareInterface::read() {
-        //TODO
+
     }
 
-    void Aleph2HardwareInterface::write() {
-        //TODO
+    void Aleph2HardwareInterface::write(ros::Duration elapsed_time) {
+        velocity_joint_limits_interface_.enforceLimits(elapsed_time);
+        ROS_INFO_STREAM("joint name: " << joint_names_[0] << " velocity command: " << joint_velocity_command_[0]);
     }
 }

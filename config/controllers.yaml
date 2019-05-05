@@ -4,11 +4,6 @@ aleph2:
       type: joint_state_controller/JointStateController
       publish_rate: 50
     velocity:
-      joint1:
-        type: effort_controllers/JointVelocityController
-        joint: joint1
-        pid: {p: 10.0, i: 0.0, d: 1.0}
-      joint2:
-        type: effort_controllers/JointVelocityController
-        joint: joint2
-        pid: {p: 5.0, i: 2.0, d: 1.0}
+      gimbal1_pan:
+        type: velocity_controllers/JointVelocityController
+        joint: gimbal1_pan
