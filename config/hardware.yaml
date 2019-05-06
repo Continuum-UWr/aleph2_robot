@@ -5,3 +5,4 @@ aleph2:
          type: rubi_stepper
          position_topic: rubi/gimbal1/current_pan_position
          velocity_topic: rubi/gimbal1/pan_velocity
+         scale: 1600.0

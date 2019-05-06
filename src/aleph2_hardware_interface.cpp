@@ -67,8 +67,14 @@ namespace aleph2_hardware_interface
                 ROS_ASSERT(hardware[i]["position_topic"].getType() == XmlRpc::XmlRpcValue::TypeString);
                 ROS_ASSERT(hardware[i].hasMember("velocity_topic"));
                 ROS_ASSERT(hardware[i]["velocity_topic"].getType() == XmlRpc::XmlRpcValue::TypeString);
+                ROS_ASSERT(hardware[i].hasMember("scale"));
+                ROS_ASSERT(hardware[i]["scale"].getType() == XmlRpc::XmlRpcValue::TypeDouble);
 
-                joints_[i] = new aleph2cpp::RubiStepperJoint(hardware[i]["position_topic"], hardware[i]["velocity_topic"]);
+                joints_[i] = new aleph2cpp::RubiStepperJoint(
+                    hardware[i]["position_topic"], 
+                    hardware[i]["velocity_topic"],
+                    static_cast<double>(hardware[i]["scale"])
+                );
             }
             else
             {
