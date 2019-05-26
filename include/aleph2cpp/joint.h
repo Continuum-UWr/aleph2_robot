@@ -4,7 +4,7 @@
 #include <string>
 
 #include "ros/ros.h"
-#include "std_msgs/Int32.h"
+#include "rubi_server/RubiInt.h"
 
 namespace aleph2cpp
 {
@@ -16,13 +16,14 @@ namespace aleph2cpp
             : position_(0),
               scale_(scale)
         {
-            vel_pub = nh.advertise<std_msgs::Int32>(velocity_topic, 10);
+            vel_pub = nh.advertise<rubi_server::RubiInt>(velocity_topic, 10);
             pos_sub = nh.subscribe(position_topic, 10, &RubiStepperJoint::positionCallback, this);
         }
         void setVelocity(double velocity) 
         {
-            std_msgs::Int32 msg;
-            msg.data = static_cast<int32_t>(velocity * scale_);
+            rubi_server::RubiInt msg;
+            msg.data.resize(1);
+            msg.data[0] = static_cast<int32_t>(velocity * scale_);
             vel_pub.publish(msg);
         }
         float getPosition() { return position_; }
@@ -31,9 +32,9 @@ namespace aleph2cpp
         ros::NodeHandle nh;
         ros::Subscriber pos_sub;
         ros::Publisher vel_pub;
-        void positionCallback(const std_msgs::Int32::ConstPtr& msg)
+        void positionCallback(const rubi_server::RubiIntConstPtr& msg)
         {
-            position_ = static_cast<double>(msg->data) / scale_;
+            position_ = static_cast<double>(msg->data[0]) / scale_;
         }
     };
 

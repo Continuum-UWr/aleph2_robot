@@ -8,6 +8,7 @@ find_package( catkin REQUIRED COMPONENTS
     joint_limits_interface
     controller_manager
     roscpp
+    rubi_server
 )
 
 catkin_package(
@@ -20,6 +21,7 @@ catkin_package(
         joint_limits_interface
         controller_manager
         roscpp
+        rubi_server
 )
 
 include_directories(

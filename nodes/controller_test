@@ -1,0 +1,46 @@
+#!/usr/bin/env python
+
+import rospy
+from input_msgs.msg import InputMessage
+from std_msgs.msg import Float64
+
+rospy.init_node("controller_test")
+
+pan_pub = rospy.Publisher(
+    "/aleph2/controller/velocity/gimbal1_pan/command", 
+    Float64, 
+    queue_size=1
+)
+
+tilt_pub = rospy.Publisher(
+    "/aleph2/controller/velocity/gimbal1_tilt/command", 
+    Float64, 
+    queue_size=1
+)
+
+zoom_pub = rospy.Publisher(
+    "/aleph2/controller/velocity/gimbal1_zoom/command", 
+    Float64, 
+    queue_size=1
+)
+
+focus_pub = rospy.Publisher(
+    "/aleph2/controller/velocity/gimbal1_focus/command", 
+    Float64, 
+    queue_size=1
+)
+
+def input_callback(data):
+    pan_velocity = data.axes[0] * 0.27
+    tilt_velocity = data.axes[1] * 0.2
+    zoom_velocity = data.axes[4] * 0.2
+    focus_velocity = data.axes[3] * 0.2
+
+    pan_pub.publish(Float64(pan_velocity))
+    tilt_pub.publish(Float64(tilt_velocity))
+    zoom_pub.publish(Float64(zoom_velocity))
+    focus_pub.publish(Float64(focus_velocity))
+
+input_sub = rospy.Subscriber("/input/Logitech_Gamepad_F310_0_blazej_pc", InputMessage, input_callback)
+
+rospy.spin()

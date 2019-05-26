@@ -14,6 +14,7 @@
   <depend>joint_limits_interface</depend>
   <depend>controller_manager</depend>
   <depend>roscpp</depend>
+  <depend>rubi_server</depend>
 
   <exec_depend>joint_state_controller</exec_depend>
   <exec_depend>effort_controllers</exec_depend>

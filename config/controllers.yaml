@@ -7,3 +7,12 @@ aleph2:
       gimbal1_pan:
         type: velocity_controllers/JointVelocityController
         joint: gimbal1_pan
+      gimbal1_tilt:
+        type: velocity_controllers/JointVelocityController
+        joint: gimbal1_tilt
+      gimbal1_zoom:
+        type: velocity_controllers/JointVelocityController
+        joint: gimbal1_zoom
+      gimbal1_focus:
+        type: velocity_controllers/JointVelocityController
+        joint: gimbal1_focus

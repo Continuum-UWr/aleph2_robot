@@ -7,5 +7,8 @@
         args="
             /aleph2/controller/state
             /aleph2/controller/velocity/gimbal1_pan
+            /aleph2/controller/velocity/gimbal1_tilt
+            /aleph2/controller/velocity/gimbal1_zoom
+            /aleph2/controller/velocity/gimbal1_focus
         "/>
 </launch>
