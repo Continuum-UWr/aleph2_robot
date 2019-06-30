@@ -94,7 +94,21 @@ namespace aleph2_hardware_interface
     {
         for( int i = 0; i < num_joints_; ++i )
         {
-            joint_position_[i] = joints_[i]->getPosition();
+            try {
+                aleph2cpp::JointType type = joints_[i]->getType();
+                switch(type)
+                {
+                case aleph2cpp::JointType::RUBI_STEPPER:
+                    joint_velocity_[i] = joints_[i]->getVelocity();
+                    joint_position_[i] = joints_[i]->getPosition();
+                    break;
+                case aleph2cpp::JointType::NANOTEC:
+                    //TODO
+                    break;
+                }
+            } catch (const char* msg) {
+                ROS_ERROR_STREAM(msg);
+            }
         }
     }
 
@@ -104,8 +118,21 @@ namespace aleph2_hardware_interface
 
         for( int i = 0; i < num_joints_; ++i )
         {
-            //ROS_INFO_STREAM("joint name: " << joint_names_[i] << " velocity command: " << joint_velocity_command_[i]);
-            joints_[i]->setVelocity(joint_velocity_command_[i]);
+            try {
+                aleph2cpp::JointType type = joints_[i]->getType();
+                switch(type)
+                {
+                case aleph2cpp::JointType::RUBI_STEPPER:
+                    joints_[i]->setVelocity(joint_velocity_command_[i]);
+                    break;
+                case aleph2cpp::JointType::NANOTEC:
+                    //TODO
+                    break;
+                }
+            } catch (const char* msg) {
+                ROS_ERROR_STREAM(msg);
+            }
+            
         }
     }
 }

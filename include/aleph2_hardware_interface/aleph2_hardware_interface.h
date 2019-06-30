@@ -36,7 +36,7 @@ namespace aleph2_hardware_interface
             std::vector<double> joint_velocity_;
             std::vector<double> joint_effort_;
             std::vector<double> joint_velocity_command_;
-            std::vector<aleph2cpp::RubiStepperJoint*> joints_;
+            std::vector<aleph2cpp::Joint*> joints_;
     };
 
 }
