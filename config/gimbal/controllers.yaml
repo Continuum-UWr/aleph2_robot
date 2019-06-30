@@ -1,8 +1,5 @@
 aleph2:
   controller:
-    state:
-      type: joint_state_controller/JointStateController
-      publish_rate: 50
     velocity:
       gimbal1_pan:
         type: velocity_controllers/JointVelocityController

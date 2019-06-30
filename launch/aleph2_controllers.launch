@@ -1,0 +1,18 @@
+<launch>
+    <arg name="output" default="log"/>
+
+    <include file="$(find aleph2_hardware_interface)/launch/gimbal_controllers.launch">
+        <arg name="spawn_manager" value="false"/>
+        <arg name="output" value="$(arg output)"/>
+    </include>
+
+    <include file="$(find aleph2_hardware_interface)/launch/drivetrain_controllers.launch">
+        <arg name="spawn_manager" value="false"/>
+        <arg name="output" value="$(arg output)"/>
+    </include>
+
+    <node name="controller_manager" pkg="aleph2_hardware_interface" type="controller_manager" output="$(arg output)"/>
+    <node name="state_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="$(arg output)" args="
+        /aleph2/controller/state
+    "/>
+</launch>
