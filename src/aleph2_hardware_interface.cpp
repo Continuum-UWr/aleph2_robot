@@ -16,8 +16,9 @@ namespace aleph2_hardware_interface
 
     void Aleph2HardwareInterface::init(ros::NodeHandle& robot_hw_nh) {
         XmlRpc::XmlRpcValue hardware;
-        robot_hw_nh.getParam("hardware_interface/joints", hardware);
-        ROS_ASSERT(hardware.getType() == XmlRpc::XmlRpcValue::TypeArray);
+        robot_hw_nh.getParam("joint", hardware);
+
+        ROS_ASSERT(hardware.getType() == XmlRpc::XmlRpcValue::TypeStruct);
         
         num_joints_ = hardware.size();
 
@@ -29,19 +30,18 @@ namespace aleph2_hardware_interface
         joint_velocity_command_.resize(num_joints_);
         joints_.resize(num_joints_);
 
-        for( int i = 0; i < num_joints_; ++i )
+        int i = 0;
+        for( auto const& joint : hardware )
         {
-            ROS_ASSERT(hardware[i].getType() == XmlRpc::XmlRpcValue::TypeStruct);
+            joint_names_[i] = joint.first;
+            auto joint_struct = joint.second;
+            
+            ROS_ASSERT(joint_struct.getType() == XmlRpc::XmlRpcValue::TypeStruct);
 
-            ROS_ASSERT(hardware[i].hasMember("name"));
-            ROS_ASSERT(hardware[i]["name"].getType() == XmlRpc::XmlRpcValue::TypeString);
+            ROS_ASSERT(joint_struct.hasMember("type"));
+            ROS_ASSERT(joint_struct["type"].getType() == XmlRpc::XmlRpcValue::TypeString);
 
-            joint_names_[i] = static_cast<std::string>(hardware[i]["name"]);
-
-            ROS_ASSERT(hardware[i].hasMember("type"));
-            ROS_ASSERT(hardware[i]["type"].getType() == XmlRpc::XmlRpcValue::TypeString);
-
-            if( hardware[i]["type"] == "rubi_stepper" )
+            if( joint_struct["type"] == "rubi_stepper" )
             {
                 // Create joint state handle
                 JointStateHandle joint_state_handle(joint_names_[i], &joint_position_[i], &joint_velocity_[i], &joint_effort_[i]);
@@ -63,24 +63,25 @@ namespace aleph2_hardware_interface
                 velocity_joint_saturation_interface_.registerHandle(joint_velocity_saturation_handle);
                 velocity_joint_soft_limits_interface_.registerHandle(joint_velocity_soft_limits_handle);
 
-                ROS_ASSERT(hardware[i].hasMember("position_topic"));
-                ROS_ASSERT(hardware[i]["position_topic"].getType() == XmlRpc::XmlRpcValue::TypeString);
-                ROS_ASSERT(hardware[i].hasMember("velocity_topic"));
-                ROS_ASSERT(hardware[i]["velocity_topic"].getType() == XmlRpc::XmlRpcValue::TypeString);
-                ROS_ASSERT(hardware[i].hasMember("scale"));
-                ROS_ASSERT(hardware[i]["scale"].getType() == XmlRpc::XmlRpcValue::TypeDouble);
+                ROS_ASSERT(joint_struct.hasMember("position_topic"));
+                ROS_ASSERT(joint_struct["position_topic"].getType() == XmlRpc::XmlRpcValue::TypeString);
+                ROS_ASSERT(joint_struct.hasMember("velocity_topic"));
+                ROS_ASSERT(joint_struct["velocity_topic"].getType() == XmlRpc::XmlRpcValue::TypeString);
+                ROS_ASSERT(joint_struct.hasMember("scale"));
+                ROS_ASSERT(joint_struct["scale"].getType() == XmlRpc::XmlRpcValue::TypeDouble);
 
                 joints_[i] = new aleph2cpp::RubiStepperJoint(
-                    hardware[i]["position_topic"], 
-                    hardware[i]["velocity_topic"],
-                    static_cast<double>(hardware[i]["scale"])
+                    joint_struct["position_topic"], 
+                    joint_struct["velocity_topic"],
+                    static_cast<double>(joint_struct["scale"])
                 );
             }
             else
             {
-                ROS_ERROR_STREAM("Incorrect joint type: " << hardware[i]["type"]);
+                ROS_ERROR_STREAM("Incorrect joint type: " << joint_struct["type"]);
                 ROS_ASSERT(false);
             }
+            ++i;
         }
 
         registerInterface(&joint_state_interface_);
@@ -103,7 +104,7 @@ namespace aleph2_hardware_interface
 
         for( int i = 0; i < num_joints_; ++i )
         {
-            ROS_INFO_STREAM("joint name: " << joint_names_[i] << " velocity command: " << joint_velocity_command_[i]);
+            //ROS_INFO_STREAM("joint name: " << joint_names_[i] << " velocity command: " << joint_velocity_command_[i]);
             joints_[i]->setVelocity(joint_velocity_command_[i]);
         }
     }

@@ -1,0 +1,22 @@
+aleph2:
+  joint:
+    gimbal1_pan:
+      type: rubi_stepper
+      position_topic: rubi/boards/gimbal1/fields_from_board/position_pan
+      velocity_topic: rubi/boards/gimbal1/fields_to_board/velocity_pan
+      scale: 1600.0
+    gimbal1_tilt:
+      type: rubi_stepper
+      position_topic: rubi/boards/gimbal1/fields_from_board/position_tilt
+      velocity_topic: rubi/boards/gimbal1/fields_to_board/velocity_tilt
+      scale: 1900.0
+    gimbal1_zoom:
+      type: rubi_stepper
+      position_topic: rubi/boards/gimbal1/fields_from_board/position_zoom
+      velocity_topic: rubi/boards/gimbal1/fields_to_board/velocity_zoom
+      scale: 1900.0
+    gimbal1_focus:
+      type: rubi_stepper
+      position_topic: rubi/boards/gimbal1/fields_from_board/position_focus
+      velocity_topic: rubi/boards/gimbal1/fields_to_board/velocity_focus
+      scale: 1900.0

@@ -3,7 +3,7 @@
     <arg name="output" default="screen"/>
 
     <rosparam file="$(find aleph2_hardware_interface)/config/common.yaml" command="load"/>
-    <rosparam file="$(find aleph2_hardware_interface)/config/gimbal/hardware.yaml" command="load"/>
+    <rosparam file="$(find aleph2_hardware_interface)/config/gimbal/joints.yaml" command="load"/>
     <rosparam file="$(find aleph2_hardware_interface)/config/gimbal/controllers.yaml" command="load"/>
     <rosparam file="$(find aleph2_hardware_interface)/config/gimbal/joint_limits.yaml" command="load"/>
 
