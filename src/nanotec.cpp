@@ -1,5 +1,5 @@
 
-#include "nanotec.h"
+#include "nanotec_driver/nanotec.h"
 
 const static std::unordered_map<uint32_t, std::string> NANOTEC_ERROR_MAP = {
     {0, "Watchdog-Reset"},

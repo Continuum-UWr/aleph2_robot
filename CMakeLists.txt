@@ -16,5 +16,5 @@ include_directories(include ${catkin_INCLUDE_DIRS})
 add_library(${PROJECT_NAME} src/nanotec.cpp)
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
 
-add_executable(nanotec_autocalib nodes/nanotec_autocalib.cpp)
+add_executable(nanotec_autocalib examples/nanotec_autocalib.cpp)
 target_link_libraries(nanotec_autocalib ${PROJECT_NAME})

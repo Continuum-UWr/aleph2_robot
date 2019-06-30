@@ -2,7 +2,7 @@
 #include <cstdint>
 #include <thread>
 
-#include "nanotec.h"
+#include "nanotec_driver/nanotec.h"
 
 int main(int argc, char **argv)
 {
