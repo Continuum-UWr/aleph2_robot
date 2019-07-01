@@ -2,7 +2,7 @@ aleph2:
   joint:
     nanotec_test:
       type: "nanotec"
-      node_id: 1
+      node_id: 127
       busname: "can0"
-      baudrate: "500K"
+      baudrate: "1M"
       

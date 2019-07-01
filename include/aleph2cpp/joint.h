@@ -78,8 +78,7 @@ namespace aleph2cpp
                      const std::string& baudrate,
                      Nanotec::OperationMode op_mode)
         {
-            kaco::Master master;
-            if (!master.start(busname, baudrate))
+            if (!master_.start(busname, baudrate))
             {
                 throw "Could not initialize can";
             }
@@ -89,9 +88,9 @@ namespace aleph2cpp
 
             while (!found_device)
             {
-                for (size_t i = 0; i < master.num_devices(); ++i)
+                for (size_t i = 0; i < master_.num_devices(); ++i)
                 {
-                    kaco::Device &device = master.get_device(i);
+                    kaco::Device &device = master_.get_device(i);
                     if (device.get_node_id() == node_id)
                     {
                         found_device = true;
@@ -105,7 +104,7 @@ namespace aleph2cpp
                 std::this_thread::sleep_for(std::chrono::milliseconds(300));
             }
 
-            kaco::Device &device = master.get_device(device_index);
+            kaco::Device& device = master_.get_device(device_index);
 
             device.start();
             device.load_dictionary_from_library();
@@ -141,6 +140,7 @@ namespace aleph2cpp
         }
 
     private:
+        kaco::Master master_;
         Nanotec* nanotec_;
     };
 
