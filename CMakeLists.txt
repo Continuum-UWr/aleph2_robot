@@ -9,6 +9,7 @@ find_package( catkin REQUIRED COMPONENTS
     controller_manager
     roscpp
     rubi_server
+    nanotec_driver
 )
 
 catkin_package(
@@ -22,6 +23,7 @@ catkin_package(
         controller_manager
         roscpp
         rubi_server
+        nanotec_driver
 )
 
 include_directories(

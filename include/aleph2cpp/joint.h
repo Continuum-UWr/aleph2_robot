@@ -5,6 +5,7 @@
 
 #include "ros/ros.h"
 #include "rubi_server/RubiInt.h"
+#include "nanotec_driver/nanotec.h"
 
 namespace aleph2cpp
 {
@@ -29,7 +30,9 @@ namespace aleph2cpp
     class RubiStepperJoint : public Joint
     {
     public:
-        RubiStepperJoint(std::string position_topic, std::string velocity_topic, float scale)
+        RubiStepperJoint(std::string position_topic, 
+                         std::string velocity_topic, 
+                         float scale)
             : position_(0),
               velocity_(0),
               scale_(scale)
@@ -64,6 +67,81 @@ namespace aleph2cpp
         {
             position_ = static_cast<double>(msg->data[0]) / scale_;
         }
+    };
+
+
+    class NanotecJoint: public Joint
+    {
+    public:
+        NanotecJoint(const uint8_t node_id, 
+                     const std::string& busname, 
+                     const std::string& baudrate,
+                     Nanotec::OperationMode op_mode)
+        {
+            kaco::Master master;
+            if (!master.start(busname, baudrate))
+            {
+                throw "Could not initialize can";
+            }
+
+            bool found_device = false;
+            size_t device_index;
+
+            while (!found_device)
+            {
+                for (size_t i = 0; i < master.num_devices(); ++i)
+                {
+                    kaco::Device &device = master.get_device(i);
+                    if (device.get_node_id() == node_id)
+                    {
+                        found_device = true;
+                        device_index = i;
+                        break;
+                    }
+                }
+
+                ROS_WARN_STREAM("Device with ID " << (unsigned)node_id
+                                << " has not been found yet. Will keep retrying.");
+                std::this_thread::sleep_for(std::chrono::milliseconds(300));
+            }
+
+            kaco::Device &device = master.get_device(device_index);
+
+            device.start();
+            device.load_dictionary_from_library();
+
+            nanotec_ = new Nanotec(device, op_mode);
+        }
+
+        JointType getType()
+        {
+            return JointType::NANOTEC;
+        }
+
+        //void setEffort(double effort);
+        void setVelocity(double velocity)
+        {
+            int32_t vel = static_cast<int32_t>(velocity);
+            nanotec_->SetTarget(vel);
+        }
+        void setPosition(double position)
+        {
+            int32_t pos = static_cast<int32_t>(position);
+            nanotec_->SetTarget(pos);
+        }
+
+        //double getEffort() 
+        double getVelocity() 
+        {
+            return nanotec_->GetVelocity();
+        }
+        double getPosition()
+        {
+            return nanotec_->GetPosition();
+        }
+
+    private:
+        Nanotec* nanotec_;
     };
 
 }

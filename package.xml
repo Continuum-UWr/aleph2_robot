@@ -15,6 +15,7 @@
   <depend>controller_manager</depend>
   <depend>roscpp</depend>
   <depend>rubi_server</depend>
+  <depend>nanotec_driver</depend>
 
   <exec_depend>joint_state_controller</exec_depend>
   <exec_depend>effort_controllers</exec_depend>

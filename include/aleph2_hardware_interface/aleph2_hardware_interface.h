@@ -25,8 +25,11 @@ namespace aleph2_hardware_interface
             // Interfaces
             hardware_interface::JointStateInterface joint_state_interface_;
             hardware_interface::VelocityJointInterface velocity_joint_interface_;
+            hardware_interface::PositionJointInterface position_joint_interface_;
             joint_limits_interface::VelocityJointSaturationInterface velocity_joint_saturation_interface_;
             joint_limits_interface::VelocityJointSoftLimitsInterface velocity_joint_soft_limits_interface_;
+            joint_limits_interface::PositionJointSaturationInterface position_joint_saturation_interface_;
+            joint_limits_interface::PositionJointSoftLimitsInterface position_joint_soft_limits_interface_;
 
             // Shared memory
             int num_joints_;
@@ -35,6 +38,7 @@ namespace aleph2_hardware_interface
             std::vector<double> joint_position_;
             std::vector<double> joint_velocity_;
             std::vector<double> joint_effort_;
+            std::vector<double> joint_position_command_;
             std::vector<double> joint_velocity_command_;
             std::vector<aleph2cpp::Joint*> joints_;
     };
