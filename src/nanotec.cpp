@@ -41,7 +41,7 @@ Nanotec::Nanotec(kaco::Device &device, OperationMode mode)
         uint32_t(device_.get_entry("Motor drive submode select")) & (1 << 0);
     bool bldc = uint32_t(device_.get_entry("Motor drive submode select")) & (1 << 6);
     bool hall =
-        int32_t(device_.get_entry("Motor drive sensor source closed loop/commutation"));
+        int32_t(device_.get_entry("Motor drive sensor display closed loop/commutation"));
 
     if (!closed_loop || !bldc || !hall)
     {
@@ -163,7 +163,7 @@ std::string Nanotec::Autocalib()
 
     device_.set_entry(0x6040, 0x00, uint16_t(0x00));
 
-    int32_t foc_data;
+    uint32_t foc_data;
 
     for (int j = 1; j < 11; j++)
     {
@@ -214,7 +214,7 @@ void Nanotec::SetVelocityProfile(uint32_t max_acceleration, uint32_t max_deceler
 void Nanotec::SetMotorProtection(uint32_t nominal_current, uint32_t peak_current,
                                  uint32_t peak_length)
 {
-    device_.set_entry("Peak current", peak_current);
+    device_.set_entry("Maximum current", peak_current);
     device_.set_entry("I2t Parameters/Nominal Current", nominal_current);
     device_.set_entry("I2t Parameters/Maximum duration of peak current", peak_length);
 }
