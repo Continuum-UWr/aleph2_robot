@@ -37,6 +37,7 @@ class Nanotec
 
     int32_t GetPosition();
     int16_t GetVelocity();
+    int16_t GetTorque();
 
     boost::optional<std::string> CheckError();
 

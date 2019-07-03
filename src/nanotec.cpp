@@ -99,7 +99,7 @@ void Nanotec::LoadParameters(std::string profile)
     {
         token = profile.substr(0, pos);
 
-        int32_t value = std::stoi(token);
+        uint32_t value = std::stoi(token);
         device_.set_entry(0x3210, subid, value);
 
         profile.erase(0, pos + delimiter.length());
@@ -244,6 +244,8 @@ void Nanotec::SetTarget(int32_t target)
 int32_t Nanotec::GetPosition() { return device_.get_entry("Position actual value"); }
 
 int16_t Nanotec::GetVelocity() { return device_.get_entry("vl velocity actual value"); }
+
+int16_t Nanotec::GetTorque() { return device_.get_entry("Torque actual value"); }
 
 boost::optional<std::string> Nanotec::CheckError()
 {

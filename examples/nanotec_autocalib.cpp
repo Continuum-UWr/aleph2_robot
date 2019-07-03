@@ -1,14 +1,32 @@
 #include <chrono>
 #include <cstdint>
 #include <thread>
+#include <unistd.h>
 
 #include "nanotec_driver/nanotec.h"
 
 int main(int argc, char **argv)
 {
-    const uint8_t node_id = 1;
-    const std::string busname = "can0";
-    const std::string baudrate = "500K";
+    uint8_t node_id = 1;
+    std::string busname = "can0";
+    std::string baudrate = "500K";
+
+    int opt;
+    while((opt = getopt(argc, argv, "c:n:b:")) != -1) 
+    {
+        switch(opt)
+        {
+            case 'c':
+                busname = optarg;
+                break;
+            case 'n':
+                node_id = static_cast<uint8_t>(std::stoi(optarg));
+                break;
+            case 'b':
+                baudrate = optarg;
+                break;
+        }
+    }
 
     kaco::Master master;
     if (!master.start(busname, baudrate))
@@ -48,5 +66,4 @@ int main(int argc, char **argv)
     Nanotec nanotec(device, Nanotec::OperationMode::VELOCITY);
 
     std::cout << "Calibration results " << nanotec.Autocalib();
-
 }
