@@ -110,6 +110,14 @@ namespace aleph2cpp
             device.load_dictionary_from_library();
 
             nanotec_ = new Nanotec(device, op_mode);
+
+            //nanotec_->Autocalib();
+
+            nanotec_->LoadParameters("2048;0;12000;30;8192;256;8192;256;240000;450000");
+
+            nanotec_->SetVelocityProfile(0x450, 0x450);
+            nanotec_->SetMotorProtection(25000, 25000, 100);
+            nanotec_->SetPowerMode(Nanotec::PowerMode::ACTIVE);
         }
 
         JointType getType()
@@ -117,7 +125,13 @@ namespace aleph2cpp
             return JointType::NANOTEC;
         }
 
-        //void setEffort(double effort);
+        void setEffort(double effort)
+        {
+            int32_t eff = static_cast<int32_t>(effort);
+            std::cout << eff << std::endl;
+            nanotec_->SetTarget(eff);
+        }
+
         void setVelocity(double velocity)
         {
             int32_t vel = static_cast<int32_t>(velocity);
@@ -129,11 +143,16 @@ namespace aleph2cpp
             nanotec_->SetTarget(pos);
         }
 
-        //double getEffort() 
+        double getEffort()
+        {
+            return nanotec_->GetTorque();
+        }
+
         double getVelocity() 
         {
             return nanotec_->GetVelocity();
         }
+
         double getPosition()
         {
             return nanotec_->GetPosition();

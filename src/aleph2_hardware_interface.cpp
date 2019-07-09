@@ -31,6 +31,7 @@ namespace aleph2_hardware_interface
         joint_effort_.resize(num_joints_);
         joint_position_command_.resize(num_joints_);
         joint_velocity_command_.resize(num_joints_);
+        joint_effort_command_.resize(num_joints_);
         joints_.resize(num_joints_);
 
         int i = 0;
@@ -90,6 +91,9 @@ namespace aleph2_hardware_interface
                 // Create joint position handle
                 JointHandle joint_position_handle(joint_state_handle, &joint_position_command_[i]);
 
+                // Create joint effort handle
+                JointHandle joint_effort_handle(joint_state_handle, &joint_effort_command_[i]);
+
                 // Create joint velocity limits handles
                 JointLimits joint_limits;
                 SoftJointLimits soft_joint_limits;
@@ -106,6 +110,7 @@ namespace aleph2_hardware_interface
                 joint_state_interface_.registerHandle(joint_state_handle);
                 velocity_joint_interface_.registerHandle(joint_velocity_handle);
                 position_joint_interface_.registerHandle(joint_position_handle);
+                effort_joint_interface_.registerHandle(joint_effort_handle);
                 velocity_joint_saturation_interface_.registerHandle(joint_velocity_saturation_handle);
                 velocity_joint_soft_limits_interface_.registerHandle(joint_velocity_soft_limits_handle);
                 position_joint_saturation_interface_.registerHandle(joint_position_saturation_handle);
@@ -137,6 +142,10 @@ namespace aleph2_hardware_interface
         registerInterface(&velocity_joint_interface_);
         registerInterface(&velocity_joint_saturation_interface_);
         registerInterface(&velocity_joint_soft_limits_interface_);
+        registerInterface(&position_joint_interface_);
+        registerInterface(&position_joint_saturation_interface_);
+        registerInterface(&position_joint_soft_limits_interface_);
+        registerInterface(&effort_joint_interface_);
     }
 
     void Aleph2HardwareInterface::read() 
@@ -152,7 +161,7 @@ namespace aleph2_hardware_interface
                     joint_position_[i] = joints_[i]->getPosition();
                     break;
                 case aleph2cpp::JointType::NANOTEC:
-                    //joint_effort_[i] = joints_[i]->getEffort();
+                    joint_effort_[i] = joints_[i]->getEffort();
                     joint_velocity_[i] = joints_[i]->getVelocity();
                     joint_position_[i] = joints_[i]->getPosition();
                     break;
@@ -179,6 +188,7 @@ namespace aleph2_hardware_interface
                     joints_[i]->setVelocity(joint_velocity_command_[i]);
                     break;
                 case aleph2cpp::JointType::NANOTEC:
+                    //joints_[i]->setEffort(joint_effort_command_[i]);
                     joints_[i]->setVelocity(joint_velocity_command_[i]);
                     break;
                 }

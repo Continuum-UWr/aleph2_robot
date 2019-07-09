@@ -13,8 +13,8 @@
             /aleph2/controller/state
         "/>
     </group>
-<!-- 
+
     <node name="drivetrain_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="$(arg output)" args="
-        
-    "/> TODO -->
+        /aleph2/controller/velocity/nanotec_test 
+    "/>
 </launch>

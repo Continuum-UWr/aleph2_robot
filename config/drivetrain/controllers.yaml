@@ -1,1 +1,6 @@
-# TODO
+aleph2:
+  controller:
+    velocity:
+      nanotec_test:
+        type: velocity_controllers/JointVelocityController
+        joint: nanotec_test
