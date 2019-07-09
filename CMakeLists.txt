@@ -31,12 +31,22 @@ include_directories(
   ${catkin_INCLUDE_DIRS})
 
   
+# Joint
+add_library( aleph2_joint
+    src/aleph2_joint/rubi_stepper_joint.cpp
+    src/aleph2_joint/nanotec_joint.cpp)
+
+target_link_libraries( aleph2_joint
+    ${catkin_LIBRARIES} )
+
+
 # Hardware interface
 add_library( aleph2_hardware_interface 
-    src/aleph2_hardware_interface.cpp )
+    src/aleph2_hardware_interface/aleph2_hardware_interface.cpp )
 
 target_link_libraries( aleph2_hardware_interface
-    ${catkin_LIBRARIES} )
+    ${catkin_LIBRARIES} 
+    aleph2_joint )
 
 
 # Controller Manager

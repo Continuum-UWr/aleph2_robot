@@ -6,7 +6,7 @@
 #include <hardware_interface/robot_hw.h>
 #include <joint_limits_interface/joint_limits_interface.h>
 #include <ros/ros.h>
-#include <aleph2cpp/joint.h>
+#include <aleph2_joint/joint.h>
 
 
 namespace aleph2_hardware_interface
@@ -42,7 +42,7 @@ namespace aleph2_hardware_interface
             std::vector<double> joint_position_command_;
             std::vector<double> joint_velocity_command_;
             std::vector<double> joint_effort_command_;
-            std::vector<aleph2cpp::Joint*> joints_;
+            std::vector<aleph2_joint::Joint*> joints_;
     };
 
 }

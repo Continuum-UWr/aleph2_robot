@@ -74,7 +74,7 @@ namespace aleph2_hardware_interface
                 ROS_ASSERT(joint_struct.hasMember("scale"));
                 ROS_ASSERT(joint_struct["scale"].getType() == XmlRpc::XmlRpcValue::TypeDouble);
 
-                joints_[i] = new aleph2cpp::RubiStepperJoint(
+                joints_[i] = new aleph2_joint::RubiStepperJoint(
                     joint_struct["position_topic"], 
                     joint_struct["velocity_topic"],
                     static_cast<double>(joint_struct["scale"])
@@ -123,7 +123,7 @@ namespace aleph2_hardware_interface
                 ROS_ASSERT(joint_struct.hasMember("baudrate"));
                 ROS_ASSERT(joint_struct["baudrate"].getType() == XmlRpc::XmlRpcValue::TypeString);
 
-                joints_[i] = new aleph2cpp::NanotecJoint(
+                joints_[i] = new aleph2_joint::NanotecJoint(
                     static_cast<int>(joint_struct["node_id"]),
                     joint_struct["busname"],
                     joint_struct["baudrate"],
@@ -153,14 +153,14 @@ namespace aleph2_hardware_interface
         for( int i = 0; i < num_joints_; ++i )
         {
             try {
-                aleph2cpp::JointType type = joints_[i]->getType();
+                aleph2_joint::JointType type = joints_[i]->getType();
                 switch(type)
                 {
-                case aleph2cpp::JointType::RUBI_STEPPER:
+                case aleph2_joint::JointType::RUBI_STEPPER:
                     joint_velocity_[i] = joints_[i]->getVelocity();
                     joint_position_[i] = joints_[i]->getPosition();
                     break;
-                case aleph2cpp::JointType::NANOTEC:
+                case aleph2_joint::JointType::NANOTEC:
                     joint_effort_[i] = joints_[i]->getEffort();
                     joint_velocity_[i] = joints_[i]->getVelocity();
                     joint_position_[i] = joints_[i]->getPosition();
@@ -181,13 +181,13 @@ namespace aleph2_hardware_interface
         for( int i = 0; i < num_joints_; ++i )
         {
             try {
-                aleph2cpp::JointType type = joints_[i]->getType();
+                aleph2_joint::JointType type = joints_[i]->getType();
                 switch(type)
                 {
-                case aleph2cpp::JointType::RUBI_STEPPER:
+                case aleph2_joint::JointType::RUBI_STEPPER:
                     joints_[i]->setVelocity(joint_velocity_command_[i]);
                     break;
-                case aleph2cpp::JointType::NANOTEC:
+                case aleph2_joint::JointType::NANOTEC:
                     //joints_[i]->setEffort(joint_effort_command_[i]);
                     joints_[i]->setVelocity(joint_velocity_command_[i]);
                     break;
