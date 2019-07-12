@@ -40,10 +40,10 @@ Nanotec::Nanotec(kaco::Device &device, OperationMode mode)
     bool closed_loop =
         uint32_t(device_.get_entry("Motor drive submode select")) & (1 << 0);
     bool bldc = uint32_t(device_.get_entry("Motor drive submode select")) & (1 << 6);
-    bool hall =
-        int32_t(device_.get_entry("Motor drive sensor display closed loop/commutation"));
+    //bool hall =
+        //int32_t(device_.get_entry("Motor drive sensor display closed loop/commutation"));
 
-    if (!closed_loop || !bldc || !hall)
+    if (!closed_loop || !bldc) // || !hall)
     {
         error_ = "Driver not calibrated!";
         return;
@@ -115,53 +115,53 @@ std::string Nanotec::Autocalib()
 
     SetMotorProtection(2000, 2000, 500);
 
-    device_.set_entry(0x6040, 0x0, uint16_t(0x6));
+    device_.set_entry("Controlword", uint16_t(0x6)); // Enable Voltage, ~ Quick Stop
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-    data = device_.get_entry(0x6041, 0x0);
-    assert((data >> 9) & 1);
-    assert((data >> 5) & 1);
-    assert((data >> 0) & 1);
+    data = device_.get_entry("Statusword");
+    assert((data >> 9) & 1); // Remote
+    assert((data >> 5) & 1); // ~ Quick Stop
+    assert((data >> 0) & 1); // Ready to switch on
 
-    device_.set_entry(0x6060, 0x00, int8_t(-2));
-    device_.set_entry(0x6040, 0x00, uint16_t(0x07));
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
-    data = device_.get_entry(0x6041, 0x0);
-    assert((data >> 9) & 1);
-    assert((data >> 5) & 1);
-    assert((data >> 4) & 1);
-    assert((data >> 1) & 1);
-    assert((data >> 0) & 1);
-
-    device_.set_entry(0x6040, 0x00, uint16_t(0x0f));
+    device_.set_entry("Modes of operation", int8_t(-2)); // Auto setup
+    device_.set_entry("Controlword", uint16_t(0x07)); // + Switched On
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-    data = device_.get_entry(0x6041, 0x0);
-    assert((data >> 9) & 1);
-    assert((data >> 5) & 1);
-    assert((data >> 4) & 1);
-    assert((data >> 1) & 1);
-    assert((data >> 2) & 1);
-    assert((data >> 0) & 1);
+    data = device_.get_entry("Statusword");
+    assert((data >> 9) & 1); // Remote
+    assert((data >> 5) & 1); // ~ Quick Stop
+    assert((data >> 4) & 1); // Voltage Enabled
+    assert((data >> 1) & 1); // Switched On
+    assert((data >> 0) & 1); // Ready to switch on
+
+    device_.set_entry("Controlword", uint16_t(0x0f)); // + Enable Operation
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-    int8_t monitor = device_.get_entry(0x6061, 0x0);
-    assert(monitor == -2);
+    data = device_.get_entry("Statusword");
+    assert((data >> 9) & 1); // Remote
+    assert((data >> 5) & 1); // ~ Quick Stop
+    assert((data >> 4) & 1); // Voltage Enabled
+    assert((data >> 1) & 1); // Switched On
+    assert((data >> 2) & 1); // Operation Enabled
+    assert((data >> 0) & 1); // Ready to switch on
 
-    device_.set_entry(0x6040, 0x00, uint16_t(0x1f));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+    int8_t monitor = device_.get_entry("Modes of operation display");
+    assert(monitor == -2); // Auto setup
+
+    device_.set_entry("Controlword", uint16_t(0x1f)); // + Start Auto setup
 
     uint16_t state;
     do
     {
-        state = device_.get_entry(0x6041, 0x00);
+        state = device_.get_entry("Statusword");
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    } while (!((state >> 12) & 1));
+    } while (!((state >> 12) & 1)); // Auto setup completed
 
-    device_.set_entry(0x6040, 0x00, uint16_t(0x00));
+    device_.set_entry("Controlword", uint16_t(0x00));
 
     uint32_t foc_data;
 
