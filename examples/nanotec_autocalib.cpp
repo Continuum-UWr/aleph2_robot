@@ -65,5 +65,13 @@ int main(int argc, char **argv)
 
     Nanotec nanotec(device, Nanotec::OperationMode::VELOCITY);
 
-    std::cout << "Calibration results " << nanotec.Autocalib();
+    std::map<std::string, int64_t> params = nanotec.Autocalib();
+
+    std::cout << "Autocalib completed!" << std::endl;
+    std::cout << "Parameters:" << std::endl;
+
+    for (auto const& x : params)
+    {
+        std::cout << "\"" << x.first << "\": " << x.second << std::endl;  
+    }
 }

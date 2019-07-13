@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include <map>
+
 #include "canopen_error.h"
 #include "logger.h"
 #include "master.h"
@@ -25,9 +27,9 @@ class Nanotec
 
     Nanotec(kaco::Device &device, OperationMode mode);
 
-    void LoadParameters(std::string profile);
+    void LoadParameters(const std::map<std::string, int64_t>& parameters);
 
-    std::string Autocalib();
+    std::map<std::string, int64_t> Autocalib();
 
     void SetPowerMode(PowerMode mode);
     void SetVelocityProfile(uint32_t max_acceleration, uint32_t max_deceleration);

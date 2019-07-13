@@ -1,5 +1,9 @@
+#include <vector>
+
+#include "dictionary_error.h"
 
 #include "nanotec_driver/nanotec.h"
+#include "nanotec_driver/utils.h"
 
 const static std::unordered_map<uint32_t, std::string> NANOTEC_ERROR_MAP = {
     {0, "Watchdog-Reset"},
@@ -32,7 +36,21 @@ const static std::unordered_map<uint32_t, std::string> NANOTEC_ERROR_MAP = {
     {26, "Current too high at digital output"},
     {27, "Unexpected sync length"},
     {28, "EtherCAT only: The motor was stopped because EtherCAT switched state from OP "
-         "to either SafeOP or PreOP without first stopping the motor."}};
+         "to either SafeOP or PreOP without first stopping the motor."}
+};
+
+const static std::vector<std::string> AUTOCALIB_PARAMETERS = {
+    "Motor drive parameter set/Position loop, proportional gain (closed loop)",
+    "Motor drive parameter set/Position loop, integral gain (closed loop)",
+    "Motor drive parameter set/Velocity loop, proportional gain (closed loop)",
+    "Motor drive parameter set/Velocity loop, integral gain (closed loop)",
+    "Motor drive parameter set/Flux current loop, proportional gain (closed loop)",
+    "Motor drive parameter set/Flux current loop, integral gain (closed loop)",
+    "Motor drive parameter set/Torque current loop, proportional gain (closed loop)",
+    "Motor drive parameter set/Torque current loop, integral gain (closed loop)",
+    "Motor drive parameter set/Torque current loop, proportional gain (open loop)",
+    "Motor drive parameter set/Torque current loop, integral gain (open loop)"
+};
 
 Nanotec::Nanotec(kaco::Device &device, OperationMode mode)
     : device_(device), operation_mode_(mode)
@@ -88,30 +106,28 @@ void Nanotec::DowloadPowerState()
     } while (disabled);
 }
 
-void Nanotec::LoadParameters(std::string profile)
+void Nanotec::LoadParameters(const std::map<std::string, int64_t>& parameters)
 {
-    size_t pos = 0;
-    std::string token;
-    std::string delimiter = ";";
-    int subid = 1;
-
-    while ((pos = profile.find(delimiter)) != std::string::npos)
+    for (auto const& entry : parameters)
     {
-        token = profile.substr(0, pos);
-
-        uint32_t value = std::stoi(token);
-        device_.set_entry(0x3210, subid, value);
-
-        profile.erase(0, pos + delimiter.length());
-        ++subid;
+        try 
+        {
+            kaco::Type type = device_.get_entry_type(entry.first);
+            kaco::Value val = int_to_value_of_type(entry.second, type);
+            device_.set_entry(entry.first, val);
+        } 
+        catch (const kaco::dictionary_error& err)
+        {
+            std::cerr << err.what();
+        }
     }
 }
 
-std::string Nanotec::Autocalib()
+std::map<std::string, int64_t> Nanotec::Autocalib()
 {
     std::string ret;
 
-    uint16_t data;
+    uint16_t data, new_data;
 
     SetMotorProtection(2000, 2000, 500);
 
@@ -128,24 +144,20 @@ std::string Nanotec::Autocalib()
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-    data = device_.get_entry("Statusword");
-    assert((data >> 9) & 1); // Remote
-    assert((data >> 5) & 1); // ~ Quick Stop
+    new_data = device_.get_entry("Statusword");
+    assert((data & new_data) == data);
+    data = new_data;
     assert((data >> 4) & 1); // Voltage Enabled
     assert((data >> 1) & 1); // Switched On
-    assert((data >> 0) & 1); // Ready to switch on
 
     device_.set_entry("Controlword", uint16_t(0x0f)); // + Enable Operation
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-    data = device_.get_entry("Statusword");
-    assert((data >> 9) & 1); // Remote
-    assert((data >> 5) & 1); // ~ Quick Stop
-    assert((data >> 4) & 1); // Voltage Enabled
-    assert((data >> 1) & 1); // Switched On
+    new_data = device_.get_entry("Statusword");
+    data = new_data;
+    assert((data & new_data) == data);
     assert((data >> 2) & 1); // Operation Enabled
-    assert((data >> 0) & 1); // Ready to switch on
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
@@ -163,21 +175,26 @@ std::string Nanotec::Autocalib()
 
     device_.set_entry("Controlword", uint16_t(0x00));
 
-    uint32_t foc_data;
+    std::map<std::string, int64_t> parameters;
 
-    for (int j = 1; j < 11; j++)
+    for (const std::string& param : AUTOCALIB_PARAMETERS)
     {
-        if (j > 1)
-            ret += ";";
-
-        foc_data = device_.get_entry(0x3210, j);
-        ret += std::to_string(foc_data);
+        try 
+        {
+            kaco::Value val = device_.get_entry(param);
+            int64_t entry = static_cast<int64_t>(uint32_t(val));
+            parameters[param] = entry;
+        }
+        catch (const kaco::dictionary_error& err)
+        {
+            std::cerr << err.what() << std::endl;
+        }
     }
 
     SetPowerMode(PowerMode::PASSIVE_BRAKE);
     device_.set_entry("Modes of operation", static_cast<int8_t>(operation_mode_));
 
-    return ret;
+    return parameters;
 };
 
 void Nanotec::SetPowerMode(PowerMode mode)
