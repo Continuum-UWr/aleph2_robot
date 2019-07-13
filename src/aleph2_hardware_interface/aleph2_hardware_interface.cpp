@@ -122,12 +122,38 @@ namespace aleph2_hardware_interface
                 ROS_ASSERT(joint_struct["busname"].getType() == XmlRpc::XmlRpcValue::TypeString);
                 ROS_ASSERT(joint_struct.hasMember("baudrate"));
                 ROS_ASSERT(joint_struct["baudrate"].getType() == XmlRpc::XmlRpcValue::TypeString);
+                ROS_ASSERT(joint_struct.hasMember("parameters"));
+                ROS_ASSERT(joint_struct["parameters"].getType() == XmlRpc::XmlRpcValue::TypeStruct);
+
+                std::map<std::string, int64_t> parameters;
+
+                for (auto& param : joint_struct["parameters"])
+                {
+                    if (param.second.getType() == XmlRpc::XmlRpcValue::TypeStruct)
+                    {
+                        for (auto& subparam : param.second)
+                        {
+                            ROS_ASSERT(subparam.second.getType() == XmlRpc::XmlRpcValue::TypeInt);
+                            std::string key = param.first + "/" + subparam.first;
+                            int64_t value = static_cast<int64_t>(static_cast<int>(subparam.second));
+                            parameters[key] = value;
+                        }
+                    }
+                    else
+                    {
+                        ROS_ASSERT(param.second.getType() == XmlRpc::XmlRpcValue::TypeInt);
+                        const std::string& key = param.first;
+                        int64_t value = static_cast<int64_t>(static_cast<int>(param.second));
+                        parameters[key] = value;
+                    }
+                }
 
                 joints_[i] = new aleph2_joint::NanotecJoint(
                     static_cast<int>(joint_struct["node_id"]),
                     joint_struct["busname"],
                     joint_struct["baudrate"],
-                    Nanotec::OperationMode::VELOCITY
+                    Nanotec::OperationMode::VELOCITY,
+                    parameters
                 );
             }
             else

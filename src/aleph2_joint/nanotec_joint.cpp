@@ -4,7 +4,8 @@
 namespace aleph2_joint
 {
     NanotecJoint::NanotecJoint(const uint8_t node_id, const std::string& busname, 
-                               const std::string& baudrate, Nanotec::OperationMode op_mode)
+                               const std::string& baudrate, const Nanotec::OperationMode op_mode,
+                               const std::map<std::string, int64_t>& parameters)
     {
         if (!master_.start(busname, baudrate))
         {
@@ -38,13 +39,7 @@ namespace aleph2_joint
         device.load_dictionary_from_library();
 
         nanotec_ = new Nanotec(device, op_mode);
-
-        //nanotec_->Autocalib();
-
-        nanotec_->LoadParameters("2048;0;12000;30;8192;256;8192;256;240000;450000");
-
-        nanotec_->SetVelocityProfile(0x450, 0x450);
-        nanotec_->SetMotorProtection(25000, 25000, 100);
+        nanotec_->LoadParameters(parameters);
         nanotec_->SetPowerMode(Nanotec::PowerMode::ACTIVE);
     }
 

@@ -2,7 +2,16 @@ aleph2:
   joint:
     nanotec_test:
       type: "nanotec"
-      node_id: 2
+      node_id: 1
       busname: "can0"
       baudrate: "500K"
-      
+      parameters:
+        Maximum current: 25000
+        I2t Parameters:
+          Nominal Current: 25000
+          Maximum duration of peak current: 100
+        Profile acceleration: 1000
+        Profile deceleration: 1000
+        Motor drive parameter set:
+          Velocity loop, integral gain (closed loop): 30
+          Velocity loop, proportional gain (closed loop): 12000

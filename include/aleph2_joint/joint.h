@@ -2,6 +2,7 @@
 #define ALEPH2CPP_JOINT_H
 
 #include <string>
+#include <map>
 
 #include "ros/ros.h"
 #include "rubi_server/RubiInt.h"
@@ -52,7 +53,8 @@ namespace aleph2_joint
     {
     public:
         NanotecJoint(const uint8_t node_id, const std::string& busname, 
-                     const std::string& baudrate, Nanotec::OperationMode op_mode);
+                     const std::string& baudrate, const Nanotec::OperationMode op_mode,
+                     const std::map<std::string, int64_t>& parameters);
 
         JointType getType();
 
