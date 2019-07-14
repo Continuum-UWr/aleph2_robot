@@ -14,7 +14,13 @@
         "/>
     </group>
 
+    <!-- <node name="drivetrain_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="$(arg output)" args="
+        /aleph2/controller/velocity/wheelRL
+        /aleph2/controller/velocity/wheelRR
+        /aleph2/controller/velocity/wheelFL
+        /aleph2/controller/velocity/wheelFR
+    "/> -->
     <node name="drivetrain_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="$(arg output)" args="
-        /aleph2/controller/velocity/nanotec_test 
+        /aleph2/controller/diff_drive
     "/>
 </launch>

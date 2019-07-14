@@ -122,6 +122,8 @@ namespace aleph2_hardware_interface
                 ROS_ASSERT(joint_struct["busname"].getType() == XmlRpc::XmlRpcValue::TypeString);
                 ROS_ASSERT(joint_struct.hasMember("baudrate"));
                 ROS_ASSERT(joint_struct["baudrate"].getType() == XmlRpc::XmlRpcValue::TypeString);
+                ROS_ASSERT(joint_struct.hasMember("scale"));
+                ROS_ASSERT(joint_struct["scale"].getType() == XmlRpc::XmlRpcValue::TypeDouble);
                 ROS_ASSERT(joint_struct.hasMember("parameters"));
                 ROS_ASSERT(joint_struct["parameters"].getType() == XmlRpc::XmlRpcValue::TypeStruct);
 
@@ -153,6 +155,7 @@ namespace aleph2_hardware_interface
                     joint_struct["busname"],
                     joint_struct["baudrate"],
                     Nanotec::OperationMode::VELOCITY,
+                    static_cast<double>(joint_struct["scale"]),
                     parameters
                 );
             }

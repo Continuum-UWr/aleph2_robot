@@ -7,7 +7,7 @@ namespace aleph2_joint
 {
 
     RubiStepperJoint::RubiStepperJoint(std::string position_topic, 
-                                       std::string velocity_topic, float scale)
+                                       std::string velocity_topic, double scale)
         : scale_(scale)
     {
         vel_pub = nh.advertise<rubi_server::RubiInt>(velocity_topic, 10);

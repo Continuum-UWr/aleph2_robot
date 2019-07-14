@@ -5,7 +5,8 @@ namespace aleph2_joint
 {
     NanotecJoint::NanotecJoint(const uint8_t node_id, const std::string& busname, 
                                const std::string& baudrate, const Nanotec::OperationMode op_mode,
-                               const std::map<std::string, int64_t>& parameters)
+                               double scale, const std::map<std::string, int64_t>& parameters)
+        : scale_(scale)
     {
         if (!master_.start(busname, baudrate))
         {
@@ -56,28 +57,28 @@ namespace aleph2_joint
 
     void NanotecJoint::setVelocity(double velocity)
     {
-        int32_t vel = static_cast<int32_t>(velocity);
+        int32_t vel = static_cast<int32_t>(velocity * scale_);
         nanotec_->SetTarget(vel);
     }
     void NanotecJoint::setPosition(double position)
     {
-        int32_t pos = static_cast<int32_t>(position);
+        int32_t pos = static_cast<int32_t>(position * scale_);
         nanotec_->SetTarget(pos);
     }
 
     double NanotecJoint::getEffort()
     {
-        return nanotec_->GetTorque();
+        return static_cast<double>(nanotec_->GetTorque());
     }
 
     double NanotecJoint::getVelocity() 
     {
-        return nanotec_->GetVelocity();
+        return static_cast<double>(nanotec_->GetVelocity()) / scale_;
     }
 
     double NanotecJoint::getPosition()
     {
-        return nanotec_->GetPosition();
+        return static_cast<double>(nanotec_->GetPosition()) / scale_;
     }
 
 }

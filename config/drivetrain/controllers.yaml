@@ -1,6 +1,27 @@
 aleph2:
   controller:
     velocity:
-      nanotec_test:
+      wheelRL:
         type: velocity_controllers/JointVelocityController
-        joint: nanotec_test
+        joint: kolo_RL_to_chromosom_L
+      wheelRR:
+        type: velocity_controllers/JointVelocityController
+        joint: kolo_RR_to_chromosom_R
+      wheelFL:
+        type: velocity_controllers/JointVelocityController
+        joint: kolo_FL_to_chromosom_L
+      wheelFR:
+        type: velocity_controllers/JointVelocityController
+        joint: kolo_FR_to_chromosom_R
+    diff_drive:
+      type: "diff_drive_controller/DiffDriveController"
+      left_wheel: ['kolo_RL_to_chromosom_L', 'kolo_FL_to_chromosom_L']
+      right_wheel: ['kolo_RR_to_chromosom_R', 'kolo_FR_to_chromosom_R']
+      publish_rate: 50
+      pose_covariance_diagonal: [0.001, 0.001, 1000000.0, 1000000.0, 1000000.0, 0.03]
+      twist_covariance_diagonal: [0.001, 0.001, 0.001, 1000000.0, 1000000.0, 0.03]
+      cmd_vel_timeout: 0.25
+      enable_odom_tf: false
+      wheel_separation: 0.9
+      wheel_radius: 0.15
+

@@ -1,10 +1,11 @@
 aleph2:
   joint:
-    nanotec_test:
+    kolo_RL_to_chromosom_L:
       type: "nanotec"
       node_id: 1
       busname: "can0"
       baudrate: "500K"
+      scale: 1000.0
       parameters:
         Maximum current: 25000
         I2t Parameters:
@@ -13,5 +14,85 @@ aleph2:
         Profile acceleration: 1000
         Profile deceleration: 1000
         Motor drive parameter set:
-          Velocity loop, integral gain (closed loop): 30
-          Velocity loop, proportional gain (closed loop): 12000
+          Velocity loop, integral gain (closed loop): 15
+          Velocity loop, proportional gain (closed loop): 200000
+        Position encoder resolution:
+          Encoder increments: 6280 # 2 * pi * scale
+          Motor revolutions: 1
+        Gear ratio:
+          Motor revolutions: 1
+          Shaft revolutions: 1
+        Velocity numerator: 1
+        Velocity denominator: 6280 # 2 * pi * scale
+    kolo_RR_to_chromosom_R:
+      type: "nanotec"
+      node_id: 2
+      busname: "can0"
+      baudrate: "500K"
+      scale: -1000.0
+      parameters:
+        Maximum current: 25000
+        I2t Parameters:
+          Nominal Current: 25000
+          Maximum duration of peak current: 100
+        Profile acceleration: 1000
+        Profile deceleration: 1000
+        Motor drive parameter set:
+          Velocity loop, integral gain (closed loop): 15
+          Velocity loop, proportional gain (closed loop): 200000
+        Position encoder resolution:
+          Encoder increments: 6280 # 2 * pi * scale
+          Motor revolutions: 1
+        Gear ratio:
+          Motor revolutions: 1
+          Shaft revolutions: 1
+        Velocity numerator: 1
+        Velocity denominator: 6280 # 2 * pi * scale
+    kolo_FL_to_chromosom_L:
+      type: "nanotec"
+      node_id: 3
+      busname: "can0"
+      baudrate: "500K"
+      scale: 1000.0
+      parameters:
+        Maximum current: 25000
+        I2t Parameters:
+          Nominal Current: 25000
+          Maximum duration of peak current: 100
+        Profile acceleration: 1000
+        Profile deceleration: 1000
+        Motor drive parameter set:
+          Velocity loop, integral gain (closed loop): 15
+          Velocity loop, proportional gain (closed loop): 200000
+        Position encoder resolution:
+          Encoder increments: 6280 # 2 * pi * scale
+          Motor revolutions: 1
+        Gear ratio:
+          Motor revolutions: 1
+          Shaft revolutions: 1 
+        Velocity numerator: 1
+        Velocity denominator: 6280 # 2 * pi * scale
+    kolo_FR_to_chromosom_R:
+      type: "nanotec"
+      node_id: 4
+      busname: "can0"
+      baudrate: "500K"
+      scale: -1000.0
+      parameters:
+        Maximum current: 25000
+        I2t Parameters:
+          Nominal Current: 25000
+          Maximum duration of peak current: 100
+        Profile acceleration: 1000
+        Profile deceleration: 1000
+        Motor drive parameter set:
+          Velocity loop, integral gain (closed loop): 15
+          Velocity loop, proportional gain (closed loop): 200000
+        Position encoder resolution:
+          Encoder increments: 6280 # 2 * pi * scale * 4
+          Motor revolutions: 1
+        Gear ratio:
+          Motor revolutions: 1
+          Shaft revolutions: 1 
+        Velocity numerator: 1
+        Velocity denominator: 6280 # 2 * pi * scale

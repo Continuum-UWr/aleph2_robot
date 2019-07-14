@@ -31,7 +31,7 @@ namespace aleph2_joint
     class RubiStepperJoint : public Joint
     {
     public:
-        RubiStepperJoint(std::string position_topic, std::string velocity_topic, float scale);
+        RubiStepperJoint(std::string position_topic, std::string velocity_topic, double scale);
 
         JointType getType();
         
@@ -54,7 +54,7 @@ namespace aleph2_joint
     public:
         NanotecJoint(const uint8_t node_id, const std::string& busname, 
                      const std::string& baudrate, const Nanotec::OperationMode op_mode,
-                     const std::map<std::string, int64_t>& parameters);
+                     double scale, const std::map<std::string, int64_t>& parameters);
 
         JointType getType();
 
@@ -69,6 +69,7 @@ namespace aleph2_joint
     private:
         kaco::Master master_;
         Nanotec* nanotec_;
+        double scale_;
     };
 
 }
