@@ -11,19 +11,33 @@ aleph2:
         I2t Parameters:
           Nominal Current: 25000
           Maximum duration of peak current: 100
-        Profile acceleration: 1000
-        Profile deceleration: 1000
+        Profile velocity: 20000
+        Profile acceleration: 10000
+        Profile deceleration: 10000
+        Max acceleration: 15000
+        Max develeration: 15000
+        Max torque: 1000
+        Torque slope: 1000
         Motor drive parameter set:
-          Velocity loop, integral gain (closed loop): 15
-          Velocity loop, proportional gain (closed loop): 200000
+          Flux current loop, integral gain (closed loop): 256
+          Flux current loop, proportional gain (closed loop): 8192
+          Position loop, integral gain (closed loop): 0
+          Position loop, proportional gain (closed loop): 2048
+          Torque current loop, integral gain (closed loop): 256
+          Torque current loop, integral gain (open loop): 45000
+          Torque current loop, proportional gain (closed loop): 8192
+          Torque current loop, proportional gain (open loop): 240000
+          Velocity loop, integral gain (closed loop): 5
+          Velocity loop, proportional gain (closed loop): 30000
         Position encoder resolution:
           Encoder increments: 6280 # 2 * pi * scale
           Motor revolutions: 1
         Gear ratio:
-          Motor revolutions: 1
-          Shaft revolutions: 1
+          Motor revolutions: 12
+          Shaft revolutions: 1 
         Velocity numerator: 1
-        Velocity denominator: 6280 # 2 * pi * scale
+        Velocity denominator: 524 # (2 * pi * scale) / (Gear ratio)
+        Pole pair count: 8
     kolo_RR_to_chromosom_R:
       type: "nanotec"
       node_id: 2
@@ -35,19 +49,33 @@ aleph2:
         I2t Parameters:
           Nominal Current: 25000
           Maximum duration of peak current: 100
-        Profile acceleration: 1000
-        Profile deceleration: 1000
+        Profile velocity: 20000
+        Profile acceleration: 10000
+        Profile deceleration: 10000
+        Max acceleration: 15000
+        Max develeration: 15000
+        Max torque: 1000
+        Torque slope: 1000
         Motor drive parameter set:
-          Velocity loop, integral gain (closed loop): 15
-          Velocity loop, proportional gain (closed loop): 200000
+          Flux current loop, integral gain (closed loop): 256
+          Flux current loop, proportional gain (closed loop): 8192
+          Position loop, integral gain (closed loop): 0
+          Position loop, proportional gain (closed loop): 2048
+          Torque current loop, integral gain (closed loop): 256
+          Torque current loop, integral gain (open loop): 45000
+          Torque current loop, proportional gain (closed loop): 8192
+          Torque current loop, proportional gain (open loop): 240000
+          Velocity loop, integral gain (closed loop): 5
+          Velocity loop, proportional gain (closed loop): 30000
         Position encoder resolution:
           Encoder increments: 6280 # 2 * pi * scale
           Motor revolutions: 1
         Gear ratio:
-          Motor revolutions: 1
-          Shaft revolutions: 1
+          Motor revolutions: 12
+          Shaft revolutions: 1 
         Velocity numerator: 1
-        Velocity denominator: 6280 # 2 * pi * scale
+        Velocity denominator: 524 # (2 * pi * scale) / (Gear ratio)
+        Pole pair count: 8
     kolo_FL_to_chromosom_L:
       type: "nanotec"
       node_id: 3
@@ -59,19 +87,33 @@ aleph2:
         I2t Parameters:
           Nominal Current: 25000
           Maximum duration of peak current: 100
-        Profile acceleration: 1000
-        Profile deceleration: 1000
+        Profile velocity: 20000
+        Profile acceleration: 10000
+        Profile deceleration: 10000
+        Max acceleration: 15000
+        Max develeration: 15000
+        Max torque: 1000
+        Torque slope: 1000
         Motor drive parameter set:
-          Velocity loop, integral gain (closed loop): 15
-          Velocity loop, proportional gain (closed loop): 200000
+          Flux current loop, integral gain (closed loop): 256
+          Flux current loop, proportional gain (closed loop): 8192
+          Position loop, integral gain (closed loop): 0
+          Position loop, proportional gain (closed loop): 2048
+          Torque current loop, integral gain (closed loop): 256
+          Torque current loop, integral gain (open loop): 45000
+          Torque current loop, proportional gain (closed loop): 8192
+          Torque current loop, proportional gain (open loop): 240000
+          Velocity loop, integral gain (closed loop): 5
+          Velocity loop, proportional gain (closed loop): 30000
         Position encoder resolution:
           Encoder increments: 6280 # 2 * pi * scale
           Motor revolutions: 1
         Gear ratio:
-          Motor revolutions: 1
+          Motor revolutions: 12
           Shaft revolutions: 1 
         Velocity numerator: 1
-        Velocity denominator: 6280 # 2 * pi * scale
+        Velocity denominator: 524 # (2 * pi * scale) / (Gear ratio)
+        Pole pair count: 8
     kolo_FR_to_chromosom_R:
       type: "nanotec"
       node_id: 4
@@ -83,16 +125,30 @@ aleph2:
         I2t Parameters:
           Nominal Current: 25000
           Maximum duration of peak current: 100
-        Profile acceleration: 1000
-        Profile deceleration: 1000
+        Profile velocity: 20000
+        Profile acceleration: 10000
+        Profile deceleration: 10000
+        Max acceleration: 15000
+        Max develeration: 15000
+        Max torque: 1000
+        Torque slope: 1000
         Motor drive parameter set:
-          Velocity loop, integral gain (closed loop): 15
-          Velocity loop, proportional gain (closed loop): 200000
+          Flux current loop, integral gain (closed loop): 256
+          Flux current loop, proportional gain (closed loop): 8192
+          Position loop, integral gain (closed loop): 0
+          Position loop, proportional gain (closed loop): 2048
+          Torque current loop, integral gain (closed loop): 256
+          Torque current loop, integral gain (open loop): 45000
+          Torque current loop, proportional gain (closed loop): 8192
+          Torque current loop, proportional gain (open loop): 240000
+          Velocity loop, integral gain (closed loop): 5
+          Velocity loop, proportional gain (closed loop): 30000
         Position encoder resolution:
-          Encoder increments: 6280 # 2 * pi * scale * 4
+          Encoder increments: 6280 # 2 * pi * scale
           Motor revolutions: 1
         Gear ratio:
-          Motor revolutions: 1
+          Motor revolutions: 12
           Shaft revolutions: 1 
         Velocity numerator: 1
-        Velocity denominator: 6280 # 2 * pi * scale
+        Velocity denominator: 524 # (2 * pi * scale) / (Gear ratio)
+        Pole pair count: 8

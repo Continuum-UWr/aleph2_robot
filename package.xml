@@ -18,6 +18,9 @@
   <depend>nanotec_driver</depend>
 
   <exec_depend>joint_state_controller</exec_depend>
+  <exec_depend>position_controllers</exec_depend>
+  <exec_depend>velocity_controllers</exec_depend>
   <exec_depend>effort_controllers</exec_depend>
+  <exec_depend>diff_drive_controller</exec_depend>
   
 </package>
