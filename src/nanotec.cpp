@@ -49,7 +49,7 @@ const static std::vector<std::string> AUTOCALIB_PARAMETERS = {
     "Motor drive parameter set/Torque current loop, proportional gain (closed loop)",
     "Motor drive parameter set/Torque current loop, integral gain (closed loop)",
     "Motor drive parameter set/Torque current loop, proportional gain (open loop)",
-    "Motor drive parameter set/Torque current loop, integral gain (open loop)"
+    "Motor drive parameter set/Torque current loop, integral gain (open loop)",
 };
 
 Nanotec::Nanotec(kaco::Device &device, OperationMode mode)
@@ -244,9 +244,7 @@ void Nanotec::SetTarget(int32_t target)
         device_.set_entry("Target torque", static_cast<int16_t>(target));
         break;
     case OperationMode::VELOCITY:
-        device_.set_entry("Target velocity",
-                          static_cast<int32_t>(target >= 0 ? target : -target));
-        device_.set_entry("Polarity", target < 0 ? uint8_t(0b11000000) : uint8_t(0));
+        device_.set_entry("Target velocity", target);
         break;
     case OperationMode::POSITION:
         // device_.set_entry("Polarity", target < 0 ? uint8_t(0b11000000) :
@@ -260,7 +258,7 @@ void Nanotec::SetTarget(int32_t target)
 
 int32_t Nanotec::GetPosition() { return device_.get_entry("Position actual value"); }
 
-int16_t Nanotec::GetVelocity() { return device_.get_entry("vl velocity actual value"); }
+int32_t Nanotec::GetVelocity() { return device_.get_entry("Velocity actual value"); }
 
 int16_t Nanotec::GetTorque() { return device_.get_entry("Torque actual value"); }
 
