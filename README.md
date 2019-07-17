@@ -1,7 +1,7 @@
 # aleph2_hardware_interface
 
 ## TODO
-- presety parametrów dla Nanoteców
+- ~~presety parametrów dla Nanoteców~~
 - obsługa enkoderów rubi
 - obsługa mostków rubi
 - (?) wielowątkowa inicjalizacja jointów (przynajmniej Nanoteców)

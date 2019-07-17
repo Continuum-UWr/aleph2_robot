@@ -8,7 +8,7 @@
     <rosparam file="$(find aleph2_hardware_interface)/config/drivetrain/joint_limits.yaml" command="load"/>
 
     <group if="$(arg spawn_manager)">
-        <node name="controller_manager" pkg="aleph2_hardware_interface" type="controller_manager" output="$(arg output)"/>
+        <node name="controller_manager" pkg="aleph2_hardware_interface" type="controller_manager" output="$(arg output)" required="true"/>
         <node name="state_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="$(arg output)" args="
             /aleph2/controller/state
         "/>

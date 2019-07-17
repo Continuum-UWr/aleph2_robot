@@ -1,4 +1,5 @@
 #include <aleph2_hardware_interface/aleph2_hardware_interface.h>
+#include <aleph2_hardware_interface/utils.h>
 #include <joint_limits_interface/joint_limits.h>
 #include <joint_limits_interface/joint_limits_rosparam.h>
 #include <nanotec_driver/nanotec.h>
@@ -10,6 +11,7 @@ using joint_limits_interface::VelocityJointSaturationHandle;
 using joint_limits_interface::VelocityJointSoftLimitsHandle;
 using joint_limits_interface::PositionJointSaturationHandle;
 using joint_limits_interface::PositionJointSoftLimitsHandle;
+using XmlRpc::XmlRpcValue;
 
 namespace aleph2_hardware_interface
 {
@@ -17,11 +19,13 @@ namespace aleph2_hardware_interface
     Aleph2HardwareInterface::~Aleph2HardwareInterface() {}
 
     void Aleph2HardwareInterface::init(ros::NodeHandle& robot_hw_nh) {
-        XmlRpc::XmlRpcValue hardware;
-        robot_hw_nh.getParam("joint", hardware);
+        XmlRpcValue hardware, nanotec_presets;
+        robot_hw_nh.getParam("joints", hardware);
+        robot_hw_nh.getParam("nanotec_presets", nanotec_presets);
 
-        ROS_ASSERT(hardware.getType() == XmlRpc::XmlRpcValue::TypeStruct);
-        
+        ROS_ASSERT(hardware.getType() == XmlRpcValue::TypeStruct);
+        ROS_ASSERT(nanotec_presets.getType() == XmlRpcValue::TypeStruct || !nanotec_presets.valid());
+
         num_joints_ = hardware.size();
 
         // Resize vectors
@@ -40,10 +44,10 @@ namespace aleph2_hardware_interface
             joint_names_[i] = joint.first;
             auto joint_struct = joint.second;
             
-            ROS_ASSERT(joint_struct.getType() == XmlRpc::XmlRpcValue::TypeStruct);
+            ROS_ASSERT(joint_struct.getType() == XmlRpcValue::TypeStruct);
 
             ROS_ASSERT(joint_struct.hasMember("type"));
-            ROS_ASSERT(joint_struct["type"].getType() == XmlRpc::XmlRpcValue::TypeString);
+            ROS_ASSERT(joint_struct["type"].getType() == XmlRpcValue::TypeString);
 
             if( joint_struct["type"] == "rubi_stepper" )
             {
@@ -68,11 +72,11 @@ namespace aleph2_hardware_interface
                 velocity_joint_soft_limits_interface_.registerHandle(joint_velocity_soft_limits_handle);
 
                 ROS_ASSERT(joint_struct.hasMember("position_topic"));
-                ROS_ASSERT(joint_struct["position_topic"].getType() == XmlRpc::XmlRpcValue::TypeString);
+                ROS_ASSERT(joint_struct["position_topic"].getType() == XmlRpcValue::TypeString);
                 ROS_ASSERT(joint_struct.hasMember("velocity_topic"));
-                ROS_ASSERT(joint_struct["velocity_topic"].getType() == XmlRpc::XmlRpcValue::TypeString);
+                ROS_ASSERT(joint_struct["velocity_topic"].getType() == XmlRpcValue::TypeString);
                 ROS_ASSERT(joint_struct.hasMember("scale"));
-                ROS_ASSERT(joint_struct["scale"].getType() == XmlRpc::XmlRpcValue::TypeDouble);
+                ROS_ASSERT(joint_struct["scale"].getType() == XmlRpcValue::TypeDouble);
 
                 joints_[i] = new aleph2_joint::RubiStepperJoint(
                     joint_struct["position_topic"], 
@@ -117,37 +121,36 @@ namespace aleph2_hardware_interface
                 position_joint_soft_limits_interface_.registerHandle(joint_position_soft_limits_handle);
 
                 ROS_ASSERT(joint_struct.hasMember("node_id"));
-                ROS_ASSERT(joint_struct["node_id"].getType() == XmlRpc::XmlRpcValue::TypeInt);
+                ROS_ASSERT(joint_struct["node_id"].getType() == XmlRpcValue::TypeInt);
                 ROS_ASSERT(joint_struct.hasMember("busname"));
-                ROS_ASSERT(joint_struct["busname"].getType() == XmlRpc::XmlRpcValue::TypeString);
+                ROS_ASSERT(joint_struct["busname"].getType() == XmlRpcValue::TypeString);
                 ROS_ASSERT(joint_struct.hasMember("baudrate"));
-                ROS_ASSERT(joint_struct["baudrate"].getType() == XmlRpc::XmlRpcValue::TypeString);
+                ROS_ASSERT(joint_struct["baudrate"].getType() == XmlRpcValue::TypeString);
                 ROS_ASSERT(joint_struct.hasMember("scale"));
-                ROS_ASSERT(joint_struct["scale"].getType() == XmlRpc::XmlRpcValue::TypeDouble);
-                ROS_ASSERT(joint_struct.hasMember("parameters"));
-                ROS_ASSERT(joint_struct["parameters"].getType() == XmlRpc::XmlRpcValue::TypeStruct);
+                ROS_ASSERT(joint_struct["scale"].getType() == XmlRpcValue::TypeDouble);
 
                 std::map<std::string, int64_t> parameters;
 
-                for (auto& param : joint_struct["parameters"])
+                if (joint_struct.hasMember("preset"))
                 {
-                    if (param.second.getType() == XmlRpc::XmlRpcValue::TypeStruct)
+                    ROS_ASSERT(joint_struct["preset"].getType() == XmlRpcValue::TypeString);
+
+                    std::string preset = joint_struct["preset"];
+                    if (nanotec_presets.valid() && nanotec_presets.hasMember(preset))
                     {
-                        for (auto& subparam : param.second)
-                        {
-                            ROS_ASSERT(subparam.second.getType() == XmlRpc::XmlRpcValue::TypeInt);
-                            std::string key = param.first + "/" + subparam.first;
-                            int64_t value = static_cast<int64_t>(static_cast<int>(subparam.second));
-                            parameters[key] = value;
-                        }
+                        ROS_ASSERT(nanotec_presets[preset].getType() == XmlRpcValue::TypeStruct);
+                        LoadNanotecParametersFromStruct(parameters, nanotec_presets[preset]);
                     }
-                    else
+                    else 
                     {
-                        ROS_ASSERT(param.second.getType() == XmlRpc::XmlRpcValue::TypeInt);
-                        const std::string& key = param.first;
-                        int64_t value = static_cast<int64_t>(static_cast<int>(param.second));
-                        parameters[key] = value;
+                        ROS_ERROR_STREAM("Nanotec preset " << preset << " is not defined");
                     }
+                }
+
+                if (joint_struct.hasMember("parameters"))
+                {
+                    ROS_ASSERT(joint_struct["parameters"].getType() == XmlRpcValue::TypeStruct);
+                    LoadNanotecParametersFromStruct(parameters, joint_struct["parameters"]);
                 }
 
                 joints_[i] = new aleph2_joint::NanotecJoint(
