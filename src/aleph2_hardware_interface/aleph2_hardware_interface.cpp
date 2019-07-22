@@ -157,7 +157,7 @@ namespace aleph2_hardware_interface
                     static_cast<int>(joint_struct["node_id"]),
                     joint_struct["busname"],
                     joint_struct["baudrate"],
-                    Nanotec::OperationMode::VELOCITY,
+                    "aleph2/joints/" + joint_names_[i],
                     static_cast<double>(joint_struct["scale"]),
                     parameters
                 );

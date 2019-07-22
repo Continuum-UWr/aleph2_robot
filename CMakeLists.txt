@@ -10,7 +10,13 @@ find_package( catkin REQUIRED COMPONENTS
     roscpp
     rubi_server
     nanotec_driver
+    dynamic_reconfigure
 )
+
+
+generate_dynamic_reconfigure_options(
+  cfg/Nanotec.cfg )
+
 
 catkin_package(
     INCLUDE_DIRS
@@ -24,13 +30,15 @@ catkin_package(
         roscpp
         rubi_server
         nanotec_driver
+        dynamic_reconfigure
 )
+
 
 include_directories(
   include/
   ${catkin_INCLUDE_DIRS})
 
-  
+
 # Joint
 add_library( aleph2_joint
     src/aleph2_joint/rubi_stepper_joint.cpp
@@ -38,6 +46,9 @@ add_library( aleph2_joint
 
 target_link_libraries( aleph2_joint
     ${catkin_LIBRARIES} )
+
+add_dependencies( aleph2_joint
+    ${PROJECT_NAME}_gencfg )
 
 
 # Hardware interface
@@ -65,3 +76,7 @@ install( DIRECTORY include/${PROJECT_NAME}/
     DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
     FILES_MATCHING PATTERN "*.h"
     PATTERN ".svn" EXCLUDE )
+
+install(DIRECTORY launch/
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+    PATTERN ".svn" EXCLUDE)

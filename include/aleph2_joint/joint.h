@@ -8,6 +8,10 @@
 #include "rubi_server/RubiInt.h"
 #include "nanotec_driver/nanotec.h"
 
+#include "dynamic_reconfigure/server.h"
+#include "aleph2_hardware_interface/NanotecConfig.h"
+
+
 namespace aleph2_joint
 {
     enum class JointType 
@@ -53,8 +57,9 @@ namespace aleph2_joint
     {
     public:
         NanotecJoint(const uint8_t node_id, const std::string& busname, 
-                     const std::string& baudrate, const Nanotec::OperationMode op_mode,
-                     double scale, const std::map<std::string, int64_t>& parameters);
+                     const std::string& baudrate, const std::string& nh_namespace,
+                     double scale, const std::map<std::string, int64_t>& parameters,
+                     const Nanotec::OperationMode& op_mode = Nanotec::OperationMode::VELOCITY);
 
         JointType getType();
 
@@ -67,9 +72,17 @@ namespace aleph2_joint
         double getPosition();
 
     private:
+        void configCallback(NanotecConfig& config, uint32_t level);
+
+        ros::NodeHandle nh_;
         kaco::Master master_;
         Nanotec* nanotec_;
+        dynamic_reconfigure::Server<NanotecConfig> reconfigure_server_;
+        dynamic_reconfigure::Server<NanotecConfig>::CallbackType call_type_; 
+        Nanotec::OperationMode op_mode_;
+        Nanotec::PowerMode power_mode_ = Nanotec::PowerMode::OFF;
         double scale_;
+        bool active_braking_ = false;
     };
 
 }

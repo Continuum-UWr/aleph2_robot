@@ -4,9 +4,13 @@
 namespace aleph2_joint
 {
     NanotecJoint::NanotecJoint(const uint8_t node_id, const std::string& busname, 
-                               const std::string& baudrate, const Nanotec::OperationMode op_mode,
-                               double scale, const std::map<std::string, int64_t>& parameters)
-        : scale_(scale)
+                               const std::string& baudrate, const std::string& nh_namespace,
+                               double scale, const std::map<std::string, int64_t>& parameters,
+                               const Nanotec::OperationMode& op_mode)
+        : scale_(scale),
+          nh_(nh_namespace),
+          reconfigure_server_(nh_),
+          op_mode_(op_mode)
     {
         if (!master_.start(busname, baudrate))
         {
@@ -18,6 +22,8 @@ namespace aleph2_joint
 
         while (!found_device)
         {
+            std::this_thread::sleep_for(std::chrono::milliseconds(300));
+
             for (size_t i = 0; i < master_.num_devices(); ++i)
             {
                 kaco::Device &device = master_.get_device(i);
@@ -31,7 +37,6 @@ namespace aleph2_joint
 
             ROS_WARN_STREAM("Device with ID " << (unsigned)node_id
                             << " has not been found yet. Will keep retrying.");
-            std::this_thread::sleep_for(std::chrono::milliseconds(300));
         }
 
         kaco::Device& device = master_.get_device(device_index);
@@ -39,9 +44,38 @@ namespace aleph2_joint
         device.start();
         device.load_dictionary_from_library();
 
-        nanotec_ = new Nanotec(device, op_mode);
+        nanotec_ = new Nanotec(device, op_mode_);
         nanotec_->LoadParameters(parameters);
-        nanotec_->SetPowerMode(Nanotec::PowerMode::ACTIVE);
+
+        call_type_ = boost::bind(&NanotecJoint::configCallback, this, _1, _2);
+        reconfigure_server_.setCallback(call_type_);
+    }
+
+    void NanotecJoint::configCallback(NanotecConfig& config, uint32_t level)
+    {
+        if (config.power) 
+        {
+            if (power_mode_ != Nanotec::PowerMode::ACTIVE)
+                nanotec_->SetPowerMode(Nanotec::PowerMode::ACTIVE);
+            if (config.brake)
+            {
+                active_braking_ = true;
+                if (op_mode_ == Nanotec::OperationMode::VELOCITY)
+                    setVelocity(0.0);
+            }
+        }
+        else if (config.brake)
+        {
+            if (power_mode_ != Nanotec::PowerMode::PASSIVE_BRAKE)
+                nanotec_->SetPowerMode(Nanotec::PowerMode::PASSIVE_BRAKE);
+            active_braking_ = false;
+        }
+        else
+        {
+            if (power_mode_ != Nanotec::PowerMode::OFF)
+                nanotec_->SetPowerMode(Nanotec::PowerMode::OFF);
+        }
+        
     }
 
     JointType NanotecJoint::getType()
@@ -57,8 +91,11 @@ namespace aleph2_joint
 
     void NanotecJoint::setVelocity(double velocity)
     {
-        int32_t vel = static_cast<int32_t>(velocity * scale_);
-        nanotec_->SetTarget(vel);
+        if (!active_braking_)
+        {
+            int32_t vel = static_cast<int32_t>(velocity * scale_);
+            nanotec_->SetTarget(vel);
+        }
     }
     void NanotecJoint::setPosition(double position)
     {
