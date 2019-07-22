@@ -56,24 +56,38 @@ namespace aleph2_joint
         if (config.power) 
         {
             if (power_mode_ != Nanotec::PowerMode::ACTIVE)
-                nanotec_->SetPowerMode(Nanotec::PowerMode::ACTIVE);
+            {
+                power_mode_ = Nanotec::PowerMode::ACTIVE;
+                nanotec_->SetPowerMode(power_mode_);
+            }
             if (config.brake)
             {
                 active_braking_ = true;
                 if (op_mode_ == Nanotec::OperationMode::VELOCITY)
-                    setVelocity(0.0);
+                    nanotec_->SetTarget(0);
             }
+            else
+            {
+                active_braking_ = false;
+            }
+            
         }
         else if (config.brake)
         {
             if (power_mode_ != Nanotec::PowerMode::PASSIVE_BRAKE)
-                nanotec_->SetPowerMode(Nanotec::PowerMode::PASSIVE_BRAKE);
+            {
+                power_mode_ = Nanotec::PowerMode::PASSIVE_BRAKE;
+                nanotec_->SetPowerMode(power_mode_);
+            }
             active_braking_ = false;
         }
         else
         {
             if (power_mode_ != Nanotec::PowerMode::OFF)
-                nanotec_->SetPowerMode(Nanotec::PowerMode::OFF);
+            {
+                power_mode_ = Nanotec::PowerMode::OFF;
+                nanotec_->SetPowerMode(power_mode_);
+            }
         }
         
     }
