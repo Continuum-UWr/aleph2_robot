@@ -167,6 +167,21 @@ namespace aleph2_hardware_interface
                 ROS_ERROR_STREAM("Incorrect joint type: " << joint_struct["type"]);
                 ROS_ASSERT(false);
             }
+
+            if (joint_struct.hasMember("has_rubi_encoder"))
+            {
+                ROS_ASSERT(joint_struct["has_rubi_encoder"].getType() == XmlRpcValue::TypeBoolean);
+                if (joint_struct["has_rubi_encoder"])
+                {
+                    ROS_ASSERT(joint_struct.hasMember("encoder_position_topic"));
+                    ROS_ASSERT(joint_struct["encoder_position_topic"].getType() == XmlRpcValue::TypeString);
+                    joints_[i] = new aleph2_joint::RubiEncoderAddon(
+                        joints_[i],
+                        joint_struct["encoder_position_topic"]
+                    );
+                }
+            }
+
             ++i;
         }
 

@@ -7,6 +7,7 @@
 #include <joint_limits_interface/joint_limits_interface.h>
 #include <ros/ros.h>
 #include <aleph2_joint/joint.h>
+#include <aleph2_joint/addon.h>
 
 
 namespace aleph2_hardware_interface
