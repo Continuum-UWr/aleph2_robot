@@ -10,8 +10,8 @@ namespace aleph2_joint
                                        std::string velocity_topic, double scale)
         : scale_(scale)
     {
-        vel_pub = nh.advertise<rubi_server::RubiInt>(velocity_topic, 10);
-        pos_sub = nh.subscribe(position_topic, 10, &RubiStepperJoint::positionCallback, this);
+        vel_pub_ = nh_.advertise<rubi_server::RubiInt>(velocity_topic, 10);
+        pos_sub_ = nh_.subscribe(position_topic, 10, &RubiStepperJoint::positionCallback, this);
     }
 
     JointType RubiStepperJoint::getType()
@@ -25,7 +25,7 @@ namespace aleph2_joint
         rubi_server::RubiInt msg;
         msg.data.resize(1);
         msg.data[0] = static_cast<int32_t>(velocity * scale_);
-        vel_pub.publish(msg);
+        vel_pub_.publish(msg);
     }
 
     void RubiStepperJoint::positionCallback(const rubi_server::RubiIntConstPtr& msg)

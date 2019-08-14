@@ -1,5 +1,5 @@
-#ifndef ALEPH2CPP_JOINT_H
-#define ALEPH2CPP_JOINT_H
+#ifndef ALEPH2_JOINT_JOINT_H
+#define ALEPH2_JOINT_JOINT_H
 
 #include <string>
 #include <map>
@@ -32,6 +32,7 @@ namespace aleph2_joint
         virtual double getPosition() { throw "getPosition is not implemented"; }
     };
 
+
     class RubiStepperJoint : public Joint
     {
     public:
@@ -46,9 +47,9 @@ namespace aleph2_joint
 
     private:
         double velocity_, position_, scale_;
-        ros::NodeHandle nh;
-        ros::Subscriber pos_sub;
-        ros::Publisher vel_pub;
+        ros::NodeHandle nh_;
+        ros::Subscriber pos_sub_;
+        ros::Publisher vel_pub_;
         void positionCallback(const rubi_server::RubiIntConstPtr& msg);
     };
 
