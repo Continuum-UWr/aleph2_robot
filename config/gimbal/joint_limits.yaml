@@ -5,7 +5,7 @@ aleph2:
       min_position: -100.0
       max_position: 100.0
       has_velocity_limits: true
-      max_velocity: 0.27
+      max_velocity: 0.28
       has_acceleration_limits: false
       has_jerk_limits: false
       has_effort_limits: false
@@ -19,7 +19,7 @@ aleph2:
       min_position: -100.0
       max_position: 100.0
       has_velocity_limits: true
-      max_velocity: 0.2
+      max_velocity: 0.235
       has_acceleration_limits: false
       has_jerk_limits: false
       has_effort_limits: false
@@ -33,7 +33,7 @@ aleph2:
       min_position: -100.0
       max_position: 100.0
       has_velocity_limits: true
-      max_velocity: 0.2
+      max_velocity: 0.235
       has_acceleration_limits: false
       has_jerk_limits: false
       has_effort_limits: false
@@ -47,7 +47,178 @@ aleph2:
       min_position: -100.0
       max_position: 100.0
       has_velocity_limits: true
-      max_velocity: 0.2
+      max_velocity: 0.235
+      has_acceleration_limits: false
+      has_jerk_limits: false
+      has_effort_limits: false
+      has_soft_limits: true
+      soft_lower_limit: -99.0
+      soft_upper_limit: 99.0
+      k_position: 0.1
+      k_velocity: 10.0
+
+    gimbal2_pan:
+      has_position_limits: true
+      min_position: -100.0
+      max_position: 100.0
+      has_velocity_limits: true
+      max_velocity: 0.28
+      has_acceleration_limits: false
+      has_jerk_limits: false
+      has_effort_limits: false
+      has_soft_limits: true
+      soft_lower_limit: -99.0
+      soft_upper_limit: 99.0
+      k_position: 0.1
+      k_velocity: 10.0
+    gimbal2_tilt:
+      has_position_limits: true
+      min_position: -100.0
+      max_position: 100.0
+      has_velocity_limits: true
+      max_velocity: 0.235
+      has_acceleration_limits: false
+      has_jerk_limits: false
+      has_effort_limits: false
+      has_soft_limits: true
+      soft_lower_limit: -99.0
+      soft_upper_limit: 99.0
+      k_position: 0.1
+      k_velocity: 10.0
+    gimbal2_zoom:
+      has_position_limits: true
+      min_position: -100.0
+      max_position: 100.0
+      has_velocity_limits: true
+      max_velocity: 0.235
+      has_acceleration_limits: false
+      has_jerk_limits: false
+      has_effort_limits: false
+      has_soft_limits: true
+      soft_lower_limit: -99.0
+      soft_upper_limit: 99.0
+      k_position: 0.1
+      k_velocity: 10.0
+    gimbal2_focus:
+      has_position_limits: true
+      min_position: -100.0
+      max_position: 100.0
+      has_velocity_limits: true
+      max_velocity: 0.235
+      has_acceleration_limits: false
+      has_jerk_limits: false
+      has_effort_limits: false
+      has_soft_limits: true
+      soft_lower_limit: -99.0
+      soft_upper_limit: 99.0
+      k_position: 0.1
+      k_velocity: 10.0
+
+    gimbal3_pan:
+      has_position_limits: true
+      min_position: -100.0
+      max_position: 100.0
+      has_velocity_limits: true
+      max_velocity: 0.28
+      has_acceleration_limits: false
+      has_jerk_limits: false
+      has_effort_limits: false
+      has_soft_limits: true
+      soft_lower_limit: -99.0
+      soft_upper_limit: 99.0
+      k_position: 0.1
+      k_velocity: 10.0
+    gimbal3_tilt:
+      has_position_limits: true
+      min_position: -100.0
+      max_position: 100.0
+      has_velocity_limits: true
+      max_velocity: 0.235
+      has_acceleration_limits: false
+      has_jerk_limits: false
+      has_effort_limits: false
+      has_soft_limits: true
+      soft_lower_limit: -99.0
+      soft_upper_limit: 99.0
+      k_position: 0.1
+      k_velocity: 10.0
+    gimbal3_zoom:
+      has_position_limits: true
+      min_position: -100.0
+      max_position: 100.0
+      has_velocity_limits: true
+      max_velocity: 0.235
+      has_acceleration_limits: false
+      has_jerk_limits: false
+      has_effort_limits: false
+      has_soft_limits: true
+      soft_lower_limit: -99.0
+      soft_upper_limit: 99.0
+      k_position: 0.1
+      k_velocity: 10.0
+    gimbal3_focus:
+      has_position_limits: true
+      min_position: -100.0
+      max_position: 100.0
+      has_velocity_limits: true
+      max_velocity: 0.235
+      has_acceleration_limits: false
+      has_jerk_limits: false
+      has_effort_limits: false
+      has_soft_limits: true
+      soft_lower_limit: -99.0
+      soft_upper_limit: 99.0
+      k_position: 0.1
+      k_velocity: 10.0
+
+    gimbal4_pan:
+      has_position_limits: true
+      min_position: -100.0
+      max_position: 100.0
+      has_velocity_limits: true
+      max_velocity: 0.28
+      has_acceleration_limits: false
+      has_jerk_limits: false
+      has_effort_limits: false
+      has_soft_limits: true
+      soft_lower_limit: -99.0
+      soft_upper_limit: 99.0
+      k_position: 0.1
+      k_velocity: 10.0
+    gimbal4_tilt:
+      has_position_limits: true
+      min_position: -100.0
+      max_position: 100.0
+      has_velocity_limits: true
+      max_velocity: 0.235
+      has_acceleration_limits: false
+      has_jerk_limits: false
+      has_effort_limits: false
+      has_soft_limits: true
+      soft_lower_limit: -99.0
+      soft_upper_limit: 99.0
+      k_position: 0.1
+      k_velocity: 10.0
+    gimbal4_zoom:
+      has_position_limits: true
+      min_position: -100.0
+      max_position: 100.0
+      has_velocity_limits: true
+      max_velocity: 0.235
+      has_acceleration_limits: false
+      has_jerk_limits: false
+      has_effort_limits: false
+      has_soft_limits: true
+      soft_lower_limit: -99.0
+      soft_upper_limit: 99.0
+      k_position: 0.1
+      k_velocity: 10.0
+    gimbal4_focus:
+      has_position_limits: true
+      min_position: -100.0
+      max_position: 100.0
+      has_velocity_limits: true
+      max_velocity: 0.235
       has_acceleration_limits: false
       has_jerk_limits: false
       has_effort_limits: false

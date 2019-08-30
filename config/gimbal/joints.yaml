@@ -1,22 +1,86 @@
 aleph2:
-  joint:
+  joints:
+
     gimbal1_pan:
       type: rubi_stepper
-      position_topic: rubi/boards/gimbal1/fields_from_board/position_pan
-      velocity_topic: rubi/boards/gimbal1/fields_to_board/velocity_pan
+      position_topic: rubi/boards/gimbal/00000000/fields_from_board/position_pan
+      velocity_topic: rubi/boards/gimbal/00000000/fields_to_board/velocity_pan
       scale: 1600.0
     gimbal1_tilt:
       type: rubi_stepper
-      position_topic: rubi/boards/gimbal1/fields_from_board/position_tilt
-      velocity_topic: rubi/boards/gimbal1/fields_to_board/velocity_tilt
+      position_topic: rubi/boards/gimbal/00000000/fields_from_board/position_tilt
+      velocity_topic: rubi/boards/gimbal/00000000/fields_to_board/velocity_tilt
       scale: 1900.0
     gimbal1_zoom:
       type: rubi_stepper
-      position_topic: rubi/boards/gimbal1/fields_from_board/position_zoom
-      velocity_topic: rubi/boards/gimbal1/fields_to_board/velocity_zoom
+      position_topic: rubi/boards/gimbal/00000000/fields_from_board/position_zoom
+      velocity_topic: rubi/boards/gimbal/00000000/fields_to_board/velocity_zoom
       scale: 1900.0
     gimbal1_focus:
       type: rubi_stepper
-      position_topic: rubi/boards/gimbal1/fields_from_board/position_focus
-      velocity_topic: rubi/boards/gimbal1/fields_to_board/velocity_focus
+      position_topic: rubi/boards/gimbal/00000000/fields_from_board/position_focus
+      velocity_topic: rubi/boards/gimbal/00000000/fields_to_board/velocity_focus
+      scale: 1900.0
+
+    gimbal2_pan:
+      type: rubi_stepper
+      position_topic: rubi/boards/gimbal/00000001/fields_from_board/position_pan
+      velocity_topic: rubi/boards/gimbal/00000001/fields_to_board/velocity_pan
+      scale: 1600.0
+    gimbal2_tilt:
+      type: rubi_stepper
+      position_topic: rubi/boards/gimbal/00000001/fields_from_board/position_tilt
+      velocity_topic: rubi/boards/gimbal/00000001/fields_to_board/velocity_tilt
+      scale: 1900.0
+    gimbal2_zoom:
+      type: rubi_stepper
+      position_topic: rubi/boards/gimbal/00000001/fields_from_board/position_zoom
+      velocity_topic: rubi/boards/gimbal/00000001/fields_to_board/velocity_zoom
+      scale: 1900.0
+    gimbal2_focus:
+      type: rubi_stepper
+      position_topic: rubi/boards/gimbal/00000001/fields_from_board/position_focus
+      velocity_topic: rubi/boards/gimbal/00000001/fields_to_board/velocity_focus
+      scale: 1900.0
+
+    gimbal3_pan:
+      type: rubi_stepper
+      position_topic: rubi/boards/gimbal/00000002/fields_from_board/position_pan
+      velocity_topic: rubi/boards/gimbal/00000002/fields_to_board/velocity_pan
+      scale: 1600.0
+    gimbal3_tilt:
+      type: rubi_stepper
+      position_topic: rubi/boards/gimbal/00000002/fields_from_board/position_tilt
+      velocity_topic: rubi/boards/gimbal/00000002/fields_to_board/velocity_tilt
+      scale: 1900.0
+    gimbal3_zoom:
+      type: rubi_stepper
+      position_topic: rubi/boards/gimbal/00000002/fields_from_board/position_zoom
+      velocity_topic: rubi/boards/gimbal/00000002/fields_to_board/velocity_zoom
+      scale: 1900.0
+    gimbal3_focus:
+      type: rubi_stepper
+      position_topic: rubi/boards/gimbal/00000002/fields_from_board/position_focus
+      velocity_topic: rubi/boards/gimbal/00000002/fields_to_board/velocity_focus
+      scale: 1900.0
+
+    gimbal4_pan:
+      type: rubi_stepper
+      position_topic: rubi/boards/gimbal/00000003/fields_from_board/position_pan
+      velocity_topic: rubi/boards/gimbal/00000003/fields_to_board/velocity_pan
+      scale: 1600.0
+    gimbal4_tilt:
+      type: rubi_stepper
+      position_topic: rubi/boards/gimbal/00000003/fields_from_board/position_tilt
+      velocity_topic: rubi/boards/gimbal/00000003/fields_to_board/velocity_tilt
+      scale: 1900.0
+    gimbal4_zoom:
+      type: rubi_stepper
+      position_topic: rubi/boards/gimbal/00000003/fields_from_board/position_zoom
+      velocity_topic: rubi/boards/gimbal/00000003/fields_to_board/velocity_zoom
+      scale: 1900.0
+    gimbal4_focus:
+      type: rubi_stepper
+      position_topic: rubi/boards/gimbal/00000003/fields_from_board/position_focus
+      velocity_topic: rubi/boards/gimbal/00000003/fields_to_board/velocity_focus
       scale: 1900.0
