@@ -4,7 +4,7 @@
 #include <string>
 
 #include "ros/ros.h"
-#include "rubi_server/RubiInt.h"
+#include "rubi_server/RubiUnsignedInt.h"
 #include "aleph2_joint/joint.h"
 
 
@@ -33,13 +33,13 @@ namespace aleph2_joint
     class RubiEncoderAddon : public JointAddon
     {
     public:
-        RubiEncoderAddon(Joint* joint, std::string position_topic);
+        RubiEncoderAddon(Joint* joint, std::string position_topic, double offset);
         virtual double getPosition() override { return position_; }
     private:
-        double position_;
+        double position_, offset_;
         ros::NodeHandle nh_;
         ros::Subscriber pos_sub_;
-        void positionCallback(const rubi_server::RubiIntConstPtr& msg);
+        void positionCallback(const rubi_server::RubiUnsignedIntConstPtr& msg);
     };
 }
 

@@ -175,9 +175,12 @@ namespace aleph2_hardware_interface
                 {
                     ROS_ASSERT(joint_struct.hasMember("encoder_position_topic"));
                     ROS_ASSERT(joint_struct["encoder_position_topic"].getType() == XmlRpcValue::TypeString);
+                    ROS_ASSERT(joint_struct.hasMember("encoder_angle_offset"));
+                    ROS_ASSERT(joint_struct["encoder_angle_offset"].getType() == XmlRpcValue::TypeDouble);
                     joints_[i] = new aleph2_joint::RubiEncoderAddon(
                         joints_[i],
-                        joint_struct["encoder_position_topic"]
+                        joint_struct["encoder_position_topic"],
+                        joint_struct["encoder_angle_offset"]
                     );
                 }
             }
