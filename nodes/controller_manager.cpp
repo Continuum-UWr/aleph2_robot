@@ -11,7 +11,7 @@ int main(int argc, char** argv)
 
     controller_manager::ControllerManager cm(&aleph2);
 
-    ros::AsyncSpinner spinner(1);
+    ros::AsyncSpinner spinner(10);
     ros::Rate rate(20);
 
     ros::Time last_update = ros::Time::now();

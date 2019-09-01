@@ -13,7 +13,8 @@ namespace aleph2_joint
                             const std::string& home_field, const std::string& nh_namespace,
                             double scale)
         : scale_(scale),
-          nh_(nh_namespace)
+          nh_(nh_namespace),
+          home_(false)
     {
         std::string base_topic = "/rubi/boards/" + board_name + '/';
         if (!board_id.empty())
@@ -71,8 +72,55 @@ namespace aleph2_joint
     bool RubiStepperJoint::homeFunction(std_srvs::Trigger::Request& req,
                       std_srvs::Trigger::Response& res)
     {
-        res.message = "TODO";
-        res.success = false;
+        if (home_) 
+        {
+            res.message = "The joint is already homing!";
+            res.success = false;
+            return true;
+        }
+        else 
+        {
+            setVelocity(0);
+
+            rubi_server::RubiBool msg;
+            msg.data.push_back(true);
+            home_pub_.publish(msg);
+
+            ros::Time begin = ros::Time::now();
+            ros::Rate rate(10);
+            
+            while (ros::ok() && !home_)
+            {
+                if ((ros::Time::now() - begin).sec > 5)
+                {
+                    res.message = "Could not start homing!";
+                    res.success = false;
+                    return true;
+                }
+                rate.sleep();
+            }
+
+            if (!ros::ok())
+                return false;
+            
+            begin = ros::Time::now();
+            rate.reset();
+            while (ros::ok() && home_)
+            {
+                if ((ros::Time::now() - begin).sec > 10)
+                {
+                    res.message = "Homing took too long!";
+                    res.success = false;
+                    return true;
+                }
+                rate.sleep();
+            }
+
+            if (!ros::ok())
+                return false;
+        }
+        res.message = "Joint succesfully homed!";
+        res.success = true;
         return true;
     }
 
