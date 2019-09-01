@@ -6,6 +6,8 @@
 
 #include "ros/ros.h"
 #include "rubi_server/RubiInt.h"
+#include "rubi_server/RubiBool.h"
+#include "std_srvs/Trigger.h"
 #include "nanotec_driver/nanotec.h"
 
 #include "dynamic_reconfigure/server.h"
@@ -36,7 +38,10 @@ namespace aleph2_joint
     class RubiStepperJoint : public Joint
     {
     public:
-        RubiStepperJoint(std::string position_topic, std::string velocity_topic, double scale);
+        RubiStepperJoint(const std::string& board_name, const std::string& board_id, 
+                         const std::string& position_field, const std::string& velocity_field,
+                         const std::string& home_field, const std::string& nh_namespace,
+                         double scale);
 
         JointType getType();
         
@@ -46,11 +51,17 @@ namespace aleph2_joint
         double getPosition() { return position_; }
 
     private:
-        double velocity_, position_, scale_;
+        double velocity_, position_;
+        double scale_;
+        bool home_;
         ros::NodeHandle nh_;
-        ros::Subscriber pos_sub_;
-        ros::Publisher vel_pub_;
+        ros::Subscriber pos_sub_, home_sub_;
+        ros::Publisher vel_pub_, home_pub_;
+        ros::ServiceServer home_service_;
         void positionCallback(const rubi_server::RubiIntConstPtr& msg);
+        void homeCallback(const rubi_server::RubiBoolConstPtr& msg);
+        bool homeFunction(std_srvs::Trigger::Request& req,
+                          std_srvs::Trigger::Response& res);
     };
 
 

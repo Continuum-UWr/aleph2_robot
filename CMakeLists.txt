@@ -11,6 +11,7 @@ find_package( catkin REQUIRED COMPONENTS
     rubi_server
     nanotec_driver
     dynamic_reconfigure
+    std_srvs
 )
 
 
@@ -31,6 +32,7 @@ catkin_package(
         rubi_server
         nanotec_driver
         dynamic_reconfigure
+        std_srvs
 )
 
 

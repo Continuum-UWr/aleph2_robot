@@ -71,18 +71,38 @@ namespace aleph2_hardware_interface
                 velocity_joint_saturation_interface_.registerHandle(joint_velocity_saturation_handle);
                 velocity_joint_soft_limits_interface_.registerHandle(joint_velocity_soft_limits_handle);
 
-                ROS_ASSERT(joint_struct.hasMember("position_topic"));
-                ROS_ASSERT(joint_struct["position_topic"].getType() == XmlRpcValue::TypeString);
-                ROS_ASSERT(joint_struct.hasMember("velocity_topic"));
-                ROS_ASSERT(joint_struct["velocity_topic"].getType() == XmlRpcValue::TypeString);
+                ROS_ASSERT(joint_struct.hasMember("board_name"));
+                ROS_ASSERT(joint_struct["board_name"].getType() == XmlRpcValue::TypeString);
+                ROS_ASSERT(joint_struct.hasMember("position_field"));
+                ROS_ASSERT(joint_struct["position_field"].getType() == XmlRpcValue::TypeString);
+                ROS_ASSERT(joint_struct.hasMember("velocity_field"));
+                ROS_ASSERT(joint_struct["velocity_field"].getType() == XmlRpcValue::TypeString);
                 ROS_ASSERT(joint_struct.hasMember("scale"));
                 ROS_ASSERT(joint_struct["scale"].getType() == XmlRpcValue::TypeDouble);
+                
+                // optional parameters
+                std::string board_id, home_field;
+                if (joint_struct.hasMember("board_id"))
+                {
+                    ROS_ASSERT(joint_struct["board_id"].getType() == XmlRpcValue::TypeString);
+                    board_id = static_cast<std::string>(joint_struct["board_id"]);
+                }
+                if (joint_struct.hasMember("home_field"))
+                {
+                    ROS_ASSERT(joint_struct["home_field"].getType() == XmlRpcValue::TypeString);
+                    home_field = static_cast<std::string>(joint_struct["home_field"]);
+                }
 
                 joints_[i] = new aleph2_joint::RubiStepperJoint(
-                    joint_struct["position_topic"], 
-                    joint_struct["velocity_topic"],
+                    joint_struct["board_name"],
+                    board_id,
+                    joint_struct["position_field"],
+                    joint_struct["velocity_field"],
+                    home_field,
+                    "aleph2/joints/" + joint_names_[i],
                     static_cast<double>(joint_struct["scale"])
                 );
+
             }
             else if( joint_struct["type"] == "nanotec" )
             {

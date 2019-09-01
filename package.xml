@@ -17,6 +17,7 @@
   <depend>rubi_server</depend>
   <depend>nanotec_driver</depend>
   <depend>dynamic_reconfigure</depend>
+  <depend>std_srvs</depend>
 
   <exec_depend>joint_state_controller</exec_depend>
   <exec_depend>position_controllers</exec_depend>
