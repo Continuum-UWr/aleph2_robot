@@ -5,12 +5,7 @@
 #include <nanotec_driver/nanotec.h>
 
 using namespace hardware_interface;
-using joint_limits_interface::JointLimits;
-using joint_limits_interface::SoftJointLimits;
-using joint_limits_interface::VelocityJointSaturationHandle;
-using joint_limits_interface::VelocityJointSoftLimitsHandle;
-using joint_limits_interface::PositionJointSaturationHandle;
-using joint_limits_interface::PositionJointSoftLimitsHandle;
+using namespace joint_limits_interface;
 using XmlRpc::XmlRpcValue;
 
 namespace aleph2_hardware_interface
@@ -51,56 +46,58 @@ namespace aleph2_hardware_interface
 
             if( joint_struct["type"] == "rubi" )
             {
-                // Create joint state handle
+                // Create joint handles
                 JointStateHandle joint_state_handle(joint_names_[i], &joint_position_[i], &joint_velocity_[i], &joint_effort_[i]);
-
-                // Create joint velocity handle
+                JointHandle joint_effort_handle(joint_state_handle, &joint_effort_command_[i]);
                 JointHandle joint_velocity_handle(joint_state_handle, &joint_velocity_command_[i]);
+                JointHandle joint_position_handle(joint_state_handle, &joint_position_command_[i]);
 
-                // Create joint velocity limits handles
+                // Get joint limits
                 JointLimits joint_limits;
-                SoftJointLimits soft_joint_limits;
-                getJointLimits(joint_names_[i], robot_hw_nh, joint_limits);
-                getSoftJointLimits(joint_names_[i], robot_hw_nh, soft_joint_limits);
-                VelocityJointSaturationHandle joint_velocity_saturation_handle(joint_velocity_handle, joint_limits);
-                VelocityJointSoftLimitsHandle joint_velocity_soft_limits_handle(joint_velocity_handle, joint_limits, soft_joint_limits);
+                SoftJointLimits joint_soft_limits;
+                bool has_limits = getJointLimits(joint_names_[i], robot_hw_nh, joint_limits);
+                bool has_soft_limits = getSoftJointLimits(joint_names_[i], robot_hw_nh, joint_soft_limits);
 
                 // Register handles
                 joint_state_interface_.registerHandle(joint_state_handle);
+                effort_joint_interface_.registerHandle(joint_effort_handle);
                 velocity_joint_interface_.registerHandle(joint_velocity_handle);
-                velocity_joint_saturation_interface_.registerHandle(joint_velocity_saturation_handle);
-                velocity_joint_soft_limits_interface_.registerHandle(joint_velocity_soft_limits_handle);
+                position_joint_interface_.registerHandle(joint_position_handle);
+
+                if (has_limits) 
+                {
+                    registerLimitsHandles(joint_effort_handle, joint_velocity_handle, joint_position_handle,
+                        joint_limits, has_soft_limits, joint_soft_limits);
+                }
 
                 ROS_ASSERT(joint_struct.hasMember("board_name"));
                 ROS_ASSERT(joint_struct["board_name"].getType() == XmlRpcValue::TypeString);
-                ROS_ASSERT(joint_struct.hasMember("get_position_field"));
-                ROS_ASSERT(joint_struct["get_position_field"].getType() == XmlRpcValue::TypeString);
-                ROS_ASSERT(joint_struct.hasMember("set_velocity_field"));
-                ROS_ASSERT(joint_struct["set_velocity_field"].getType() == XmlRpcValue::TypeString);
                 ROS_ASSERT(joint_struct.hasMember("scale"));
                 ROS_ASSERT(joint_struct["scale"].getType() == XmlRpcValue::TypeDouble);
                 
                 // optional parameters
-                std::string board_id, home_field;
-                if (joint_struct.hasMember("board_id"))
-                {
-                    ROS_ASSERT(joint_struct["board_id"].getType() == XmlRpcValue::TypeString);
-                    board_id = static_cast<std::string>(joint_struct["board_id"]);
-                }
-                if (joint_struct.hasMember("home_field"))
-                {
-                    ROS_ASSERT(joint_struct["home_field"].getType() == XmlRpcValue::TypeString);
-                    home_field = static_cast<std::string>(joint_struct["home_field"]);
-                }
+                std::string board_id, home_field,
+                            get_effort_field, get_velocity_field, get_position_field,
+                            set_effort_field, set_velocity_field, set_position_field;
+
+                board_id = LoadOptionalRubiFieldFromStruct("board_id", joint_struct);
+                home_field = LoadOptionalRubiFieldFromStruct("home_field", joint_struct);
+                get_effort_field = LoadOptionalRubiFieldFromStruct("get_effort_field", joint_struct);
+                get_velocity_field = LoadOptionalRubiFieldFromStruct("get_velocity_field", joint_struct);
+                get_position_field = LoadOptionalRubiFieldFromStruct("get_position_field", joint_struct);
+                set_effort_field = LoadOptionalRubiFieldFromStruct("set_effort_field", joint_struct);
+                set_velocity_field = LoadOptionalRubiFieldFromStruct("set_velocity_field", joint_struct);
+                set_velocity_field = LoadOptionalRubiFieldFromStruct("set_position_field", joint_struct);
 
                 joints_[i] = new aleph2_joint::RubiJoint(
                     joint_struct["board_name"],
                     board_id,
-                    "", "", 
-                    joint_struct["get_position_field"],
-                    "", 
-                    joint_struct["set_velocity_field"],
-                    "",
+                    get_effort_field,
+                    get_velocity_field,
+                    get_position_field,
+                    set_effort_field,
+                    set_velocity_field,
+                    set_position_field,
                     home_field,
                     "aleph2/joints/" + joint_names_[i],
                     static_cast<double>(joint_struct["scale"])
@@ -109,39 +106,29 @@ namespace aleph2_hardware_interface
             }
             else if( joint_struct["type"] == "nanotec" )
             {
-                // Create joint state handle
+                // Create joint handles
                 JointStateHandle joint_state_handle(joint_names_[i], &joint_position_[i], &joint_velocity_[i], &joint_effort_[i]);
-
-                // Create joint velocity handle
+                JointHandle joint_effort_handle(joint_state_handle, &joint_effort_command_[i]);
                 JointHandle joint_velocity_handle(joint_state_handle, &joint_velocity_command_[i]);
-
-                // Create joint position handle
                 JointHandle joint_position_handle(joint_state_handle, &joint_position_command_[i]);
 
-                // Create joint effort handle
-                JointHandle joint_effort_handle(joint_state_handle, &joint_effort_command_[i]);
-
-                // Create joint velocity limits handles
+                // Create joint limits handles
                 JointLimits joint_limits;
-                SoftJointLimits soft_joint_limits;
-                getJointLimits(joint_names_[i], robot_hw_nh, joint_limits);
-                getSoftJointLimits(joint_names_[i], robot_hw_nh, soft_joint_limits);
-                VelocityJointSaturationHandle joint_velocity_saturation_handle(joint_velocity_handle, joint_limits);
-                VelocityJointSoftLimitsHandle joint_velocity_soft_limits_handle(joint_velocity_handle, joint_limits, soft_joint_limits);
-
-                // Create joint position limits handles
-                PositionJointSaturationHandle joint_position_saturation_handle(joint_position_handle, joint_limits);
-                PositionJointSoftLimitsHandle joint_position_soft_limits_handle(joint_position_handle, joint_limits, soft_joint_limits);
+                SoftJointLimits joint_soft_limits;
+                bool has_limits = getJointLimits(joint_names_[i], robot_hw_nh, joint_limits);
+                bool has_soft_limits = getSoftJointLimits(joint_names_[i], robot_hw_nh, joint_soft_limits);
 
                 // Register handles
                 joint_state_interface_.registerHandle(joint_state_handle);
+                effort_joint_interface_.registerHandle(joint_effort_handle);
                 velocity_joint_interface_.registerHandle(joint_velocity_handle);
                 position_joint_interface_.registerHandle(joint_position_handle);
-                effort_joint_interface_.registerHandle(joint_effort_handle);
-                velocity_joint_saturation_interface_.registerHandle(joint_velocity_saturation_handle);
-                velocity_joint_soft_limits_interface_.registerHandle(joint_velocity_soft_limits_handle);
-                position_joint_saturation_interface_.registerHandle(joint_position_saturation_handle);
-                position_joint_soft_limits_interface_.registerHandle(joint_position_soft_limits_handle);
+
+                if (has_limits) 
+                {
+                    registerLimitsHandles(joint_effort_handle, joint_velocity_handle, joint_position_handle,
+                        joint_limits, has_soft_limits, joint_soft_limits);
+                }
 
                 ROS_ASSERT(joint_struct.hasMember("node_id"));
                 ROS_ASSERT(joint_struct["node_id"].getType() == XmlRpcValue::TypeInt);
@@ -212,13 +199,62 @@ namespace aleph2_hardware_interface
         }
 
         registerInterface(&joint_state_interface_);
+        registerInterface(&effort_joint_interface_);
+        registerInterface(&effort_joint_saturation_interface_);
+        registerInterface(&effort_joint_soft_limits_interface_);
         registerInterface(&velocity_joint_interface_);
         registerInterface(&velocity_joint_saturation_interface_);
         registerInterface(&velocity_joint_soft_limits_interface_);
         registerInterface(&position_joint_interface_);
         registerInterface(&position_joint_saturation_interface_);
         registerInterface(&position_joint_soft_limits_interface_);
-        registerInterface(&effort_joint_interface_);
+    }
+
+    void Aleph2HardwareInterface::registerLimitsHandles(JointHandle& joint_effort_handle, JointHandle& joint_velocity_handle,
+            JointHandle& joint_position_handle, JointLimits& joint_limits, bool has_soft_limits, SoftJointLimits& joint_soft_limits)
+    {
+        if (!has_soft_limits)
+        {
+            if (joint_limits.has_effort_limits && joint_limits.has_velocity_limits)
+            {
+                EffortJointSaturationHandle joint_effort_saturation_handle(
+                    joint_effort_handle, joint_limits);
+                effort_joint_saturation_interface_.registerHandle(joint_effort_saturation_handle);
+            }
+            if (joint_limits.has_velocity_limits)
+            {
+                VelocityJointSaturationHandle joint_velocity_saturation_handle(
+                    joint_velocity_handle, joint_limits);
+                velocity_joint_saturation_interface_.registerHandle(joint_velocity_saturation_handle);
+            }
+            if (joint_limits.has_position_limits)
+            {
+                PositionJointSaturationHandle joint_position_saturation_handle(
+                    joint_position_handle, joint_limits);
+                position_joint_saturation_interface_.registerHandle(joint_position_saturation_handle);
+            }
+        }
+        else
+        {
+            if (joint_limits.has_effort_limits && joint_limits.has_velocity_limits)
+            {
+                EffortJointSoftLimitsHandle joint_effort_soft_limits_handle(
+                    joint_effort_handle, joint_limits, joint_soft_limits);
+                effort_joint_soft_limits_interface_.registerHandle(joint_effort_soft_limits_handle);
+            }
+
+            VelocityJointSoftLimitsHandle joint_velocity_soft_limits_handle(
+                joint_velocity_handle, joint_limits, joint_soft_limits);
+            velocity_joint_soft_limits_interface_.registerHandle(joint_velocity_soft_limits_handle);
+
+            if (joint_limits.has_velocity_limits)
+            {
+                PositionJointSoftLimitsHandle joint_position_soft_limits_handle(
+                    joint_position_handle, joint_limits, joint_soft_limits);
+                position_joint_soft_limits_interface_.registerHandle(joint_position_soft_limits_handle);
+            }
+        }
+        
     }
 
     void Aleph2HardwareInterface::read() 
@@ -246,6 +282,8 @@ namespace aleph2_hardware_interface
     }
 
     void Aleph2HardwareInterface::write(ros::Duration elapsed_time) {
+        effort_joint_saturation_interface_.enforceLimits(elapsed_time);
+        effort_joint_soft_limits_interface_.enforceLimits(elapsed_time);
         velocity_joint_saturation_interface_.enforceLimits(elapsed_time);
         velocity_joint_soft_limits_interface_.enforceLimits(elapsed_time);
         position_joint_saturation_interface_.enforceLimits(elapsed_time);
@@ -261,7 +299,6 @@ namespace aleph2_hardware_interface
                     joints_[i]->setVelocity(joint_velocity_command_[i]);
                     break;
                 case aleph2_joint::JointType::NANOTEC:
-                    //joints_[i]->setEffort(joint_effort_command_[i]);
                     joints_[i]->setVelocity(joint_velocity_command_[i]);
                     break;
                 }

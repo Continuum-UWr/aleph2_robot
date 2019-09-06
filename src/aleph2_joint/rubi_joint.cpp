@@ -89,7 +89,6 @@ namespace aleph2_joint
             msg.data[0] = static_cast<int32_t>(effort);
             eff_pub_.publish(msg);
         }
-        // else Joint::setEffort(effort);
     }
 
     void RubiJoint::setVelocity(double velocity) 
@@ -101,7 +100,6 @@ namespace aleph2_joint
             msg.data[0] = static_cast<int32_t>(velocity * scale_);
             vel_pub_.publish(msg);
         }
-        // else Joint::setVelocity(velocity);
     }
 
     void RubiJoint::setPosition(double position) 
@@ -113,7 +111,6 @@ namespace aleph2_joint
             msg.data[0] = static_cast<int32_t>(position * scale_);
             pos_pub_.publish(msg);
         }
-        // else Joint::setPosition(position);
     }
 
     void RubiJoint::effortCallback(const rubi_server::RubiIntConstPtr& msg)

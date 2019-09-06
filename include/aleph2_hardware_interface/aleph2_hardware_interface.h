@@ -9,6 +9,8 @@
 #include <aleph2_joint/joint.h>
 #include <aleph2_joint/addon.h>
 
+using namespace hardware_interface;
+using namespace joint_limits_interface;
 
 namespace aleph2_hardware_interface
 {
@@ -25,9 +27,11 @@ namespace aleph2_hardware_interface
         protected:
             // Interfaces
             hardware_interface::JointStateInterface joint_state_interface_;
+            hardware_interface::EffortJointInterface effort_joint_interface_;
             hardware_interface::VelocityJointInterface velocity_joint_interface_;
             hardware_interface::PositionJointInterface position_joint_interface_;
-            hardware_interface::EffortJointInterface effort_joint_interface_;
+            joint_limits_interface::EffortJointSaturationInterface effort_joint_saturation_interface_;
+            joint_limits_interface::EffortJointSoftLimitsInterface effort_joint_soft_limits_interface_;
             joint_limits_interface::VelocityJointSaturationInterface velocity_joint_saturation_interface_;
             joint_limits_interface::VelocityJointSoftLimitsInterface velocity_joint_soft_limits_interface_;
             joint_limits_interface::PositionJointSaturationInterface position_joint_saturation_interface_;
@@ -44,6 +48,9 @@ namespace aleph2_hardware_interface
             std::vector<double> joint_velocity_command_;
             std::vector<double> joint_effort_command_;
             std::vector<aleph2_joint::Joint*> joints_;
+
+            void registerLimitsHandles(JointHandle& joint_effort_handle, JointHandle& joint_velocity_handle, JointHandle& joint_position_handle, 
+                JointLimits& joint_limits, bool has_soft_limits, SoftJointLimits& joint_soft_limits);
     };
 
 }

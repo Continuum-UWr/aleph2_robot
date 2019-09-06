@@ -30,4 +30,14 @@ void LoadNanotecParametersFromStruct(std::map<std::string, int64_t>& parameters,
     }
 }
 
+std::string LoadOptionalRubiFieldFromStruct(const std::string field_name, XmlRpc::XmlRpcValue& str)
+{
+    if (str.hasMember(field_name))
+    {
+        ROS_ASSERT(str[field_name].getType() == XmlRpc::XmlRpcValue::TypeString);
+        return static_cast<std::string>(str[field_name]);
+    }
+    return "";
+}
+
 #endif
