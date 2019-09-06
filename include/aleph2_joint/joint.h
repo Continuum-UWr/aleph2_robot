@@ -18,7 +18,7 @@ namespace aleph2_joint
 {
     enum class JointType 
     {
-        RUBI_STEPPER,
+        RUBI,
         NANOTEC
     };
 
@@ -35,30 +35,44 @@ namespace aleph2_joint
     };
 
 
-    class RubiStepperJoint : public Joint
+    class RubiJoint : public Joint
     {
     public:
-        RubiStepperJoint(const std::string& board_name, const std::string& board_id, 
-                         const std::string& position_field, const std::string& velocity_field,
-                         const std::string& home_field, const std::string& nh_namespace,
-                         double scale);
+        RubiJoint(const std::string& board_name,
+                  const std::string& board_id, 
+                  const std::string& get_effort_field,
+                  const std::string& get_velocity_field,
+                  const std::string& get_position_field,
+                  const std::string& set_effort_field,
+                  const std::string& set_velocity_field,
+                  const std::string& set_position_field,
+                  const std::string& home_field, 
+                  const std::string& nh_namespace,
+                  double scale);
 
         JointType getType();
         
-        void setVelocity(double velocity); 
+        void setEffort(double effort);
+        void setVelocity(double velocity);
+        void setPosition(double position);
 
+        double getEffort() { return effort_; }
         double getVelocity() { return velocity_; }
         double getPosition() { return position_; }
 
     private:
-        double velocity_, position_;
+        double effort_, velocity_, position_;
         double scale_;
-        bool home_;
         ros::NodeHandle nh_;
-        ros::Subscriber pos_sub_, home_sub_;
-        ros::Publisher vel_pub_, home_pub_;
+        ros::Subscriber eff_sub_, vel_sub_, pos_sub_, home_sub_;
+        ros::Publisher eff_pub_, vel_pub_, pos_pub_, home_pub_;
         ros::ServiceServer home_service_;
+
+        void effortCallback(const rubi_server::RubiIntConstPtr& msg);
+        void velocityCallback(const rubi_server::RubiIntConstPtr& msg);
         void positionCallback(const rubi_server::RubiIntConstPtr& msg);
+
+        bool home_;
         void homeCallback(const rubi_server::RubiBoolConstPtr& msg);
         bool homeFunction(std_srvs::Trigger::Request& req,
                           std_srvs::Trigger::Response& res);
@@ -68,9 +82,12 @@ namespace aleph2_joint
     class NanotecJoint: public Joint
     {
     public:
-        NanotecJoint(const uint8_t node_id, const std::string& busname, 
-                     const std::string& baudrate, const std::string& nh_namespace,
-                     double scale, const std::map<std::string, int64_t>& parameters,
+        NanotecJoint(const uint8_t node_id, 
+                     const std::string& busname, 
+                     const std::string& baudrate, 
+                     const std::string& nh_namespace,
+                     double scale, 
+                     const std::map<std::string, int64_t>& parameters,
                      const Nanotec::OperationMode& op_mode = Nanotec::OperationMode::VELOCITY);
 
         JointType getType();

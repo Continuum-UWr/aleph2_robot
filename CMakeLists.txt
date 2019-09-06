@@ -43,7 +43,7 @@ include_directories(
 
 # Joint
 add_library( aleph2_joint
-    src/aleph2_joint/rubi_stepper_joint.cpp
+    src/aleph2_joint/rubi_joint.cpp
     src/aleph2_joint/nanotec_joint.cpp
     src/aleph2_joint/rubi_encoder_addon.cpp)
 

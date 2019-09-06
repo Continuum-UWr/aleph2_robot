@@ -49,7 +49,7 @@ namespace aleph2_hardware_interface
             ROS_ASSERT(joint_struct.hasMember("type"));
             ROS_ASSERT(joint_struct["type"].getType() == XmlRpcValue::TypeString);
 
-            if( joint_struct["type"] == "rubi_stepper" )
+            if( joint_struct["type"] == "rubi" )
             {
                 // Create joint state handle
                 JointStateHandle joint_state_handle(joint_names_[i], &joint_position_[i], &joint_velocity_[i], &joint_effort_[i]);
@@ -73,10 +73,10 @@ namespace aleph2_hardware_interface
 
                 ROS_ASSERT(joint_struct.hasMember("board_name"));
                 ROS_ASSERT(joint_struct["board_name"].getType() == XmlRpcValue::TypeString);
-                ROS_ASSERT(joint_struct.hasMember("position_field"));
-                ROS_ASSERT(joint_struct["position_field"].getType() == XmlRpcValue::TypeString);
-                ROS_ASSERT(joint_struct.hasMember("velocity_field"));
-                ROS_ASSERT(joint_struct["velocity_field"].getType() == XmlRpcValue::TypeString);
+                ROS_ASSERT(joint_struct.hasMember("get_position_field"));
+                ROS_ASSERT(joint_struct["get_position_field"].getType() == XmlRpcValue::TypeString);
+                ROS_ASSERT(joint_struct.hasMember("set_velocity_field"));
+                ROS_ASSERT(joint_struct["set_velocity_field"].getType() == XmlRpcValue::TypeString);
                 ROS_ASSERT(joint_struct.hasMember("scale"));
                 ROS_ASSERT(joint_struct["scale"].getType() == XmlRpcValue::TypeDouble);
                 
@@ -93,11 +93,14 @@ namespace aleph2_hardware_interface
                     home_field = static_cast<std::string>(joint_struct["home_field"]);
                 }
 
-                joints_[i] = new aleph2_joint::RubiStepperJoint(
+                joints_[i] = new aleph2_joint::RubiJoint(
                     joint_struct["board_name"],
                     board_id,
-                    joint_struct["position_field"],
-                    joint_struct["velocity_field"],
+                    "", "", 
+                    joint_struct["get_position_field"],
+                    "", 
+                    joint_struct["set_velocity_field"],
+                    "",
                     home_field,
                     "aleph2/joints/" + joint_names_[i],
                     static_cast<double>(joint_struct["scale"])
@@ -226,7 +229,7 @@ namespace aleph2_hardware_interface
                 aleph2_joint::JointType type = joints_[i]->getType();
                 switch(type)
                 {
-                case aleph2_joint::JointType::RUBI_STEPPER:
+                case aleph2_joint::JointType::RUBI:
                     joint_velocity_[i] = joints_[i]->getVelocity();
                     joint_position_[i] = joints_[i]->getPosition();
                     break;
@@ -254,7 +257,7 @@ namespace aleph2_hardware_interface
                 aleph2_joint::JointType type = joints_[i]->getType();
                 switch(type)
                 {
-                case aleph2_joint::JointType::RUBI_STEPPER:
+                case aleph2_joint::JointType::RUBI:
                     joints_[i]->setVelocity(joint_velocity_command_[i]);
                     break;
                 case aleph2_joint::JointType::NANOTEC:
