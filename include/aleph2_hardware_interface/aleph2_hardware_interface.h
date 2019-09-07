@@ -14,6 +14,13 @@ using namespace joint_limits_interface;
 
 namespace aleph2_hardware_interface
 {
+    enum class JointMode
+    {
+        NONE,
+        EFFORT,
+        VELOCITY,
+        POSITION
+    };
 
     class Aleph2HardwareInterface: public hardware_interface::RobotHW
     {
@@ -21,6 +28,8 @@ namespace aleph2_hardware_interface
             Aleph2HardwareInterface();
             ~Aleph2HardwareInterface();
             void init(ros::NodeHandle& robot_hw_nh);
+            void doSwitch(const std::list<ControllerInfo>& start_controllers,
+                          const std::list<ControllerInfo>& stop_controllers) override; 
             void read();
             void write(ros::Duration elapsed_time);
 
@@ -37,20 +46,21 @@ namespace aleph2_hardware_interface
             joint_limits_interface::PositionJointSaturationInterface position_joint_saturation_interface_;
             joint_limits_interface::PositionJointSoftLimitsInterface position_joint_soft_limits_interface_;
 
-            // Shared memory
             int num_joints_;
             std::vector<std::string> joint_names_;
-            std::vector<int> joint_types_;
+            std::vector<JointMode> joint_modes_;
+            std::vector<aleph2_joint::Joint*> joints_;
+
+            void registerLimitsHandles(JointHandle& joint_effort_handle, JointHandle& joint_velocity_handle, JointHandle& joint_position_handle, 
+                JointLimits& joint_limits, bool has_soft_limits, SoftJointLimits& joint_soft_limits);
+
+            // Shared memory
             std::vector<double> joint_position_;
             std::vector<double> joint_velocity_;
             std::vector<double> joint_effort_;
             std::vector<double> joint_position_command_;
             std::vector<double> joint_velocity_command_;
             std::vector<double> joint_effort_command_;
-            std::vector<aleph2_joint::Joint*> joints_;
-
-            void registerLimitsHandles(JointHandle& joint_effort_handle, JointHandle& joint_velocity_handle, JointHandle& joint_position_handle, 
-                JointLimits& joint_limits, bool has_soft_limits, SoftJointLimits& joint_soft_limits);
     };
 
 }

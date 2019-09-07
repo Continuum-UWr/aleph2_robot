@@ -25,6 +25,7 @@ namespace aleph2_hardware_interface
 
         // Resize vectors
         joint_names_.resize(num_joints_);
+        joint_modes_.resize(num_joints_);
         joint_position_.resize(num_joints_);
         joint_velocity_.resize(num_joints_);
         joint_effort_.resize(num_joints_);
@@ -38,6 +39,7 @@ namespace aleph2_hardware_interface
         {
             joint_names_[i] = joint.first;
             auto joint_struct = joint.second;
+            joint_modes_[i] = JointMode::NONE;
             
             ROS_ASSERT(joint_struct.getType() == XmlRpcValue::TypeStruct);
 
@@ -257,6 +259,38 @@ namespace aleph2_hardware_interface
         
     }
 
+    void Aleph2HardwareInterface::doSwitch(const std::list<ControllerInfo>& start_controllers,
+                                           const std::list<ControllerInfo>& stop_controllers)
+    {
+        for (const ControllerInfo& con : start_controllers)
+        {
+            for (const InterfaceResources& res : con.claimed_resources)
+            {
+                JointMode jm = JointMode::NONE;
+                if (res.hardware_interface == "hardware_interface::EffortJointInterface")
+                    jm = JointMode::EFFORT;
+                else if (res.hardware_interface == "hardware_interface::VelocityJointInterface")
+                    jm = JointMode::VELOCITY;
+                else if (res.hardware_interface == "hardware_interface::PositionJointInterface")
+                    jm = JointMode::POSITION;
+
+                if (jm != JointMode::NONE)
+                {
+                    ROS_ASSERT(res.resources.size() > 0);
+                    const std::string& name = *res.resources.begin();
+                    for (int i = 0; i < num_joints_; ++i)
+                    {
+                        if (joint_names_[i] == name) 
+                        {
+                            joint_modes_[i] = jm;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     void Aleph2HardwareInterface::read() 
     {
         for( int i = 0; i < num_joints_; ++i )
@@ -266,6 +300,7 @@ namespace aleph2_hardware_interface
                 switch(type)
                 {
                 case aleph2_joint::JointType::RUBI:
+                    joint_effort_[i] = joints_[i]->getEffort();
                     joint_velocity_[i] = joints_[i]->getVelocity();
                     joint_position_[i] = joints_[i]->getPosition();
                     break;
@@ -292,14 +327,16 @@ namespace aleph2_hardware_interface
         for( int i = 0; i < num_joints_; ++i )
         {
             try {
-                aleph2_joint::JointType type = joints_[i]->getType();
-                switch(type)
+                switch(joint_modes_[i])
                 {
-                case aleph2_joint::JointType::RUBI:
+                case JointMode::EFFORT:
+                    joints_[i]->setEffort(joint_effort_command_[i]);
+                    break;
+                case JointMode::VELOCITY:
                     joints_[i]->setVelocity(joint_velocity_command_[i]);
                     break;
-                case aleph2_joint::JointType::NANOTEC:
-                    joints_[i]->setVelocity(joint_velocity_command_[i]);
+                case JointMode::POSITION:
+                    joints_[i]->setPosition(joint_position_command_[i]);
                     break;
                 }
             } catch (const char* msg) {
