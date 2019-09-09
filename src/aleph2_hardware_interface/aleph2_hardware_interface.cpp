@@ -89,7 +89,7 @@ namespace aleph2_hardware_interface
                 get_position_field = LoadOptionalRubiFieldFromStruct("get_position_field", joint_struct);
                 set_effort_field = LoadOptionalRubiFieldFromStruct("set_effort_field", joint_struct);
                 set_velocity_field = LoadOptionalRubiFieldFromStruct("set_velocity_field", joint_struct);
-                set_velocity_field = LoadOptionalRubiFieldFromStruct("set_position_field", joint_struct);
+                set_position_field = LoadOptionalRubiFieldFromStruct("set_position_field", joint_struct);
 
                 joints_[i] = new aleph2_joint::RubiJoint(
                     joint_struct["board_name"],
