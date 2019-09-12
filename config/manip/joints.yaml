@@ -1,0 +1,10 @@
+aleph2:
+  joints:
+    effector_roll:
+      type: rubi
+      board_name: ManipDC_Driver
+      board_id: "00000000"
+      get_position_field: encoder
+      get_velocity_field: speed
+      set_effort_field: pwm
+      scale: 238.7 # 12 * 125 / (2*pi)

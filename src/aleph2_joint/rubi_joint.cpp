@@ -26,6 +26,7 @@ namespace aleph2_joint
           velocity_(0.0),
           position_(0.0)
     {
+
         std::string base_topic = "/rubi/boards/" + board_name + '/';
         if (!board_id.empty())
             base_topic += board_id + '/';
@@ -50,7 +51,7 @@ namespace aleph2_joint
 
         if (!set_effort_field.empty())
             eff_pub_ = nh_.advertise<rubi_server::RubiInt>(
-                base_topic = "fields_to_board" + set_effort_field, 10);
+                base_topic + "fields_to_board/" + set_effort_field, 10);
             
         if (!set_velocity_field.empty())
             vel_pub_ = nh_.advertise<rubi_server::RubiInt>(

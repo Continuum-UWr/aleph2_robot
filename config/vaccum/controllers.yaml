@@ -1,0 +1,22 @@
+aleph2:
+  controller:
+    effort:
+      vaccum_rotator:
+        type: effort_controllers/JointEffortController
+        joint: vaccum_rotator
+    position:
+      vaccum_rotator:
+        type: effort_controllers/JointPositionController
+        joint: vaccum_rotator
+        pid: 
+          p: 300.0
+          i: 50.0
+          d: 0.0
+          i_clamp_min: -300.0
+          i_clamp_max: 300.0
+          
+    # velocity:
+    #   effector_roll:
+    #     type: effort_controllers/JointVelocityController
+    #     joint: effector_roll
+    #     pid: {p: 50.0, i: 10.0, d: 0.0}

@@ -1,0 +1,11 @@
+aleph2:
+  controller:
+    effort:
+      effector_roll:
+        type: effort_controllers/JointEffortController
+        joint: effector_roll
+    velocity:
+      effector_roll:
+        type: effort_controllers/JointVelocityController
+        joint: effector_roll
+        pid: {p: 50.0, i: 10.0, d: 0.0}

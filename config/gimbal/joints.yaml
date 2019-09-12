@@ -8,7 +8,7 @@ aleph2:
       get_position_field: position_pan
       set_velocity_field: velocity_pan
       # home_field: home_pan
-      scale: 1600.0
+      scale: -1600.0
     gimbal1_tilt:
       type: rubi
       board_name: gimbal
@@ -16,7 +16,7 @@ aleph2:
       get_position_field: position_tilt
       set_velocity_field: velocity_tilt
       # home_field: home_tilt
-      scale: 1900.0
+      scale: -1900.0
     gimbal1_zoom:
       type: rubi
       board_name: gimbal
@@ -41,7 +41,7 @@ aleph2:
       get_position_field: position_pan
       set_velocity_field: velocity_pan
       # home_field: home_pan
-      scale: 1600.0
+      scale: -1600.0
     gimbal2_tilt:
       type: rubi
       board_name: gimbal
@@ -49,7 +49,7 @@ aleph2:
       get_position_field: position_tilt
       set_velocity_field: velocity_tilt
       # home_field: home_tilt
-      scale: 1900.0
+      scale: -1900.0
     gimbal2_zoom:
       type: rubi
       board_name: gimbal
@@ -74,7 +74,7 @@ aleph2:
       get_position_field: position_pan
       set_velocity_field: velocity_pan
       # home_field: home_pan
-      scale: 1600.0
+      scale: -1600.0
     gimbal3_tilt:
       type: rubi
       board_name: gimbal
@@ -82,7 +82,7 @@ aleph2:
       get_position_field: position_tilt
       set_velocity_field: velocity_tilt
       # home_field: home_tilt
-      scale: 1900.0
+      scale: -1900.0
     gimbal3_zoom:
       type: rubi
       board_name: gimbal
@@ -107,7 +107,7 @@ aleph2:
       get_position_field: position_pan
       set_velocity_field: velocity_pan
       # home_field: home_pan
-      scale: 1600.0
+      scale: -1600.0
     gimbal4_tilt:
       type: rubi
       board_name: gimbal
@@ -115,7 +115,7 @@ aleph2:
       get_position_field: position_tilt
       set_velocity_field: velocity_tilt
       # home_field: home_tilt
-      scale: 1900.0
+      scale: -1900.0
     gimbal4_zoom:
       type: rubi
       board_name: gimbal
