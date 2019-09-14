@@ -1,0 +1,20 @@
+<launch>
+    <arg name="spawn_manager" default="true"/>
+    <arg name="output" default="screen"/>
+
+    <rosparam file="$(find aleph2_hardware_interface)/config/common.yaml" command="load"/>
+    <rosparam file="$(find aleph2_hardware_interface)/config/manip/joints.yaml" command="load"/>
+    <rosparam file="$(find aleph2_hardware_interface)/config/manip/controllers.yaml" command="load"/>
+    <rosparam file="$(find aleph2_hardware_interface)/config/manip/joint_limits.yaml" command="load"/>
+
+    <group if="$(arg spawn_manager)">
+        <node name="controller_manager" pkg="aleph2_hardware_interface" type="controller_manager" output="$(arg output)" required="true"/>
+        <node name="state_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="$(arg output)" args="
+            /aleph2/controller/state
+        "/>
+    </group>
+
+    <node name="manip_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="$(arg output)" args="
+        /aleph2/controller/velocity/effector_roll
+    "/>
+</launch>
