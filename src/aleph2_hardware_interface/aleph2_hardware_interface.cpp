@@ -327,17 +327,24 @@ namespace aleph2_hardware_interface
         for( int i = 0; i < num_joints_; ++i )
         {
             try {
-                switch(joint_modes_[i])
+                if (joints_[i]->getType() == aleph2_joint::JointType::NANOTEC)
                 {
-                case JointMode::EFFORT:
-                    joints_[i]->setEffort(joint_effort_command_[i]);
-                    break;
-                case JointMode::VELOCITY:
                     joints_[i]->setVelocity(joint_velocity_command_[i]);
-                    break;
-                case JointMode::POSITION:
-                    joints_[i]->setPosition(joint_position_command_[i]);
-                    break;
+                }
+                else
+                {
+                    switch(joint_modes_[i])
+                    {
+                    case JointMode::EFFORT:
+                        joints_[i]->setEffort(joint_effort_command_[i]);
+                        break;
+                    case JointMode::VELOCITY:
+                        joints_[i]->setVelocity(joint_velocity_command_[i]);
+                        break;
+                    case JointMode::POSITION:
+                        joints_[i]->setPosition(joint_position_command_[i]);
+                        break;
+                    }
                 }
             } catch (const char* msg) {
                 ROS_ERROR_STREAM(msg);
