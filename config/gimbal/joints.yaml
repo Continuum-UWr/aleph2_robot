@@ -1,134 +1,133 @@
-aleph2:
-  joints:
+joints:
 
-    gimbal1_pan:
-      type: rubi
-      board_name: gimbal
-      board_id: "00000000"
-      get_position_field: position_pan
-      set_velocity_field: velocity_pan
-      # home_field: home_pan
-      scale: -1600.0
-    gimbal1_tilt:
-      type: rubi
-      board_name: gimbal
-      board_id: "00000000"
-      get_position_field: position_tilt
-      set_velocity_field: velocity_tilt
-      # home_field: home_tilt
-      scale: -1900.0
-    gimbal1_zoom:
-      type: rubi
-      board_name: gimbal
-      board_id: "00000000"
-      get_position_field: position_zoom
-      set_velocity_field: velocity_zoom
-      home_field: home_zoom
-      scale: 1900.0
-    gimbal1_focus:
-      type: rubi
-      board_name: gimbal
-      board_id: "00000000"
-      get_position_field: position_focus
-      set_velocity_field: velocity_focus
-      home_field: home_focus
-      scale: 1900.0
+  gimbal1_pan:
+    type: rubi
+    board_name: gimbal
+    board_id: "00000000"
+    get_position_field: position_pan
+    set_velocity_field: velocity_pan
+    # home_field: home_pan
+    scale: -1600.0
+  gimbal1_tilt:
+    type: rubi
+    board_name: gimbal
+    board_id: "00000000"
+    get_position_field: position_tilt
+    set_velocity_field: velocity_tilt
+    # home_field: home_tilt
+    scale: -1900.0
+  gimbal1_zoom:
+    type: rubi
+    board_name: gimbal
+    board_id: "00000000"
+    get_position_field: position_zoom
+    set_velocity_field: velocity_zoom
+    home_field: home_zoom
+    scale: 1900.0
+  gimbal1_focus:
+    type: rubi
+    board_name: gimbal
+    board_id: "00000000"
+    get_position_field: position_focus
+    set_velocity_field: velocity_focus
+    home_field: home_focus
+    scale: 1900.0
 
-    gimbal2_pan:
-      type: rubi
-      board_name: gimbal
-      board_id: "00000001"
-      get_position_field: position_pan
-      set_velocity_field: velocity_pan
-      # home_field: home_pan
-      scale: -1600.0
-    gimbal2_tilt:
-      type: rubi
-      board_name: gimbal
-      board_id: "00000001"
-      get_position_field: position_tilt
-      set_velocity_field: velocity_tilt
-      # home_field: home_tilt
-      scale: -1900.0
-    gimbal2_zoom:
-      type: rubi
-      board_name: gimbal
-      board_id: "00000001"
-      get_position_field: position_zoom
-      set_velocity_field: velocity_zoom
-      home_field: home_zoom
-      scale: 1900.0
-    gimbal2_focus:
-      type: rubi
-      board_name: gimbal
-      board_id: "00000001"
-      get_position_field: position_focus
-      set_velocity_field: velocity_focus
-      home_field: home_focus
-      scale: 1900.0
+  gimbal2_pan:
+    type: rubi
+    board_name: gimbal
+    board_id: "00000001"
+    get_position_field: position_pan
+    set_velocity_field: velocity_pan
+    # home_field: home_pan
+    scale: -1600.0
+  gimbal2_tilt:
+    type: rubi
+    board_name: gimbal
+    board_id: "00000001"
+    get_position_field: position_tilt
+    set_velocity_field: velocity_tilt
+    # home_field: home_tilt
+    scale: -1900.0
+  gimbal2_zoom:
+    type: rubi
+    board_name: gimbal
+    board_id: "00000001"
+    get_position_field: position_zoom
+    set_velocity_field: velocity_zoom
+    home_field: home_zoom
+    scale: 1900.0
+  gimbal2_focus:
+    type: rubi
+    board_name: gimbal
+    board_id: "00000001"
+    get_position_field: position_focus
+    set_velocity_field: velocity_focus
+    home_field: home_focus
+    scale: 1900.0
 
-    gimbal3_pan:
-      type: rubi
-      board_name: gimbal
-      board_id: "00000002"
-      get_position_field: position_pan
-      set_velocity_field: velocity_pan
-      # home_field: home_pan
-      scale: -1600.0
-    gimbal3_tilt:
-      type: rubi
-      board_name: gimbal
-      board_id: "00000002"
-      get_position_field: position_tilt
-      set_velocity_field: velocity_tilt
-      # home_field: home_tilt
-      scale: -1900.0
-    gimbal3_zoom:
-      type: rubi
-      board_name: gimbal
-      board_id: "00000002"
-      get_position_field: position_zoom
-      set_velocity_field: velocity_zoom
-      home_field: home_zoom
-      scale: 1900.0
-    gimbal3_focus:
-      type: rubi
-      board_name: gimbal
-      board_id: "00000002"
-      get_position_field: position_focus
-      set_velocity_field: velocity_focus
-      home_field: home_focus
-      scale: 1900.0
+  gimbal3_pan:
+    type: rubi
+    board_name: gimbal
+    board_id: "00000002"
+    get_position_field: position_pan
+    set_velocity_field: velocity_pan
+    # home_field: home_pan
+    scale: -1600.0
+  gimbal3_tilt:
+    type: rubi
+    board_name: gimbal
+    board_id: "00000002"
+    get_position_field: position_tilt
+    set_velocity_field: velocity_tilt
+    # home_field: home_tilt
+    scale: -1900.0
+  gimbal3_zoom:
+    type: rubi
+    board_name: gimbal
+    board_id: "00000002"
+    get_position_field: position_zoom
+    set_velocity_field: velocity_zoom
+    home_field: home_zoom
+    scale: 1900.0
+  gimbal3_focus:
+    type: rubi
+    board_name: gimbal
+    board_id: "00000002"
+    get_position_field: position_focus
+    set_velocity_field: velocity_focus
+    home_field: home_focus
+    scale: 1900.0
 
-    gimbal4_pan:
-      type: rubi
-      board_name: gimbal
-      board_id: "00000003"
-      get_position_field: position_pan
-      set_velocity_field: velocity_pan
-      # home_field: home_pan
-      scale: -1600.0
-    gimbal4_tilt:
-      type: rubi
-      board_name: gimbal
-      board_id: "00000003"
-      get_position_field: position_tilt
-      set_velocity_field: velocity_tilt
-      # home_field: home_tilt
-      scale: -1900.0
-    gimbal4_zoom:
-      type: rubi
-      board_name: gimbal
-      board_id: "00000003"
-      get_position_field: position_zoom
-      set_velocity_field: velocity_zoom
-      home_field: home_zoom
-      scale: 1900.0
-    gimbal4_focus:
-      type: rubi
-      board_name: gimbal
-      board_id: "00000003"
-      get_position_field: position_focus
-      set_velocity_field: velocity_focus
-      home_field: home_focus
-      scale: 1900.0
+  gimbal4_pan:
+    type: rubi
+    board_name: gimbal
+    board_id: "00000003"
+    get_position_field: position_pan
+    set_velocity_field: velocity_pan
+    # home_field: home_pan
+    scale: -1600.0
+  gimbal4_tilt:
+    type: rubi
+    board_name: gimbal
+    board_id: "00000003"
+    get_position_field: position_tilt
+    set_velocity_field: velocity_tilt
+    # home_field: home_tilt
+    scale: -1900.0
+  gimbal4_zoom:
+    type: rubi
+    board_name: gimbal
+    board_id: "00000003"
+    get_position_field: position_zoom
+    set_velocity_field: velocity_zoom
+    home_field: home_zoom
+    scale: 1900.0
+  gimbal4_focus:
+    type: rubi
+    board_name: gimbal
+    board_id: "00000003"
+    get_position_field: position_focus
+    set_velocity_field: velocity_focus
+    home_field: home_focus
+    scale: 1900.0

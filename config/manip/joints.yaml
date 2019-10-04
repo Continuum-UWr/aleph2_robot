@@ -1,50 +1,49 @@
-aleph2:
-  joints:
-    base_to_frame:
-      type: rubi
-      board_name: ManipDC_Driver
-      board_id: "00000000"
-      get_position_field: encoder
-      get_velocity_field: speed
-      set_effort_field: pwm
-      scale: 905.5916 # 5690 / (2*pi)
-    B_to_base:
-      type: rubi
-      board_name: ManipDC_Driver
-      board_id: "00000001"
-      get_position_field: encoder
-      get_velocity_field: speed
-      set_effort_field: pwm
-      scale: 1251.5945 # 1966 / (pi/2)
-    C_to_B:
-      type: rubi
-      board_name: ManipDC_Driver
-      board_id: "00000008"
-      get_position_field: encoder
-      get_velocity_field: speed
-      set_effort_field: pwm
-      scale: 911.6395 # 1432 / (pi/2)
-    effector_to_C:
-      type: rubi
-      board_name: ManipDC_Driver
-      board_id: "00000004"
-      get_position_field: encoder
-      get_velocity_field: speed
-      set_effort_field: pwm
-      scale: 705.3747 # 1108 / (pi/2)
-    effector_roll:
-      type: rubi
-      board_name: ManipDC_Driver
-      board_id: "00000006"
-      get_position_field: encoder
-      get_velocity_field: speed
-      set_effort_field: pwm
-      scale: 238.7324 # 12 * 125 / (2*pi)
-    effector_grip:
-      type: rubi
-      board_name: ManipDC_Driver
-      board_id: "00000009"
-      get_position_field: encoder
-      get_velocity_field: speed
-      set_effort_field: pwm
-      scale: 546430.0 # 12 * 125 / (2*pi)
+joints:
+  base_to_frame:
+    type: rubi
+    board_name: ManipDC_Driver
+    board_id: "00000000"
+    get_position_field: encoder
+    get_velocity_field: speed
+    set_effort_field: pwm
+    scale: 905.5916 # 5690 / (2*pi)
+  B_to_base:
+    type: rubi
+    board_name: ManipDC_Driver
+    board_id: "00000001"
+    get_position_field: encoder
+    get_velocity_field: speed
+    set_effort_field: pwm
+    scale: 1251.5945 # 1966 / (pi/2)
+  C_to_B:
+    type: rubi
+    board_name: ManipDC_Driver
+    board_id: "00000008"
+    get_position_field: encoder
+    get_velocity_field: speed
+    set_effort_field: pwm
+    scale: 911.6395 # 1432 / (pi/2)
+  effector_to_C:
+    type: rubi
+    board_name: ManipDC_Driver
+    board_id: "00000004"
+    get_position_field: encoder
+    get_velocity_field: speed
+    set_effort_field: pwm
+    scale: 705.3747 # 1108 / (pi/2)
+  effector_roll:
+    type: rubi
+    board_name: ManipDC_Driver
+    board_id: "00000006"
+    get_position_field: encoder
+    get_velocity_field: speed
+    set_effort_field: pwm
+    scale: 238.7324 # 12 * 125 / (2*pi)
+  effector_grip:
+    type: rubi
+    board_name: ManipDC_Driver
+    board_id: "00000009"
+    get_position_field: encoder
+    get_velocity_field: speed
+    set_effort_field: pwm
+    scale: 546430.0 # 12 * 125 / (2*pi)

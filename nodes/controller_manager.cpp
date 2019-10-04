@@ -5,14 +5,21 @@ int main(int argc, char** argv)
 {
     ros::init(argc, argv, "controller_manager");
 
-    aleph2_hardware_interface::Aleph2HardwareInterface aleph2;
-    ros::NodeHandle robot_hw_nh("aleph2");
-    aleph2.init(robot_hw_nh);
+    ros::NodeHandle nh("~");
+    std::string hw_namespace;
+    int spinner_threads, control_loop_rate;
+    nh.param("hw_namespace", hw_namespace, hw_namespace);
+    nh.param("spinner_threads", spinner_threads, 4);
+    nh.param("control_loop_rate", control_loop_rate, 20);
 
-    controller_manager::ControllerManager cm(&aleph2);
+    aleph2_hardware_interface::Aleph2HardwareInterface aleph2_hw;
+    ros::NodeHandle hw_nh(hw_namespace);
+    aleph2_hw.init(hw_nh);
 
-    ros::AsyncSpinner spinner(10);
-    ros::Rate rate(20);
+    controller_manager::ControllerManager cm(&aleph2_hw);
+
+    ros::AsyncSpinner spinner(spinner_threads);
+    ros::Rate rate(control_loop_rate);
 
     ros::Time last_update = ros::Time::now();
     spinner.start();
@@ -21,9 +28,9 @@ int main(int argc, char** argv)
     {
         ros::Time current_time = ros::Time::now();
 
-        aleph2.read();
+        aleph2_hw.read();
         cm.update(current_time, current_time - last_update);
-        aleph2.write(current_time - last_update);
+        aleph2_hw.write(current_time - last_update);
 
         last_update = current_time;
         rate.sleep();

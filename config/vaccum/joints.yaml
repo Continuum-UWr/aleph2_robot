@@ -1,8 +1,0 @@
-vaccum:
-  joints:
-    vaccum_rotator:
-      type: rubi
-      board_name: vacuum_controller
-      get_position_field: position
-      set_effort_field: effort
-      scale: -1176.5

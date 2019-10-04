@@ -1,26 +1,26 @@
 <launch>
-    <arg name="spawn_manager" default="true"/>
     <arg name="output" default="screen"/>
 
-    <rosparam file="$(find aleph2_hardware_interface)/config/common.yaml" command="load"/>
-    <rosparam file="$(find aleph2_hardware_interface)/config/drivetrain/joints.yaml" command="load"/>
-    <rosparam file="$(find aleph2_hardware_interface)/config/drivetrain/controllers.yaml" command="load"/>
-    <rosparam file="$(find aleph2_hardware_interface)/config/drivetrain/joint_limits.yaml" command="load"/>
-
-    <group if="$(arg spawn_manager)">
-        <node name="controller_manager" pkg="aleph2_hardware_interface" type="controller_manager" output="$(arg output)" required="true"/>
-        <node name="state_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="$(arg output)" args="
-            /aleph2/controller/state
-        "/>
+    <group ns="drivetrain">
+        <rosparam file="$(find aleph2_hardware_interface)/config/drivetrain/joints.yaml" command="load"/>
+        <rosparam file="$(find aleph2_hardware_interface)/config/drivetrain/controllers.yaml" command="load"/>
+        <rosparam file="$(find aleph2_hardware_interface)/config/drivetrain/joint_limits.yaml" command="load"/>
     </group>
 
-    <!-- <node name="drivetrain_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="$(arg output)" args="
-        /aleph2/controller/velocity/wheelRL
-        /aleph2/controller/velocity/wheelRR
-        /aleph2/controller/velocity/wheelFL
-        /aleph2/controller/velocity/wheelFR
-    "/> -->
+    <node name="drivetrain_controller_manager" pkg="aleph2_hardware_interface" type="controller_manager" 
+            output="$(arg output)" required="true">
+        <param name="hw_namespace" value="drivetrain"/>
+        <param name="control_loop_rate" value="20"/>
+    </node>
+
     <node name="drivetrain_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="$(arg output)" args="
-        /aleph2/controller/diff_drive
-    "/>
+        drivetrain/controllers/diff_drive
+    ">
+        <remap from="controller_manager" to="drivetrain_controller_manager"/>
+    </node>
+
+    <!-- drivetrain/controllers/velocity/wheelRL
+         drivetrain/controllers/velocity/wheelRR
+         drivetrain/controllers/velocity/wheelFL
+         drivetrain/controllers/velocity/wheelFR -->
 </launch>
