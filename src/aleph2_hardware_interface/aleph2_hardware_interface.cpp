@@ -101,7 +101,7 @@ namespace aleph2_hardware_interface
                     set_velocity_field,
                     set_position_field,
                     home_field,
-                    "aleph2/joints/" + joint_names_[i],
+                    robot_hw_nh.getNamespace() + "/joints/" + joint_names_[i],
                     static_cast<double>(joint_struct["scale"])
                 );
 
@@ -169,7 +169,7 @@ namespace aleph2_hardware_interface
                     static_cast<int>(joint_struct["node_id"]),
                     joint_struct["busname"],
                     joint_struct["baudrate"],
-                    "aleph2/joints/" + joint_names_[i],
+                    robot_hw_nh.getNamespace() + "/joints/" + joint_names_[i],
                     static_cast<double>(joint_struct["scale"]),
                     parameters
                 );
