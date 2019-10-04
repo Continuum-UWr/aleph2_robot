@@ -1,9 +1,24 @@
 aleph2:
   controller:
     effort:
+      base_to_frame:
+        type: effort_controllers/JointEffortController
+        joint: base_to_frame
+      B_to_base:
+        type: effort_controllers/JointEffortController
+        joint: B_to_base
+      C_to_B:
+        type: effort_controllers/JointEffortController
+        joint: C_to_B
+      effector_to_C:
+        type: effort_controllers/JointEffortController
+        joint: effector_to_C
       effector_roll:
         type: effort_controllers/JointEffortController
         joint: effector_roll
+      effector_grip:
+        type: effort_controllers/JointEffortController
+        joint: effector_grip
     velocity:
       effector_roll:
         type: effort_controllers/JointVelocityController

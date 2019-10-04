@@ -1,9 +1,44 @@
 aleph2:
   joint_limits:
+    base_to_frame:
+      has_position_limits: false
+      has_velocity_limits: false
+      has_acceleration_limits: false
+      has_jerk_limits: false
+      has_effort_limits: false
+      has_soft_limits: false
+    B_to_base:
+      has_position_limits: false
+      has_velocity_limits: false
+      has_acceleration_limits: false
+      has_jerk_limits: false
+      has_effort_limits: false
+      has_soft_limits: false
+    C_to_B:
+      has_position_limits: false
+      has_velocity_limits: false
+      has_acceleration_limits: false
+      has_jerk_limits: false
+      has_effort_limits: false
+      has_soft_limits: false
+    effector_to_C:
+      has_position_limits: false
+      has_velocity_limits: false
+      has_acceleration_limits: false
+      has_jerk_limits: false
+      has_effort_limits: false
+      has_soft_limits: false
     effector_roll:
-      has_position_limits: true
-      min_position: -100000
-      max_position: 100000
+      has_position_limits: false
+      has_velocity_limits: true
+      max_velocity: 10.0
+      has_acceleration_limits: false
+      has_jerk_limits: false
+      has_effort_limits: true
+      max_effort: 500
+      has_soft_limits: false
+    effector_grip:
+      has_position_limits: false
       has_velocity_limits: true
       max_velocity: 10.0
       has_acceleration_limits: false
