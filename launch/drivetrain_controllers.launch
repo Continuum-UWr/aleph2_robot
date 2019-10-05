@@ -1,26 +1,27 @@
 <launch>
     <arg name="output" default="screen"/>
+    <arg name="loop_rate" default="20"/>
 
     <group ns="drivetrain">
+        <remap from="joint_states" to="/joint_states"/>
+
         <rosparam file="$(find aleph2_hardware_interface)/config/drivetrain/joints.yaml" command="load"/>
         <rosparam file="$(find aleph2_hardware_interface)/config/drivetrain/controllers.yaml" command="load"/>
         <rosparam file="$(find aleph2_hardware_interface)/config/drivetrain/joint_limits.yaml" command="load"/>
-    </group>
 
-    <node name="drivetrain_controller_manager" pkg="aleph2_hardware_interface" type="controller_manager" 
-            output="$(arg output)" required="true">
-        <param name="hw_namespace" value="drivetrain"/>
-        <param name="control_loop_rate" value="20"/>
-    </node>
+        <node name="controller_manager" pkg="aleph2_hardware_interface" type="controller_manager" 
+                output="$(arg output)" required="true">
+            <param name="control_loop_rate" value="$(arg loop_rate)"/>
+        </node>
 
-    <node name="drivetrain_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="$(arg output)" args="
-        drivetrain/controllers/diff_drive
-    ">
-        <remap from="controller_manager" to="drivetrain_controller_manager"/>
-    </node>
+        <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="$(arg output)" args="
+            controllers/diff_drive
+            controllers/state
+        "/>
 
     <!-- drivetrain/controllers/velocity/wheelRL
          drivetrain/controllers/velocity/wheelRR
          drivetrain/controllers/velocity/wheelFL
          drivetrain/controllers/velocity/wheelFR -->
+    </group>
 </launch>

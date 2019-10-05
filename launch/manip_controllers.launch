@@ -1,27 +1,27 @@
 <launch>
     <arg name="output" default="screen"/>
+    <arg name="loop_rate" default="30"/>
 
     <group ns="manip">
+        <remap from="joint_states" to="/joint_states"/>
+
         <rosparam file="$(find aleph2_hardware_interface)/config/manip/joints.yaml" command="load"/>
         <rosparam file="$(find aleph2_hardware_interface)/config/manip/controllers.yaml" command="load"/>
         <rosparam file="$(find aleph2_hardware_interface)/config/manip/joint_limits.yaml" command="load"/>
+
+        <node name="controller_manager" pkg="aleph2_hardware_interface" type="controller_manager" 
+                output="$(arg output)" required="true">
+            <param name="control_loop_rate" value="$(arg loop_rate)"/>
+        </node>
+
+        <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="$(arg output)" args="
+            controllers/effort/base_to_frame
+            controllers/effort/B_to_base
+            controllers/effort/C_to_B
+            controllers/effort/effector_to_C
+            controllers/effort/effector_roll
+            controllers/effort/effector_grip
+            controllers/state
+        "/>
     </group>
-
-    <node name="manip_controller_manager" pkg="aleph2_hardware_interface" type="controller_manager" 
-            output="$(arg output)" required="true">
-        <param name="hw_namespace" value="manip"/>
-        <param name="control_loop_rate" value="30"/>
-    </node>
-
-    <node name="manip_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="$(arg output)" args="
-        manip/controllers/effort/base_to_frame
-        manip/controllers/effort/B_to_base
-        manip/controllers/effort/C_to_B
-        manip/controllers/effort/effector_to_C
-        manip/controllers/effort/effector_roll
-        manip/controllers/effort/effector_grip
-        manip/controllers/state
-    ">
-        <remap from="controller_manager" to="manip_controller_manager"/>
-    </node>
 </launch>

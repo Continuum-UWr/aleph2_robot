@@ -1,37 +1,37 @@
 <launch>
     <arg name="output" default="screen"/>
+    <arg name="loop_rate" default="10"/>
 
     <group ns="gimbal">
+        <remap from="joint_states" to="/joint_states"/>
+
         <rosparam file="$(find aleph2_hardware_interface)/config/gimbal/joints.yaml" command="load"/>
         <rosparam file="$(find aleph2_hardware_interface)/config/gimbal/controllers.yaml" command="load"/>
         <rosparam file="$(find aleph2_hardware_interface)/config/gimbal/joint_limits.yaml" command="load"/>
+
+        <node name="controller_manager" pkg="aleph2_hardware_interface" type="controller_manager" 
+                output="$(arg output)" required="true">
+            <param name="control_loop_rate" value="$(arg loop_rate)"/>
+        </node>
+
+        <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="$(arg output)" args="
+            controllers/velocity/gimbal1_pan
+            controllers/velocity/gimbal1_tilt
+            controllers/velocity/gimbal1_zoom
+            controllers/velocity/gimbal1_focus
+            controllers/velocity/gimbal2_pan
+            controllers/velocity/gimbal2_tilt
+            controllers/velocity/gimbal2_zoom
+            controllers/velocity/gimbal2_focus
+            controllers/velocity/gimbal3_pan
+            controllers/velocity/gimbal3_tilt
+            controllers/velocity/gimbal3_zoom
+            controllers/velocity/gimbal3_focus
+            controllers/velocity/gimbal4_pan
+            controllers/velocity/gimbal4_tilt
+            controllers/velocity/gimbal4_zoom
+            controllers/velocity/gimbal4_focus
+            controllers/state
+        "/>
     </group>
-
-    <node name="gimbal_controller_manager" pkg="aleph2_hardware_interface" type="controller_manager" 
-            output="$(arg output)" required="true">
-        <param name="hw_namespace" value="gimbal"/>
-        <param name="control_loop_rate" value="10"/>
-    </node>
-
-    <node name="gimbal_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="$(arg output)" args="
-        gimbal/controllers/velocity/gimbal1_pan
-        gimbal/controllers/velocity/gimbal1_tilt
-        gimbal/controllers/velocity/gimbal1_zoom
-        gimbal/controllers/velocity/gimbal1_focus
-        gimbal/controllers/velocity/gimbal2_pan
-        gimbal/controllers/velocity/gimbal2_tilt
-        gimbal/controllers/velocity/gimbal2_zoom
-        gimbal/controllers/velocity/gimbal2_focus
-        gimbal/controllers/velocity/gimbal3_pan
-        gimbal/controllers/velocity/gimbal3_tilt
-        gimbal/controllers/velocity/gimbal3_zoom
-        gimbal/controllers/velocity/gimbal3_focus
-        gimbal/controllers/velocity/gimbal4_pan
-        gimbal/controllers/velocity/gimbal4_tilt
-        gimbal/controllers/velocity/gimbal4_zoom
-        gimbal/controllers/velocity/gimbal4_focus
-        gimbal/controllers/state
-    ">
-        <remap from="controller_manager" to="gimbal_controller_manager"/>
-    </node>
 </launch>
