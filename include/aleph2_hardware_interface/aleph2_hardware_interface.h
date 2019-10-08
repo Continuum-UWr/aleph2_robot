@@ -50,6 +50,7 @@ namespace aleph2_hardware_interface
             std::vector<std::string> joint_names_;
             std::vector<JointMode> joint_modes_;
             std::vector<aleph2_joint::Joint*> joints_;
+            std::map<std::string, kaco::Master*> can_masters_;
 
             void registerLimitsHandles(JointHandle& joint_effort_handle, JointHandle& joint_velocity_handle, JointHandle& joint_position_handle, 
                 JointLimits& joint_limits, bool has_soft_limits, SoftJointLimits& joint_soft_limits);

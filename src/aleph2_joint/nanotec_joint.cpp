@@ -3,20 +3,17 @@
  
 namespace aleph2_joint
 {
-    NanotecJoint::NanotecJoint(const uint8_t node_id, const std::string& busname, 
-                               const std::string& baudrate, const std::string& nh_namespace,
-                               double scale, const std::map<std::string, int64_t>& parameters,
+    NanotecJoint::NanotecJoint(const kaco::Master& master,
+                               const uint8_t node_id,
+                               const std::string& nh_namespace,
+                               const double scale, 
+                               const std::map<std::string, int64_t>& parameters,
                                const Nanotec::OperationMode& op_mode)
         : scale_(scale),
           nh_(nh_namespace),
           reconfigure_server_(nh_),
           op_mode_(op_mode)
     {
-        if (!master_.start(busname, baudrate))
-        {
-            throw "Could not initialize can";
-        }
-
         bool found_device = false;
         size_t device_index;
 
@@ -24,9 +21,9 @@ namespace aleph2_joint
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(300));
 
-            for (size_t i = 0; i < master_.num_devices(); ++i)
+            for (size_t i = 0; i < master.num_devices(); ++i)
             {
-                kaco::Device &device = master_.get_device(i);
+                kaco::Device& device = master.get_device(i);
                 if (device.get_node_id() == node_id)
                 {
                     found_device = true;
@@ -36,10 +33,10 @@ namespace aleph2_joint
             }
 
             ROS_WARN_STREAM("Device with ID " << (unsigned)node_id
-                            << " has not been found yet. Will keep retrying.");
+                << " has not been found yet. Will keep retrying.");
         }
 
-        kaco::Device& device = master_.get_device(device_index);
+        kaco::Device& device = master.get_device(device_index);
 
         device.start();
         device.load_dictionary_from_library();

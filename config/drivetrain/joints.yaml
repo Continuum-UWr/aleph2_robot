@@ -1,3 +1,8 @@
+can_devices:
+  jezdny:
+    busname: "can0"
+    baudrate: "500K"
+
 nanotec_presets:
   jezdny:
     Maximum current: 25000
@@ -35,29 +40,25 @@ nanotec_presets:
 joints:
   kolo_RL_to_chromosom_L:
     type: "nanotec"
+    can_device: "jezdny"
     node_id: 1
-    busname: "can0"
-    baudrate: "500K"
     scale: 1000.0
     preset: "jezdny"
   kolo_RR_to_chromosom_R:
     type: "nanotec"
+    can_device: "jezdny"
     node_id: 2
-    busname: "can0"
-    baudrate: "500K"
-    scale: -1000.0
+    scale: 1000.0
     preset: "jezdny"
   kolo_FL_to_chromosom_L:
     type: "nanotec"
+    can_device: "jezdny"
     node_id: 3
-    busname: "can0"
-    baudrate: "500K"
     scale: 1000.0
     preset: "jezdny"
   kolo_FR_to_chromosom_R:
     type: "nanotec"
+    can_device: "jezdny"
     node_id: 4
-    busname: "can0"
-    baudrate: "500K"
-    scale: -1000.0
-    preset: jezdny
+    scale: 1000.0
+    preset: "jezdny"

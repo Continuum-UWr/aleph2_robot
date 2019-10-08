@@ -82,11 +82,10 @@ namespace aleph2_joint
     class NanotecJoint: public Joint
     {
     public:
-        NanotecJoint(const uint8_t node_id, 
-                     const std::string& busname, 
-                     const std::string& baudrate, 
+        NanotecJoint(const kaco::Master& master,
+                     const uint8_t node_id,
                      const std::string& nh_namespace,
-                     double scale, 
+                     const double scale, 
                      const std::map<std::string, int64_t>& parameters,
                      const Nanotec::OperationMode& op_mode = Nanotec::OperationMode::VELOCITY);
 
@@ -104,13 +103,12 @@ namespace aleph2_joint
         void configCallback(NanotecConfig& config, uint32_t level);
 
         ros::NodeHandle nh_;
-        kaco::Master master_;
         Nanotec* nanotec_;
         dynamic_reconfigure::Server<NanotecConfig> reconfigure_server_;
         dynamic_reconfigure::Server<NanotecConfig>::CallbackType call_type_; 
         Nanotec::OperationMode op_mode_;
         Nanotec::PowerMode power_mode_ = Nanotec::PowerMode::OFF;
-        double scale_;
+        const double scale_;
         bool active_braking_ = false;
     };
 

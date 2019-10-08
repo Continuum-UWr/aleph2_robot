@@ -14,11 +14,13 @@ namespace aleph2_hardware_interface
     Aleph2HardwareInterface::~Aleph2HardwareInterface() {}
 
     void Aleph2HardwareInterface::init(ros::NodeHandle& robot_hw_nh) {
-        XmlRpcValue hardware, nanotec_presets;
+        XmlRpcValue hardware, can_devices, nanotec_presets;
         robot_hw_nh.getParam("joints", hardware);
+        robot_hw_nh.getParam("can_devices", can_devices);
         robot_hw_nh.getParam("nanotec_presets", nanotec_presets);
 
         ROS_ASSERT(hardware.getType() == XmlRpcValue::TypeStruct);
+        ROS_ASSERT(can_devices.getType() == XmlRpcValue::TypeStruct || !can_devices.valid());
         ROS_ASSERT(nanotec_presets.getType() == XmlRpcValue::TypeStruct || !nanotec_presets.valid());
 
         num_joints_ = hardware.size();
@@ -33,6 +35,31 @@ namespace aleph2_hardware_interface
         joint_velocity_command_.resize(num_joints_);
         joint_effort_command_.resize(num_joints_);
         joints_.resize(num_joints_);
+
+
+        for( auto const& device : can_devices )
+        {
+            std::string device_name = device.first;
+            auto device_struct = device.second;
+
+            ROS_ASSERT(device_struct.hasMember("busname"));
+            ROS_ASSERT(device_struct["busname"].getType() == XmlRpcValue::TypeString);
+            ROS_ASSERT(device_struct.hasMember("baudrate"));
+            ROS_ASSERT(device_struct["baudrate"].getType() == XmlRpcValue::TypeString);
+
+            std::string busname = device_struct["busname"];
+            std::string baudrate = device_struct["baudrate"];
+
+            kaco::Master* master = new kaco::Master();
+            if( !master->start(busname, baudrate) )
+            {
+                ROS_ERROR_STREAM("failed to start can master for device " << device_name 
+                    << " (busname: " << busname << ", baudrate: " << baudrate << ")");
+                ROS_BREAK();
+            }
+
+            can_masters_[device_name] = master;
+        }
 
         int i = 0;
         for( auto const& joint : hardware )
@@ -132,14 +159,24 @@ namespace aleph2_hardware_interface
                         joint_limits, has_soft_limits, joint_soft_limits);
                 }
 
+                ROS_ASSERT(joint_struct.hasMember("can_device"));
+                ROS_ASSERT(joint_struct["can_device"].getType() == XmlRpcValue::TypeString);
                 ROS_ASSERT(joint_struct.hasMember("node_id"));
                 ROS_ASSERT(joint_struct["node_id"].getType() == XmlRpcValue::TypeInt);
-                ROS_ASSERT(joint_struct.hasMember("busname"));
-                ROS_ASSERT(joint_struct["busname"].getType() == XmlRpcValue::TypeString);
-                ROS_ASSERT(joint_struct.hasMember("baudrate"));
-                ROS_ASSERT(joint_struct["baudrate"].getType() == XmlRpcValue::TypeString);
                 ROS_ASSERT(joint_struct.hasMember("scale"));
                 ROS_ASSERT(joint_struct["scale"].getType() == XmlRpcValue::TypeDouble);
+
+                kaco::Master* master;
+
+                try
+                {
+                    master = can_masters_.at(joint_struct["can_device"]);
+                }
+                catch (const std::out_of_range& ex)
+                {
+                    ROS_ERROR_STREAM("No can master for device " << joint_struct["can_device"] << " found");
+                    ROS_BREAK();
+                }
 
                 std::map<std::string, int64_t> parameters;
 
@@ -166,9 +203,8 @@ namespace aleph2_hardware_interface
                 }
 
                 joints_[i] = new aleph2_joint::NanotecJoint(
+                    *master,
                     static_cast<int>(joint_struct["node_id"]),
-                    joint_struct["busname"],
-                    joint_struct["baudrate"],
                     robot_hw_nh.getNamespace() + "/joints/" + joint_names_[i],
                     static_cast<double>(joint_struct["scale"]),
                     parameters
@@ -177,7 +213,7 @@ namespace aleph2_hardware_interface
             else
             {
                 ROS_ERROR_STREAM("Incorrect joint type: " << joint_struct["type"]);
-                ROS_ASSERT(false);
+                ROS_BREAK();
             }
 
             if (joint_struct.hasMember("has_rubi_encoder"))
