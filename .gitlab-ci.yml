@@ -1,0 +1,6 @@
+build:
+  stage: build
+  image: ros
+  script:
+    - cmake .
+    - make
