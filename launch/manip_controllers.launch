@@ -14,13 +14,18 @@
             <param name="control_loop_rate" value="$(arg loop_rate)"/>
         </node>
 
-        <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="$(arg output)" args="
+        <!-- <node name="controller_spawner1" pkg="controller_manager" type="spawner" respawn="false" output="$(arg output)" args="
             controllers/effort/base_to_frame
             controllers/effort/B_to_base
             controllers/effort/C_to_B
-            controllers/effort/effector_to_C
-            controllers/effort/effector_roll
-            controllers/effort/effector_grip
+            controllers/effort/efector_to_C
+            controllers/effort/efector_roll
+            controllers/effort/efector_grip
+            controllers/state
+        "/> -->
+
+        <node name="controller_spawner2" pkg="controller_manager" type="spawner" respawn="false" output="$(arg output)" args="
+            controllers/trajectory
             controllers/state
         "/>
     </group>

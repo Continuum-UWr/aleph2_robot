@@ -24,5 +24,6 @@
   <exec_depend>velocity_controllers</exec_depend>
   <exec_depend>effort_controllers</exec_depend>
   <exec_depend>diff_drive_controller</exec_depend>
+  <exec_depend>joint_trajectory_controller</exec_depend>
   
 </package>
