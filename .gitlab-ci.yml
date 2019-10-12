@@ -1,6 +1,8 @@
 build:
   stage: build
   image: ros
+  only:
+  - master
   script:
     - cmake .
     - make
