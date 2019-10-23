@@ -1,0 +1,5 @@
+build:
+  stage: build
+  image: ros
+  script:
+    - ./gitlab-ci-buildscript.sh dependencies.rosinstall
