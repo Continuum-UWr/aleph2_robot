@@ -1,9 +1,5 @@
 build:
   stage: build
   image: ros
-  only:
-  - master
   script:
-    - apt update && apt install -y python-catkin-tools
-    - mkdir -p ws/src && ln -s ../.. ws/src/${PWD##*/} && cd ws
-    - catkin build --summarize --no-status --force-color --cmake-args -DCMAKE_C_FLAGS="-Wall -W -Wno-unused-parameter"
+    - ./gitlab-ci-buildscript.sh dependencies.rosinstall
