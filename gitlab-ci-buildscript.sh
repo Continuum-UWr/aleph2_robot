@@ -16,6 +16,7 @@ for f in src/*/dependencies.rosinstall; do
   set -x
   wstool merge -t src $f
 done
+wstool update -t src
 apt update
 rosdep update
 rosdep install --from-paths src --ignore-src -y
