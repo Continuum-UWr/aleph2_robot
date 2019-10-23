@@ -16,4 +16,4 @@ rosdep update
 rosdep install --from-paths src --ignore-src -y
 apt install -y python-catkin-tools
 catkin build --summarize --no-status --force-color --cmake-args -DCMAKE_C_FLAGS="-Wall -W -Wno-unused-parameter"
-source devel/setup.bash
+. devel/setup.sh
