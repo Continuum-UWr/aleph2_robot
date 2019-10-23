@@ -2,12 +2,11 @@
 set -ex
 
 set +x # po co wyświetlać token
-token=`grep 'ros_ws\.git' .git/config | grep -o 'https\?://gitlab-ci-token:.*/continuum/' | head -1`
+token=`grep 'nanotec_driver\.git' .git/config | grep -o 'https\?://gitlab-ci-token:.*/continuum/' | head -1`
 sed -i "s git@.*:continuum/ $token g" $1
 set -x
 
 unset token
-rm -rf src
 mkdir -p ws/src && ln -s ../.. ws/src/${PWD##*/}
 wstool init ws/src $1
 cd ws
