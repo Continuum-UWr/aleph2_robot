@@ -4,5 +4,4 @@ build:
   only:
   - master
   script:
-    - cmake .
-    - make
+    - catkin build --this --summarize --no-status --force-color --cmake-args -DCMAKE_C_FLAGS="-Wall -W -Wno-unused-parameter"
