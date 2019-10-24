@@ -1,0 +1,6 @@
+- git:
+    local-name: nanotec_driver
+    uri: git@gitlab.continuum.ii.uni.wroc.pl:continuum/software/nanotec_driver.git
+- git:
+    local-name: rubi_server
+    uri: https://github.com/acriaer/rubi_server

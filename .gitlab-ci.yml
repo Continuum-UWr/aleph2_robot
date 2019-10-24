@@ -2,5 +2,4 @@ build:
   stage: build
   image: ros
   script:
-    - cmake .
-    - make
+    - ./gitlab-ci-buildscript.sh dependencies.rosinstall
