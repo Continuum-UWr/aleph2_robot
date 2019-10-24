@@ -1,6 +1,6 @@
 #include <vector>
 
-#include "dictionary_error.h"
+#include "kacanopen/master/dictionary_error.h"
 
 #include "nanotec_driver/nanotec.h"
 #include "nanotec_driver/utils.h"

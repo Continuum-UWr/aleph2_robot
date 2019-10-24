@@ -2,8 +2,8 @@
 
 #include <string>
 
-#include "value.h"
-#include "types.h"
+#include "kacanopen/master/value.h"
+#include "kacanopen/master/types.h"
 
 static kaco::Value int_to_value_of_type(int64_t val, kaco::Type type)
 {

@@ -3,9 +3,9 @@
 
 #include <map>
 
-#include "canopen_error.h"
-#include "logger.h"
-#include "master.h"
+#include "kacanopen/core/canopen_error.h"
+#include "kacanopen/core/logger.h"
+#include "kacanopen/master/master.h"
 
 class Nanotec
 {
