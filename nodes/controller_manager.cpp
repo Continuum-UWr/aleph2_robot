@@ -1,6 +1,8 @@
 #include <aleph2_hardware_interface/aleph2_hardware_interface.h>
 #include <controller_manager/controller_manager.h>
 
+#include "std_msgs/Float32.h"
+
 int main(int argc, char** argv)
 {
     ros::init(argc, argv, "controller_manager");
@@ -11,6 +13,9 @@ int main(int argc, char** argv)
     nh.param("hw_namespace", hw_namespace, hw_namespace);
     nh.param("spinner_threads", spinner_threads, 4);
     nh.param("control_loop_rate", control_loop_rate, 20);
+
+    std_msgs::Float32 usage_msg;
+    ros::Publisher usage_pub = nh.advertise<std_msgs::Float32>("usage", 5);
 
     aleph2_hardware_interface::Aleph2HardwareInterface aleph2_hw;
     ros::NodeHandle hw_nh(hw_namespace);
@@ -23,7 +28,7 @@ int main(int argc, char** argv)
 
     ros::Time last_update = ros::Time::now();
     spinner.start();
-    
+
     while (ros::ok())
     {
         ros::Time current_time = ros::Time::now();
@@ -34,5 +39,8 @@ int main(int argc, char** argv)
 
         last_update = current_time;
         rate.sleep();
+
+        usage_msg.data = (rate.cycleTime().toSec() / rate.expectedCycleTime().toSec()) * 100;
+        usage_pub.publish(usage_msg);
     }
 }
