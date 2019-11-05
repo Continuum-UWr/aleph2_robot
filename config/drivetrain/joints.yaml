@@ -48,7 +48,7 @@ joints:
     type: "nanotec"
     can_device: "jezdny"
     node_id: 2
-    scale: 1000.0
+    scale: -1000.0
     preset: "jezdny"
   kolo_FL_to_chromosom_L:
     type: "nanotec"
@@ -60,5 +60,5 @@ joints:
     type: "nanotec"
     can_device: "jezdny"
     node_id: 4
-    scale: 1000.0
+    scale: -1000.0
     preset: "jezdny"
