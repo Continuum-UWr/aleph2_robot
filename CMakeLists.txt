@@ -74,6 +74,8 @@ target_link_libraries( controller_manager
     aleph2_hardware_interface
     ${catkin_LIBRARIES} )
 
+
+### Install targets
     
 install( DIRECTORY include/${PROJECT_NAME}/
     DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
@@ -86,4 +88,9 @@ install(DIRECTORY launch/
 
 install(DIRECTORY config/
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config
+)
+
+install(TARGETS controller_manager aleph2_hardware_interface aleph2_joint
+    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+	LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 )
