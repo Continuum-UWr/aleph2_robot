@@ -10,4 +10,10 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
+  <exec_depend>robot_state_publisher</exec_depend>
+
+  <exec_depend>aleph_viz</exec_depend>
+  <exec_depend>aleph2_hardware_interface</exec_depend>
+  <exec_depend>rubi_server</exec_depend>
+
 </package>
