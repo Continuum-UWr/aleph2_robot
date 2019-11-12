@@ -4,7 +4,7 @@
 
     <param name="robot_description" command="xacro --inorder $(arg model)" />
 
-    <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" output="$(arg output)"/>
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="$(arg output)"/>
 
     <include file="$(find aleph2_hardware_interface)/launch/drivetrain_controllers.launch">
         <arg name="output" value="$(arg output)"/>
