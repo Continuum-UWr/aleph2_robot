@@ -19,7 +19,7 @@
     </include>
 
     <node name="rubi_server" pkg="rubi_server" type="rubi_server" output="$(arg output)">
-        <rosparam param="cans">["can1", "can2"]</rosparam>
+        <param name="cans" value="can1,can2"/>
     </node>
 
 </launch>
