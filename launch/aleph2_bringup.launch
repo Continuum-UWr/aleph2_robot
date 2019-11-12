@@ -22,4 +22,4 @@
         <rosparam param="cans">["can1", "can2"]</rosparam>
     </node>
 
-<launch>
+</launch>
