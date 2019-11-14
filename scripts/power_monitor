@@ -1,0 +1,48 @@
+#!/usr/bin/env python
+from os.path import join
+import rospy
+
+rospy.init_node('power_monitor')
+
+
+paths = ["/sys/devices/3160000.i2c/i2c-0/0-0040/iio_device",
+         "/sys/devices/3160000.i2c/i2c-0/0-0041/iio_device",
+         "/sys/devices/3160000.i2c/i2c-0/0-0042/iio_device",
+         "/sys/devices/3160000.i2c/i2c-0/0-0043/iio_device"]
+
+objects = ["in_current",
+           "in_voltage"]
+
+rails = []
+index = 0
+counter = 0
+for i in range(0,12):
+    railname = "rail_name_" + str(i % 3)
+    rails.append(open(join(paths[index], railname), 'r').read()[:-1])
+    counter += 1
+    if counter == 3:
+        counter = 0
+        index += 1
+
+#print(rails)
+while True:
+    index = 0
+    counter = 0
+    for i in range(0, 12):
+        CurrentName = objects[0] + str(i % 3) + "_input"
+        VoltageName = objects[1] + str(i % 3) + "_input"
+        current = float(open(join(paths[index], CurrentName), 'r').read()[:-1])/1000.0
+        voltage = float(open(join(paths[index], VoltageName), 'r').read()[:-1])/1000.0
+
+        print("Rail: {}".format(rails[index*3 + counter]))
+        print("In_Current: {}A, In_Voltage: {}V,".format(current, voltage))
+        counter += 1
+        if counter == 3:
+            counter = 0
+            index += 1
+        
+        
+    print()
+    rospy.sleep(2)
+    
+
