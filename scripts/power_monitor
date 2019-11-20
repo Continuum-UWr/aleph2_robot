@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 from os.path import join
 import rospy
-
-rospy.init_node('power_monitor')
+from power_msgs.msg import PowerStatus
 
 
 paths = ["/sys/devices/3160000.i2c/i2c-0/0-0040/iio_device",
@@ -14,8 +13,16 @@ objects = ["in_current",
            "in_voltage"]
 
 rails = []
+voltages = []
+currents = []
+msg = PowerStatus()
 index = 0
 counter = 0
+
+
+StatusPub = rospy.Publisher('power_status', PowerStatus, queue_size=10)
+rospy.init_node('power_monitor', anonymous=True)
+rate = rospy.Rate(2)
 for i in range(0,12):
     railname = "rail_name_" + str(i % 3)
     rails.append(open(join(paths[index], railname), 'r').read()[:-1])
@@ -24,8 +31,7 @@ for i in range(0,12):
         counter = 0
         index += 1
 
-#print(rails)
-while True:
+while not rospy.is_shutdown():
     index = 0
     counter = 0
     for i in range(0, 12):
@@ -33,16 +39,18 @@ while True:
         VoltageName = objects[1] + str(i % 3) + "_input"
         current = float(open(join(paths[index], CurrentName), 'r').read()[:-1])/1000.0
         voltage = float(open(join(paths[index], VoltageName), 'r').read()[:-1])/1000.0
-
-        print("Rail: {}".format(rails[index*3 + counter]))
-        print("In_Current: {}A, In_Voltage: {}V,".format(current, voltage))
+        voltages.append(voltage)
+        currents.append(current)
+        #print("Rail: {}".format(rails[index*3 + counter]))
+        #print("In_Current: {}A, In_Voltage: {}V,".format(current, voltage))
         counter += 1
         if counter == 3:
             counter = 0
             index += 1
-        
-        
-    print()
-    rospy.sleep(2)
-    
+    msg.rail = rails
+    msg.voltage = voltages
+    msg.current = currents
+    StatusPub.publish(msg)
+    rate.sleep()
+ 
 
