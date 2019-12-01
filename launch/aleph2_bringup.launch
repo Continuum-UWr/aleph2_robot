@@ -21,5 +21,7 @@
     <node name="rubi_server" pkg="rubi_server" type="rubi_server" output="$(arg output)">
         <param name="cans" value="can1,can2"/>
     </node>
+    
+    <node name="power_monitor" pkg="aleph2_bringup" type="power_monitor" output="$(arg output)"/>
 
 </launch>
