@@ -38,7 +38,7 @@ joints:
     get_position_field: encoder
     get_velocity_field: speed
     set_effort_field: effort
-    scale: -238.7324 # 12 * 125 / (2*pi)
+    scale: 238.7324 # 12 * 125 / (2*pi)
   efector_grip:
     type: rubi
     board_name: ManipDC_Driver

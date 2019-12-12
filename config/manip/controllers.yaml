@@ -19,10 +19,30 @@ controllers:
       type: effort_controllers/JointEffortController
       joint: efector_grip
   velocity:
+    base_to_frame:
+      type: effort_controllers/JointVelocityController
+      joint: base_to_frame
+      pid: { p: 50.0, i: 10.0, d: 0.0 }
+    B_to_base:
+      type: effort_controllers/JointVelocityController
+      joint: B_to_base
+      pid: { p: 50.0, i: 10.0, d: 0.0 }
+    C_to_B:
+      type: effort_controllers/JointVelocityController
+      joint: C_to_B
+      pid: { p: 50.0, i: 10.0, d: 0.0 }
+    efector_to_C:
+      type: effort_controllers/JointVelocityController
+      joint: efector_to_C
+      pid: { p: 50.0, i: 10.0, d: 0.0 }
     efector_roll:
       type: effort_controllers/JointVelocityController
-      joint: effector_roll
-      pid: {p: 50.0, i: 10.0, d: 0.0}
+      joint: efector_roll
+      pid: { p: 50.0, i: 10.0, d: 0.0 }
+    efector_grip:
+      type: effort_controllers/JointVelocityController
+      joint: efector_grip
+      pid: { p: 50.0, i: 10.0, d: 0.0 }
   trajectory:
     type: "effort_controllers/JointTrajectoryController"
     joints:
@@ -32,16 +52,62 @@ controllers:
       - efector_to_C
       - efector_roll
       - efector_grip
-
     gains:
-      base_to_frame: {p: 100,  d: 1, i: 1, i_clamp: 1}
-      B_to_base: {p: 100,  d: 1, i: 1, i_clamp: 1}
-      C_to_B: {p: 100,  d: 1, i: 1, i_clamp: 1}
-      efector_to_C: {p: 100,  d: 1, i: 1, i_clamp: 1}
-      efector_roll: {p: 100,  d: 1, i: 1, i_clamp: 1}
-      efector_grip: {p: 100,  d: 1, i: 1, i_clamp: 1}
-
-
+      base_to_frame: { p: 100, d: 1, i: 1, i_clamp: 1 }
+      B_to_base: { p: 100, d: 1, i: 1, i_clamp: 1 }
+      C_to_B: { p: 100, d: 1, i: 1, i_clamp: 1 }
+      efector_to_C: { p: 100, d: 1, i: 1, i_clamp: 1 }
+      efector_roll: { p: 100, d: 1, i: 1, i_clamp: 1 }
+      efector_grip: { p: 100, d: 1, i: 1, i_clamp: 1 }
+    constraints:
+      goal_time: 0.5
+      stopped_velocity_tolerance: 0.02
+      base_to_frame:
+        trajectory: 0.05
+        goal: 0.02
+      B_to_base:
+        trajectory: 0.05
+        goal: 0.02
+      C_to_B:
+        trajectory: 0.05
+        goal: 0.02
+      efector_to_C:
+        trajectory: 0.05
+        goal: 0.02
+      efector_roll:
+        trajectory: 0.05
+        goal: 0.02
+      efector_grip:
+        trajectory: 0.05
+        goal: 0.02
+    state_publish_rate: 25
+    action_monitor_rate: 30
+    stop_trajectory_duration: 0
+  position:
+    base_to_frame:
+      type: effort_controllers/JointPositionController
+      joint: base_to_frame
+      pid: { p: 50.0, i: 10.0, d: 0.0 }
+    B_to_base:
+      type: effort_controllers/JointPositionController
+      joint: B_to_base
+      pid: { p: 50.0, i: 10.0, d: 0.0 }
+    C_to_B:
+      type: effort_controllers/JointPositionController
+      joint: C_to_B
+      pid: { p: 50.0, i: 10.0, d: 0.0 }
+    efector_to_C:
+      type: effort_controllers/JointPositionController
+      joint: efector_to_C
+      pid: { p: 50.0, i: 10.0, d: 0.0 }
+    efector_roll:
+      type: effort_controllers/JointPositionController
+      joint: effector_roll
+      pid: { p: 50.0, i: 10.0, d: 0.0 }
+    efector_grip:
+      type: effort_controllers/JointPositionController
+      joint: efector_grip
+      pid: { p: 50.0, i: 10.0, d: 0.0 }
   state:
     type: joint_state_controller/JointStateController
     publish_rate: 20
