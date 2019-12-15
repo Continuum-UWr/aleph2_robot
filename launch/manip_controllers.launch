@@ -25,7 +25,12 @@
         "/> -->
 
         <node name="controller_spawner1" pkg="controller_manager" type="spawner" respawn="false" output="$(arg output)" args="
+            controllers/velocity/base_to_frame
+            controllers/velocity/B_to_base
+            controllers/velocity/C_to_B
+            controllers/velocity/efector_to_C
             controllers/velocity/efector_roll
+            controllers/velocity/efector_grip
             controllers/state
         "/>
 

@@ -22,15 +22,15 @@ controllers:
     base_to_frame:
       type: effort_controllers/JointVelocityController
       joint: base_to_frame
-      pid: { p: 50.0, i: 10.0, d: 0.0 }
+      pid: { p: 2000.0, i: 0.0, d: 0.0 }
     B_to_base:
       type: effort_controllers/JointVelocityController
       joint: B_to_base
-      pid: { p: 50.0, i: 10.0, d: 0.0 }
+      pid: { p: 500.0, i: 0.0, d: 0.0 }
     C_to_B:
       type: effort_controllers/JointVelocityController
       joint: C_to_B
-      pid: { p: 50.0, i: 10.0, d: 0.0 }
+      pid: { p: 500.0, i: 200.0, d: 0.0, i_clamp_min: -1000, i_clamp_max: 1000 }
     efector_to_C:
       type: effort_controllers/JointVelocityController
       joint: efector_to_C
@@ -38,11 +38,11 @@ controllers:
     efector_roll:
       type: effort_controllers/JointVelocityController
       joint: efector_roll
-      pid: { p: 50.0, i: 10.0, d: 0.0 }
+      pid: { p: 80.0, i: 400.0, d: 0.0, i_clamp_min: -1000, i_clamp_max: 1000 }
     efector_grip:
       type: effort_controllers/JointVelocityController
       joint: efector_grip
-      pid: { p: 50.0, i: 10.0, d: 0.0 }
+      pid: { p: 500.0, i: 0.0, d: 0.0 }
   trajectory:
     type: "effort_controllers/JointTrajectoryController"
     joints:
