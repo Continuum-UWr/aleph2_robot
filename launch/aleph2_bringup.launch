@@ -24,4 +24,8 @@
     
     <node name="power_monitor" pkg="aleph2_bringup" type="power_monitor" output="$(arg output)"/>
 
+    <include file="$(find aleph2_bringup)/launch/rosbags.launch">
+        <arg name="record_cameras" value="false"/>
+    </include>
+
 </launch>

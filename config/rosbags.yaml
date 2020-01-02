@@ -1,0 +1,10 @@
+rosbags:
+  control:
+    - "rosout_agg"
+    - "drivetrain/controllers/diff_drive/cmd_vel"
+  sensors:
+    - "sensor1"
+    - "sensor2"
+  cameras:
+    - "camera1"
+    - "camera2"
