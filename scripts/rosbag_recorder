@@ -3,6 +3,7 @@
 from os import path, mkdir
 import subprocess
 import signal
+import psutil
 from datetime import datetime
 
 import rospy
@@ -30,11 +31,15 @@ for bag in active:
         shell=True, executable="/bin/bash")
     processes.append(rosbag_process)
 
-try:
-    rospy.spin()
-except rospy.ROSInterruptException:
+
+def shutdown_hook():
     for p in processes:
-        p.send_signal(signal.SIGINT)
+        process = psutil.Process(p.pid)
+        for sub_process in process.children(recursive=True):
+            sub_process.send_signal(signal.SIGINT)
     for p in processes:
         p.wait()
 
+rospy.on_shutdown(shutdown_hook)
+
+rospy.spin()
