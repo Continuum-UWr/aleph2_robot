@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from os import path, mkdir
+from os import path, makedirs
 import subprocess
 import signal
 import psutil
@@ -14,12 +14,12 @@ rospy.init_node("rosbag_recorder")
 rosbags = rospy.get_param("~rosbags")
 active = rospy.get_param("~active")
 
-log_folder = rospy.get_param("~log_folder", "/var/log/ros")
+log_folder = rospy.get_param("~log_folder", "/var/log/ros/rosbags")
 
 date_s = datetime.today().strftime("%Y-%m-%d-%H-%M-%S")
 record_folder = path.join(log_folder, date_s)
 
-mkdir(record_folder)
+makedirs(record_folder)
 
 dump_params(path.join(record_folder, 'parameters.yaml'), "/")
 
