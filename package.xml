@@ -16,7 +16,7 @@
 
   <exec_depend>python-psutil</exec_depend>
 
-  <exec_depend>aleph_viz</exec_depend>
+  <exec_depend>aleph2_description</exec_depend>
   <exec_depend>aleph2_hardware_interface</exec_depend>
   <exec_depend>rubi_server</exec_depend>
 

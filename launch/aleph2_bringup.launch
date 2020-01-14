@@ -1,22 +1,28 @@
 <launch>
     <arg name="output" default="log"/>
-    <arg name="model" default="$(find aleph_viz)/urdf/aleph.urdf.xacro"/>
+    <arg name="model" default="$(find aleph2_description)/urdf/aleph2.urdf.xacro"/>
 
-    <param name="robot_description" command="xacro --inorder $(arg model)" />
+    <param name="robot_description" command="xacro $(arg model)" />
 
-    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="$(arg output)"/>
+    <node name="aleph2_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="$(arg output)">
+        <remap from="joint_states" to="aleph2/joint_states"/>
+    </node>
 
-    <include file="$(find aleph2_hardware_interface)/launch/drivetrain_controllers.launch">
-        <arg name="output" value="$(arg output)"/>
-    </include>
+    <group ns="aleph2">
 
-    <include file="$(find aleph2_hardware_interface)/launch/gimbal_controllers.launch">
-        <arg name="output" value="$(arg output)"/>
-    </include>
+        <include file="$(find aleph2_hardware_interface)/launch/drivetrain_controllers.launch">
+            <arg name="output" value="$(arg output)"/>
+        </include>
 
-    <include file="$(find aleph2_hardware_interface)/launch/manip_controllers.launch">
-        <arg name="output" value="$(arg output)"/>
-    </include>
+        <include file="$(find aleph2_hardware_interface)/launch/manip_controllers.launch">
+            <arg name="output" value="$(arg output)"/>
+        </include>
+
+        <include file="$(find aleph2_hardware_interface)/launch/gimbal_controllers.launch">
+            <arg name="output" value="$(arg output)"/>
+        </include>
+
+    </group>
 
     <node name="rubi_server" pkg="rubi_server" type="rubi_server" output="$(arg output)">
         <param name="cans" value="can1"/>
