@@ -2,8 +2,6 @@
     <arg name="output" default="screen"/>
     <arg name="loop_rate" default="20"/>
 
-    <remap from="drivetrain/controllers/state/joint_states" to="joint_states"/>
-
     <group ns="drivetrain">
 
         <rosparam file="$(find aleph2_hardware_interface)/config/drivetrain/joints.yaml" command="load"/>
@@ -25,4 +23,8 @@
          drivetrain/controllers/velocity/wheelFL
          drivetrain/controllers/velocity/wheelFR -->
     </group>
+
+    <node name="drivetrain_joint_state_republisher" pkg="aleph2_hardware_interface" type="joint_state_republisher" output="$(arg output)">
+        <param name="source_topic" value="drivetrain/joint_states"/>
+    </node>
 </launch>

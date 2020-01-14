@@ -2,8 +2,6 @@
     <arg name="output" default="screen"/>
     <arg name="loop_rate" default="30"/>
 
-    <remap from="manip/controllers/state/joint_states" to="joint_states"/>
-
     <group ns="manip">
 
         <rosparam file="$(find aleph2_hardware_interface)/config/manip/joints.yaml" command="load"/>
@@ -40,4 +38,8 @@
             controllers/state
         "/> -->
     </group>
+
+    <node name="manip_joint_state_republisher" pkg="aleph2_hardware_interface" type="joint_state_republisher" output="$(arg output)">
+        <param name="source_topic" value="manip/joint_states"/>
+    </node>
 </launch>
