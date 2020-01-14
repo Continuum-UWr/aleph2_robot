@@ -1,21 +1,21 @@
 controllers:
   velocity:
-    wheelRL:
+    wheel_RL:
       type: velocity_controllers/JointVelocityController
-      joint: kolo_RL_to_chromosom_L
-    wheelRR:
+      joint: wheel_RL_joint
+    wheel_RR:
       type: velocity_controllers/JointVelocityController
-      joint: kolo_RR_to_chromosom_R
-    wheelFL:
+      joint: wheel_RR_joint
+    wheel_FL:
       type: velocity_controllers/JointVelocityController
-      joint: kolo_FL_to_chromosom_L
-    wheelFR:
+      joint: wheel_FL_joint
+    wheel_FR:
       type: velocity_controllers/JointVelocityController
-      joint: kolo_FR_to_chromosom_R
+      joint: wheel_FR_joint
   diff_drive:
     type: "diff_drive_controller/DiffDriveController"
-    left_wheel: ['kolo_RL_to_chromosom_L', 'kolo_FL_to_chromosom_L']
-    right_wheel: ['kolo_RR_to_chromosom_R', 'kolo_FR_to_chromosom_R']
+    left_wheel: ['wheel_RL_joint', 'wheel_FL_joint']
+    right_wheel: ['wheel_RR_joint', 'wheel_FR_joint']
     publish_rate: 50
     pose_covariance_diagonal: [0.001, 0.001, 1000000.0, 1000000.0, 1000000.0, 0.03]
     twist_covariance_diagonal: [0.001, 0.001, 0.001, 1000000.0, 1000000.0, 0.03]

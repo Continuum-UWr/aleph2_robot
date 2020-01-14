@@ -38,25 +38,25 @@ nanotec_presets:
     Pole pair count: 8
 
 joints:
-  kolo_RL_to_chromosom_L:
+  wheel_RL_joint:
     type: "nanotec"
     can_device: "jezdny"
     node_id: 1
     scale: 1000.0
     preset: "jezdny"
-  kolo_RR_to_chromosom_R:
+  wheel_RR_joint:
     type: "nanotec"
     can_device: "jezdny"
     node_id: 2
     scale: -1000.0
     preset: "jezdny"
-  kolo_FL_to_chromosom_L:
+  wheel_FL_joint:
     type: "nanotec"
     can_device: "jezdny"
     node_id: 3
     scale: 1000.0
     preset: "jezdny"
-  kolo_FR_to_chromosom_R:
+  wheel_FR_joint:
     type: "nanotec"
     can_device: "jezdny"
     node_id: 4

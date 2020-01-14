@@ -2,8 +2,9 @@
     <arg name="output" default="screen"/>
     <arg name="loop_rate" default="30"/>
 
+    <remap from="manip/controllers/state/joint_states" to="joint_states"/>
+
     <group ns="manip">
-        <remap from="joint_states" to="/joint_states"/>
 
         <rosparam file="$(find aleph2_hardware_interface)/config/manip/joints.yaml" command="load"/>
         <rosparam file="$(find aleph2_hardware_interface)/config/manip/controllers.yaml" command="load"/>
@@ -15,22 +16,22 @@
         </node>
 
         <!-- <node name="controller_spawner1" pkg="controller_manager" type="spawner" respawn="false" output="$(arg output)" args="
-            controllers/effort/base_to_frame
-            controllers/effort/B_to_base
-            controllers/effort/C_to_B
-            controllers/effort/efector_to_C
-            controllers/effort/efector_roll
-            controllers/effort/efector_grip
+            controllers/effort/base
+            controllers/effort/shoulder
+            controllers/effort/elbow
+            controllers/effort/wrist_tilt
+            controllers/effort/wrist_roll
+            controllers/effort/gripper
             controllers/state
         "/> -->
 
         <node name="controller_spawner1" pkg="controller_manager" type="spawner" respawn="false" output="$(arg output)" args="
-            controllers/velocity/base_to_frame
-            controllers/velocity/B_to_base
-            controllers/velocity/C_to_B
-            controllers/velocity/efector_to_C
-            controllers/velocity/efector_roll
-            controllers/velocity/efector_grip
+            controllers/velocity/base
+            controllers/velocity/shoulder
+            controllers/velocity/elbow
+            controllers/velocity/wrist_tilt
+            controllers/velocity/wrist_roll
+            controllers/velocity/gripper
             controllers/state
         "/>
 

@@ -2,8 +2,9 @@
     <arg name="output" default="screen"/>
     <arg name="loop_rate" default="20"/>
 
+    <remap from="drivetrain/controllers/state/joint_states" to="joint_states"/>
+
     <group ns="drivetrain">
-        <remap from="joint_states" to="/joint_states"/>
 
         <rosparam file="$(find aleph2_hardware_interface)/config/drivetrain/joints.yaml" command="load"/>
         <rosparam file="$(find aleph2_hardware_interface)/config/drivetrain/controllers.yaml" command="load"/>

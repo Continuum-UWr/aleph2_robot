@@ -1,16 +1,20 @@
 <launch>
     <arg name="output" default="log"/>
 
-    <include file="$(find aleph2_hardware_interface)/launch/drivetrain_controllers.launch">
-        <arg name="output" value="$(arg output)"/>
-    </include>
+    <group ns="aleph2">
 
-    <include file="$(find aleph2_hardware_interface)/launch/gimbal_controllers.launch">
-        <arg name="output" value="$(arg output)"/>
-    </include>
+        <include file="$(find aleph2_hardware_interface)/launch/drivetrain_controllers.launch">
+            <arg name="output" value="$(arg output)"/>
+        </include>
 
-    <include file="$(find aleph2_hardware_interface)/launch/manip_controllers.launch">
-        <arg name="output" value="$(arg output)"/>
-    </include>
+        <include file="$(find aleph2_hardware_interface)/launch/gimbal_controllers.launch">
+            <arg name="output" value="$(arg output)"/>
+        </include>
+
+        <include file="$(find aleph2_hardware_interface)/launch/manip_controllers.launch">
+            <arg name="output" value="$(arg output)"/>
+        </include>
+
+    </group>
 
 </launch>

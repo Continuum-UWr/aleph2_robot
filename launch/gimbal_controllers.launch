@@ -2,8 +2,9 @@
     <arg name="output" default="screen"/>
     <arg name="loop_rate" default="10"/>
 
+    <remap from="gimbal/controllers/state/joint_states" to="joint_states"/>
+
     <group ns="gimbal">
-        <remap from="joint_states" to="/joint_states"/>
 
         <rosparam file="$(find aleph2_hardware_interface)/config/gimbal/joints.yaml" command="load"/>
         <rosparam file="$(find aleph2_hardware_interface)/config/gimbal/controllers.yaml" command="load"/>
