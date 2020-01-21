@@ -68,13 +68,13 @@ target_link_libraries( aleph2_hardware_interface
 
 
 # Controller Manager
-add_executable( controller_manager
-    nodes/controller_manager.cpp )
+add_executable( control_loop
+    nodes/control_loop.cpp )
 
-add_dependencies( controller_manager 
+add_dependencies( control_loop 
     aleph2_hardware_interface )
 
-target_link_libraries( controller_manager
+target_link_libraries( control_loop
     aleph2_hardware_interface
     ${catkin_LIBRARIES} )
 
@@ -94,7 +94,7 @@ install(DIRECTORY config/
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config
 )
 
-install(TARGETS controller_manager aleph2_hardware_interface aleph2_joint
+install(TARGETS control_loop aleph2_hardware_interface aleph2_joint
     RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 	LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 )

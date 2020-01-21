@@ -8,9 +8,9 @@
         <rosparam file="$(find aleph2_hardware_interface)/config/drivetrain/controllers.yaml" command="load"/>
         <rosparam file="$(find aleph2_hardware_interface)/config/drivetrain/joint_limits.yaml" command="load"/>
 
-        <node name="controller_manager" pkg="aleph2_hardware_interface" type="controller_manager" 
+        <node name="control_loop" pkg="aleph2_hardware_interface" type="control_loop" 
                 output="$(arg output)" required="true">
-            <param name="control_loop_rate" value="$(arg loop_rate)"/>
+            <param name="loop_rate" value="$(arg loop_rate)"/>
         </node>
 
         <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="$(arg output)" args="
