@@ -13,7 +13,7 @@
             <param name="control_loop_rate" value="$(arg loop_rate)"/>
         </node>
 
-        <!-- <node name="controller_spawner1" pkg="controller_manager" type="spawner" respawn="false" output="$(arg output)" args="
+        <node name="effort_controller_spawner" pkg="controller_manager" type="spawner" output="$(arg output)" args="
             controllers/effort/base
             controllers/effort/shoulder
             controllers/effort/elbow
@@ -21,22 +21,32 @@
             controllers/effort/wrist_roll
             controllers/effort/gripper
             controllers/state
-        "/> -->
+        "/>
 
-        <node name="controller_spawner1" pkg="controller_manager" type="spawner" respawn="false" output="$(arg output)" args="
+        <node name="velocity_controller_spawner" pkg="controller_manager" type="spawner" output="$(arg output)" args="
+            --stopped
             controllers/velocity/base
             controllers/velocity/shoulder
             controllers/velocity/elbow
             controllers/velocity/wrist_tilt
             controllers/velocity/wrist_roll
             controllers/velocity/gripper
-            controllers/state
         "/>
 
-        <!-- <node name="controller_spawner2" pkg="controller_manager" type="spawner" respawn="false" output="$(arg output)" args="
+        <node name="position_controller_spawner" pkg="controller_manager" type="spawner" output="$(arg output)" args="
+            --stopped
+            controllers/position/base
+            controllers/position/shoulder
+            controllers/position/elbow
+            controllers/position/wrist_tilt
+            controllers/position/wrist_roll
+            controllers/position/gripper
+        "/>
+
+        <node name="trajectory_controller_spawner" pkg="controller_manager" type="spawner" output="$(arg output)" args="
+            --stopped
             controllers/trajectory
-            controllers/state
-        "/> -->
+        "/>
     </group>
 
     <node name="manip_joint_state_republisher" pkg="aleph2_hardware_interface" type="joint_state_republisher" output="$(arg output)">
