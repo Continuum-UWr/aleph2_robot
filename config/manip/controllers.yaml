@@ -1,4 +1,5 @@
 controllers:
+
   effort:
     base:
       type: effort_controllers/JointEffortController
@@ -18,7 +19,9 @@ controllers:
     gripper:
       type: effort_controllers/JointEffortController
       joint: manip_gripper_joint
+
   velocity:
+
     base:
       type: effort_controllers/JointVelocityController
       joint: manip_base_joint
@@ -43,6 +46,37 @@ controllers:
       type: effort_controllers/JointVelocityController
       joint: manip_gripper_joint
       pid: { p: 500.0, i: 0.0, d: 0.0 }
+
+  position:
+    base:
+      type: effort_controllers/JointPositionController
+      joint: manip_base_joint
+      pid: { p: 50.0, i: 10.0, d: 0.0 }
+    shoulder:
+      type: effort_controllers/JointPositionController
+      joint: manip_shoulder_joint
+      pid: { p: 50.0, i: 10.0, d: 0.0 }
+    elbow:
+      type: effort_controllers/JointPositionController
+      joint: manip_elbow_joint
+      pid: { p: 50.0, i: 10.0, d: 0.0 }
+    wrist_tilt:
+      type: effort_controllers/JointPositionController
+      joint: manip_wrist_tilt_joint
+      pid: { p: 50.0, i: 10.0, d: 0.0 }
+    wrist_roll:
+      type: effort_controllers/JointPositionController
+      joint: manip_wrist_roll_joint
+      pid: { p: 50.0, i: 10.0, d: 0.0 }
+    gripper:
+      type: effort_controllers/JointPositionController
+      joint: manip_gripper_joint
+      pid: { p: 50.0, i: 10.0, d: 0.0 }
+
+  state:
+    type: joint_state_controller/JointStateController
+    publish_rate: 20
+
   trajectory:
     type: "effort_controllers/JointTrajectoryController"
     joints:
@@ -83,31 +117,3 @@ controllers:
     state_publish_rate: 25
     action_monitor_rate: 30
     stop_trajectory_duration: 0
-  position:
-    base:
-      type: effort_controllers/JointPositionController
-      joint: manip_base_joint
-      pid: { p: 50.0, i: 10.0, d: 0.0 }
-    shoulder:
-      type: effort_controllers/JointPositionController
-      joint: manip_shoulder_joint
-      pid: { p: 50.0, i: 10.0, d: 0.0 }
-    elbow:
-      type: effort_controllers/JointPositionController
-      joint: manip_elbow_joint
-      pid: { p: 50.0, i: 10.0, d: 0.0 }
-    wrist_tilt:
-      type: effort_controllers/JointPositionController
-      joint: manip_wrist_tilt_joint
-      pid: { p: 50.0, i: 10.0, d: 0.0 }
-    wrist_roll:
-      type: effort_controllers/JointPositionController
-      joint: effector_roll
-      pid: { p: 50.0, i: 10.0, d: 0.0 }
-    gripper:
-      type: effort_controllers/JointPositionController
-      joint: manip_gripper_joint
-      pid: { p: 50.0, i: 10.0, d: 0.0 }
-  state:
-    type: joint_state_controller/JointStateController
-    publish_rate: 20
