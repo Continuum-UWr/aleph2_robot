@@ -10,22 +10,15 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <depend>hardware_interface</depend>
-  <depend>joint_limits_interface</depend>
-  <depend>controller_manager</depend>
   <depend>roscpp</depend>
-  <depend>rubi_server</depend>
-  <depend>nanotec_driver</depend>
   <depend>dynamic_reconfigure</depend>
   <depend>std_srvs</depend>
 
-  <exec_depend>joint_state_controller</exec_depend>
-  <exec_depend>position_controllers</exec_depend>
-  <exec_depend>velocity_controllers</exec_depend>
-  <exec_depend>effort_controllers</exec_depend>
-  <exec_depend>diff_drive_controller</exec_depend>
-  <exec_depend>joint_trajectory_controller</exec_depend>
-  <exec_depend>rospy</exec_depend>
-  <exec_depend>sensor_msgs</exec_depend>
-  
+  <depend>hardware_interface</depend>
+  <depend>joint_limits_interface</depend>
+  <depend>controller_manager</depend>
+
+  <depend>rubi_server</depend>
+  <depend>nanotec_driver</depend>
+
 </package>
