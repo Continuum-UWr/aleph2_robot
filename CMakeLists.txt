@@ -35,10 +35,6 @@ catkin_package(
         std_srvs
 )
 
-catkin_install_python(PROGRAMS
-  nodes/joint_state_republisher
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
 
 include_directories(
   include/
