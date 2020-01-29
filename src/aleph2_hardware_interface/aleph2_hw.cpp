@@ -1,4 +1,4 @@
-#include <aleph2_hardware_interface/aleph2_hardware_interface.h>
+#include <aleph2_hardware_interface/aleph2_hw.h>
 #include <aleph2_hardware_interface/utils.h>
 #include <joint_limits_interface/joint_limits.h>
 #include <joint_limits_interface/joint_limits_rosparam.h>
@@ -10,10 +10,10 @@ using XmlRpc::XmlRpcValue;
 
 namespace aleph2_hardware_interface
 {
-    Aleph2HardwareInterface::Aleph2HardwareInterface() {}
-    Aleph2HardwareInterface::~Aleph2HardwareInterface() {}
+    Aleph2HW::Aleph2HW() {}
+    Aleph2HW::~Aleph2HW() {}
 
-    void Aleph2HardwareInterface::init(ros::NodeHandle& robot_hw_nh) {
+    void Aleph2HW::init(ros::NodeHandle& robot_hw_nh) {
         XmlRpcValue hardware, can_devices, nanotec_presets;
         robot_hw_nh.getParam("joints", hardware);
         robot_hw_nh.getParam("can_devices", can_devices);
@@ -248,7 +248,7 @@ namespace aleph2_hardware_interface
         registerInterface(&position_joint_soft_limits_interface_);
     }
 
-    void Aleph2HardwareInterface::registerLimitsHandles(JointHandle& joint_effort_handle, JointHandle& joint_velocity_handle,
+    void Aleph2HW::registerLimitsHandles(JointHandle& joint_effort_handle, JointHandle& joint_velocity_handle,
             JointHandle& joint_position_handle, JointLimits& joint_limits, bool has_soft_limits, SoftJointLimits& joint_soft_limits)
     {
         if (!has_soft_limits)
@@ -295,7 +295,7 @@ namespace aleph2_hardware_interface
         
     }
 
-    void Aleph2HardwareInterface::doSwitch(const std::list<ControllerInfo>& start_controllers,
+    void Aleph2HW::doSwitch(const std::list<ControllerInfo>& start_controllers,
                                            const std::list<ControllerInfo>& stop_controllers)
     {
         for (const ControllerInfo& con : start_controllers)
@@ -327,7 +327,7 @@ namespace aleph2_hardware_interface
         }
     }
 
-    void Aleph2HardwareInterface::read() 
+    void Aleph2HW::read() 
     {
         for( int i = 0; i < num_joints_; ++i )
         {
@@ -352,7 +352,7 @@ namespace aleph2_hardware_interface
         }
     }
 
-    void Aleph2HardwareInterface::write(ros::Duration elapsed_time) {
+    void Aleph2HW::write(ros::Duration elapsed_time) {
         effort_joint_saturation_interface_.enforceLimits(elapsed_time);
         effort_joint_soft_limits_interface_.enforceLimits(elapsed_time);
         velocity_joint_saturation_interface_.enforceLimits(elapsed_time);

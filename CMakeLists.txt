@@ -56,7 +56,7 @@ add_dependencies( aleph2_joint
 
 # Hardware interface
 add_library( aleph2_hardware_interface 
-    src/aleph2_hardware_interface/aleph2_hardware_interface.cpp )
+    src/aleph2_hardware_interface/aleph2_hw.cpp )
 
 target_link_libraries( aleph2_hardware_interface
     ${catkin_LIBRARIES} 

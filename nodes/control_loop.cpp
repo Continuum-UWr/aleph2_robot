@@ -1,4 +1,4 @@
-#include <aleph2_hardware_interface/aleph2_hardware_interface.h>
+#include <aleph2_hardware_interface/aleph2_hw.h>
 #include <controller_manager/controller_manager.h>
 
 #include "std_msgs/Float32.h"
@@ -19,7 +19,7 @@ int main(int argc, char** argv)
     std_msgs::Float32 usage_msg;
     ros::Publisher usage_pub = nh.advertise<std_msgs::Float32>("usage", 5);
 
-    aleph2_hardware_interface::Aleph2HardwareInterface aleph2_hw;
+    aleph2_hardware_interface::Aleph2HW aleph2_hw;
     ros::NodeHandle hw_nh(hw_namespace);
     aleph2_hw.init(hw_nh);
 

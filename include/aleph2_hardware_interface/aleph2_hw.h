@@ -22,11 +22,11 @@ namespace aleph2_hardware_interface
         POSITION
     };
 
-    class Aleph2HardwareInterface: public hardware_interface::RobotHW
+    class Aleph2HW: public hardware_interface::RobotHW
     {
         public:
-            Aleph2HardwareInterface();
-            ~Aleph2HardwareInterface();
+            Aleph2HW();
+            ~Aleph2HW();
             void init(ros::NodeHandle& robot_hw_nh);
             void doSwitch(const std::list<ControllerInfo>& start_controllers,
                           const std::list<ControllerInfo>& stop_controllers) override; 
