@@ -1,0 +1,64 @@
+can_devices:
+  jezdny:
+    busname: "can0"
+    baudrate: "500K"
+
+nanotec_presets:
+  jezdny:
+    Maximum current: 25000
+    I2t Parameters:
+      Nominal Current: 25000
+      Maximum duration of peak current: 100
+    Profile velocity: 20000
+    Profile acceleration: 10000
+    Profile deceleration: 10000
+    Max acceleration: 15000
+    Max deceleration: 15000
+    Max torque: 1000
+    Torque slope: 1000
+    Motor drive parameter set:
+      Flux current loop, integral gain (closed loop): 256
+      Flux current loop, proportional gain (closed loop): 8192
+      Position loop, integral gain (closed loop): 0
+      Position loop, proportional gain (closed loop): 2048
+      Torque current loop, integral gain (closed loop): 256
+      Torque current loop, integral gain (open loop): 45000
+      Torque current loop, proportional gain (closed loop): 8192
+      Torque current loop, proportional gain (open loop): 240000
+      Velocity loop, integral gain (closed loop): 5
+      Velocity loop, proportional gain (closed loop): 30000
+    Position encoder resolution:
+      Encoder increments: 6280 # 2 * pi * scale
+      Motor revolutions: 1
+    Gear ratio:
+      Motor revolutions: 12
+      Shaft revolutions: 1 
+    Velocity numerator: 1
+    Velocity denominator: 524 # (2 * pi * scale) / (Gear ratio)
+    Pole pair count: 8
+
+joints:
+  wheel_RL_joint:
+    type: "nanotec"
+    can_device: "jezdny"
+    node_id: 1
+    scale: 1000.0
+    preset: "jezdny"
+  wheel_RR_joint:
+    type: "nanotec"
+    can_device: "jezdny"
+    node_id: 2
+    scale: -1000.0
+    preset: "jezdny"
+  wheel_FL_joint:
+    type: "nanotec"
+    can_device: "jezdny"
+    node_id: 3
+    scale: 1000.0
+    preset: "jezdny"
+  wheel_FR_joint:
+    type: "nanotec"
+    can_device: "jezdny"
+    node_id: 4
+    scale: -1000.0
+    preset: "jezdny"

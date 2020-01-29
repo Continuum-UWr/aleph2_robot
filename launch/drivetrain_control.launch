@@ -1,0 +1,31 @@
+<launch>
+    <arg name="output" default="screen"/>
+    <arg name="loop_rate" default="20"/>
+
+    <group ns="drivetrain">
+
+        <rosparam file="$(find aleph2_bringup)/config/drivetrain/joints.yaml" command="load"/>
+        <rosparam file="$(find aleph2_bringup)/config/drivetrain/controllers.yaml" command="load"/>
+        <rosparam file="$(find aleph2_bringup)/config/drivetrain/joint_limits.yaml" command="load"/>
+
+        <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="$(arg output)" args="
+            controllers/diff_drive
+            controllers/state
+        "/>
+
+        <node name="controller_spawner_stopped" pkg="controller_manager" type="spawner" respawn="false" output="$(arg output)" args="
+            --stopped
+            controllers/velocity/wheelRL
+            controllers/velocity/wheelRR
+            controllers/velocity/wheelFL
+            controllers/velocity/wheelFR
+        "/>
+
+    </group>
+
+    <node name="drivetrain_control_loop" pkg="aleph2_hardware_interface" type="control_loop" output="$(arg output)" required="true">
+        <param name="loop_rate" value="$(arg loop_rate)"/>
+        <param name="hw_namespace" value="drivetrain"/>
+        <remap from="drivetrain/joint_states" to="joint_states"/>
+    </node>
+</launch>

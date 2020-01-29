@@ -1,0 +1,49 @@
+joints:
+  manip_base_joint:
+    type: rubi
+    board_name: ManipDC_Driver
+    board_id: "02"
+    get_position_field: encoder
+    get_velocity_field: speed
+    set_effort_field: effort
+    scale: 905.5916 # 5690 / (2*pi)
+  manip_shoulder_joint:
+    type: rubi
+    board_name: ManipDC_Driver
+    board_id: "01"
+    get_position_field: encoder
+    get_velocity_field: speed
+    set_effort_field: effort
+    scale: 1251.5945 # 1966 / (pi/2)
+  manip_elbow_joint:
+    type: rubi
+    board_name: ManipDC_Driver
+    board_id: "08"
+    get_position_field: encoder
+    get_velocity_field: speed
+    set_effort_field: effort
+    scale: 911.6395 # 1432 / (pi/2)
+  manip_wrist_tilt_joint:
+    type: rubi
+    board_name: ManipDC_Driver
+    board_id: "04"
+    get_position_field: encoder
+    get_velocity_field: speed
+    set_effort_field: effort
+    scale: 705.3747 # 1108 / (pi/2)
+  manip_wrist_roll_joint:
+    type: rubi
+    board_name: ManipDC_Driver
+    board_id: "06"
+    get_position_field: encoder
+    get_velocity_field: speed
+    set_effort_field: effort
+    scale: 238.7324 # 12 * 125 / (2*pi)
+  manip_gripper_joint:
+    type: rubi
+    board_name: ManipDC_Driver
+    board_id: "09"
+    get_position_field: encoder
+    get_velocity_field: speed
+    set_effort_field: effort
+    scale: 546430.0 # 12 * 125 / (2*pi)

@@ -1,0 +1,58 @@
+controllers:
+  velocity:
+
+    gimbal1_pan:
+      type: velocity_controllers/JointVelocityController
+      joint: gimbal1_pan
+    gimbal1_tilt:
+      type: velocity_controllers/JointVelocityController
+      joint: gimbal1_tilt
+    gimbal1_zoom:
+      type: velocity_controllers/JointVelocityController
+      joint: gimbal1_zoom
+    gimbal1_focus:
+      type: velocity_controllers/JointVelocityController
+      joint: gimbal1_focus
+
+    gimbal2_pan:
+      type: velocity_controllers/JointVelocityController
+      joint: gimbal2_pan
+    gimbal2_tilt:
+      type: velocity_controllers/JointVelocityController
+      joint: gimbal2_tilt
+    gimbal2_zoom:
+      type: velocity_controllers/JointVelocityController
+      joint: gimbal2_zoom
+    gimbal2_focus:
+      type: velocity_controllers/JointVelocityController
+      joint: gimbal2_focus
+
+    gimbal3_pan:
+      type: velocity_controllers/JointVelocityController
+      joint: gimbal3_pan
+    gimbal3_tilt:
+      type: velocity_controllers/JointVelocityController
+      joint: gimbal3_tilt
+    gimbal3_zoom:
+      type: velocity_controllers/JointVelocityController
+      joint: gimbal3_zoom
+    gimbal3_focus:
+      type: velocity_controllers/JointVelocityController
+      joint: gimbal3_focus
+
+    gimbal4_pan:
+      type: velocity_controllers/JointVelocityController
+      joint: gimbal4_pan
+    gimbal4_tilt:
+      type: velocity_controllers/JointVelocityController
+      joint: gimbal4_tilt
+    gimbal4_zoom:
+      type: velocity_controllers/JointVelocityController
+      joint: gimbal4_zoom
+    gimbal4_focus:
+      type: velocity_controllers/JointVelocityController
+      joint: gimbal4_focus
+
+  state:
+    type: joint_state_controller/JointStateController
+    publish_rate: 10

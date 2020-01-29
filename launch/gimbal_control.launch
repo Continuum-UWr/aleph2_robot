@@ -1,0 +1,38 @@
+<launch>
+    <arg name="output" default="screen"/>
+    <arg name="loop_rate" default="10"/>
+
+    <group ns="gimbal">
+
+        <rosparam file="$(find aleph2_bringup)/config/gimbal/joints.yaml" command="load"/>
+        <rosparam file="$(find aleph2_bringup)/config/gimbal/controllers.yaml" command="load"/>
+        <rosparam file="$(find aleph2_bringup)/config/gimbal/joint_limits.yaml" command="load"/>
+
+        <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="$(arg output)" args="
+            controllers/velocity/gimbal1_pan
+            controllers/velocity/gimbal1_tilt
+            controllers/velocity/gimbal1_zoom
+            controllers/velocity/gimbal1_focus
+            controllers/velocity/gimbal2_pan
+            controllers/velocity/gimbal2_tilt
+            controllers/velocity/gimbal2_zoom
+            controllers/velocity/gimbal2_focus
+            controllers/velocity/gimbal3_pan
+            controllers/velocity/gimbal3_tilt
+            controllers/velocity/gimbal3_zoom
+            controllers/velocity/gimbal3_focus
+            controllers/velocity/gimbal4_pan
+            controllers/velocity/gimbal4_tilt
+            controllers/velocity/gimbal4_zoom
+            controllers/velocity/gimbal4_focus
+            controllers/state
+        "/>
+    </group>
+
+    <node name="gimbal_control_loop" pkg="aleph2_hardware_interface" type="control_loop" output="$(arg output)" required="true">
+        <param name="loop_rate" value="$(arg loop_rate)"/>
+        <param name="hw_namespace" value="gimbal"/>
+        <remap from="gimbal/joint_states" to="joint_states"/>
+    </node>
+
+</launch>

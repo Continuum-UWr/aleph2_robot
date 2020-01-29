@@ -1,0 +1,45 @@
+<launch>
+    <arg name="output" default="screen"/>
+    <arg name="loop_rate" default="30"/>
+
+    <group ns="manip">
+
+        <rosparam file="$(find aleph2_bringup)/config/manip/joints.yaml" command="load"/>
+        <rosparam file="$(find aleph2_bringup)/config/manip/controllers.yaml" command="load"/>
+        <rosparam file="$(find aleph2_bringup)/config/manip/joint_limits.yaml" command="load"/>
+
+        <node name="controller_spawner" pkg="controller_manager" type="spawner" output="$(arg output)" args="
+            controllers/effort/base
+            controllers/effort/shoulder
+            controllers/effort/elbow
+            controllers/effort/wrist_tilt
+            controllers/effort/wrist_roll
+            controllers/effort/gripper
+            controllers/state
+        "/>
+
+        <node name="controller_spawner_stopped" pkg="controller_manager" type="spawner" output="$(arg output)" args="
+            --stopped
+            controllers/velocity/base
+            controllers/velocity/shoulder
+            controllers/velocity/elbow
+            controllers/velocity/wrist_tilt
+            controllers/velocity/wrist_roll
+            controllers/velocity/gripper
+            controllers/position/base
+            controllers/position/shoulder
+            controllers/position/elbow
+            controllers/position/wrist_tilt
+            controllers/position/wrist_roll
+            controllers/position/gripper
+            controllers/trajectory
+        "/>
+    </group>
+
+    <node name="manip_control_loop" pkg="aleph2_hardware_interface" type="control_loop" output="$(arg output)" required="true">
+        <param name="loop_rate" value="$(arg loop_rate)"/>
+        <param name="hw_namespace" value="manip"/>
+        <remap from="manip/joint_states" to="joint_states"/>
+    </node>
+
+</launch>
