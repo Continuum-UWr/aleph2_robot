@@ -6,9 +6,9 @@
 
         <param name="robot_description" command="xacro $(arg model)" />
 
-        <!-- <include file="$(find aleph2_bringup)/launch/drivetrain_control.launch">
+        <include file="$(find aleph2_bringup)/launch/drivetrain_control.launch">
             <arg name="output" value="$(arg output)"/>
-        </include> -->
+        </include>
 
         <include file="$(find aleph2_bringup)/launch/manip_control.launch">
             <arg name="output" value="$(arg output)"/>
