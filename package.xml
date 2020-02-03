@@ -27,5 +27,6 @@
   <exec_depend>aleph2_description</exec_depend>
   <exec_depend>aleph2_hardware_interface</exec_depend>
   <exec_depend>rubi_server</exec_depend>
+  <exec_depend>power_msgs</exec_depend>
 
 </package>
