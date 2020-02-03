@@ -13,7 +13,6 @@ rospy.init_node("rosbag_recorder")
 
 rosbags = rospy.get_param("~rosbags")
 active = rospy.get_param("~active")
-
 log_folder = rospy.get_param("~log_folder", "/var/log/ros/rosbags")
 
 date_s = datetime.today().strftime("%Y-%m-%d-%H-%M-%S")
@@ -27,8 +26,11 @@ processes = []
 for bag in active:
     topics = " ".join(rosbags[bag])
     file = path.join(record_folder, bag + ".bag")
-    rosbag_process = subprocess.Popen("rosbag record -O %s %s" % (file,topics), 
-        shell=True, executable="/bin/bash")
+    rosbag_process = subprocess.Popen(
+        "rosbag record -O %s %s" % (file, topics),
+        shell=True,
+        executable="/bin/bash"
+    )
     processes.append(rosbag_process)
 
 
@@ -39,6 +41,7 @@ def shutdown_hook():
             sub_process.send_signal(signal.SIGINT)
     for p in processes:
         p.wait()
+
 
 rospy.on_shutdown(shutdown_hook)
 

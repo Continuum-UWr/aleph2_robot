@@ -9,31 +9,28 @@ paths = ["/sys/devices/3160000.i2c/i2c-0/0-0040/iio_device",
          "/sys/devices/3160000.i2c/i2c-0/0-0042/iio_device",
          "/sys/devices/3160000.i2c/i2c-0/0-0043/iio_device"]
 
-objects = ["in_current",
-           "in_voltage"]
+
+rospy.init_node('power_monitor')
+
+update_rate = rospy.get_param("~update_rate", 2)
+status_pub = rospy.Publisher('power_status', PowerStatus, queue_size=5)
 
 msg = PowerStatus()
 msg.rail = [0.0] * 12
 msg.voltage = [0.0] * 12
 msg.current = [0.0] * 12
 
-index = 0
-counter = 0
+rate = rospy.Rate(update_rate)
 
+for i in range(0, 12):
+    rail_filename = "rail_name_" + str(i % 3)
+    msg.rail[i] = str(open(join(paths[i//3], rail_filename), 'r').read()[:-1])
 
-StatusPub = rospy.Publisher('power_status', PowerStatus, queue_size=10)
-rospy.init_node('power_monitor', anonymous=True)
-rate = rospy.Rate(2)
-for i in range(0,12):
-    railname = "rail_name_" + str(i % 3)
-    msg.rail[i] = str(open(join(paths[i//3], railname), 'r').read()[:-1])
 while not rospy.is_shutdown():
     for i in range(0, 12):
-        CurrentName = objects[0] + str(i % 3) + "_input"
-        VoltageName = objects[1] + str(i % 3) + "_input"
-        msg.current[i] = float(open(join(paths[i//3], CurrentName), 'r').read()[:-1])/1000.0
-        msg.voltage[i] = float(open(join(paths[i//3], VoltageName), 'r').read()[:-1])/1000.0
-    StatusPub.publish(msg)
+        current_filename = "in_current" + str(i % 3) + "_input"
+        voltage_filename = "in_voltage" + str(i % 3) + "_input"
+        msg.current[i] = float(open(join(paths[i//3], current_filename), 'r').read()[:-1])/1000.0
+        msg.voltage[i] = float(open(join(paths[i//3], voltage_filename), 'r').read()[:-1])/1000.0
+    status_pub.publish(msg)
     rate.sleep()
- 
-
