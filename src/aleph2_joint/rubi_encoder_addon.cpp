@@ -8,15 +8,28 @@
 namespace aleph2_joint
 {
 
-    RubiEncoderAddon::RubiEncoderAddon(Joint* joint, std::string position_topic, double offset)
+        RubiEncoderAddon::RubiEncoderAddon(Joint* joint, 
+                                           const std::string& board_name, 
+                                           const std::string& board_id,
+                                           const std::string& get_position_field,
+                                           const double scale,
+                                           const double offset)
         : JointAddon(joint),
+          scale_(scale),
           offset_(offset)
     {
-        pos_sub_ = nh_.subscribe(position_topic, 10, &RubiEncoderAddon::positionCallback, this);
+        std::string base_topic = "/rubi/boards/" + board_name + '/';
+        if (!board_id.empty())
+            base_topic += board_id + '/';
+
+        pos_sub_ = nh_.subscribe(
+            base_topic + "fields_from_board/" + get_position_field, 10,
+            &RubiEncoderAddon::positionCallback, this
+        );
     }
 
     void RubiEncoderAddon::positionCallback(const rubi_server::RubiUnsignedIntConstPtr& msg)
     {
-        position_ = static_cast<double>(msg->data[0]) * (2 * M_PI / 4096.0) + offset_;
+        position_ = static_cast<double>(msg->data[0]) / scale_ + offset_;
     }
 }

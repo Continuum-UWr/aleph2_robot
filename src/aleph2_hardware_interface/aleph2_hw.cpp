@@ -216,20 +216,48 @@ namespace aleph2_hardware_interface
                 ROS_BREAK();
             }
 
-            if (joint_struct.hasMember("has_rubi_encoder"))
+            if (joint_struct.hasMember("addons"))
             {
-                ROS_ASSERT(joint_struct["has_rubi_encoder"].getType() == XmlRpcValue::TypeBoolean);
-                if (joint_struct["has_rubi_encoder"])
+                ROS_ASSERT(joint_struct["addons"].getType() == XmlRpcValue::TypeArray);
+
+                for(int j = 0; j < joint_struct["addons"].size(); ++j)
                 {
-                    ROS_ASSERT(joint_struct.hasMember("encoder_position_topic"));
-                    ROS_ASSERT(joint_struct["encoder_position_topic"].getType() == XmlRpcValue::TypeString);
-                    ROS_ASSERT(joint_struct.hasMember("encoder_angle_offset"));
-                    ROS_ASSERT(joint_struct["encoder_angle_offset"].getType() == XmlRpcValue::TypeDouble);
-                    joints_[i] = new aleph2_joint::RubiEncoderAddon(
-                        joints_[i],
-                        joint_struct["encoder_position_topic"],
-                        joint_struct["encoder_angle_offset"]
-                    );
+                    XmlRpcValue& addon = joint_struct["addons"][j];
+                    ROS_ASSERT(addon.getType() == XmlRpcValue::TypeStruct);
+
+                    ROS_ASSERT(addon.hasMember("type"));
+                    ROS_ASSERT(addon["type"].getType() == XmlRpcValue::TypeString);
+
+                    if (addon["type"] == "rubi_encoder")
+                    {
+                        ROS_ASSERT(addon.hasMember("board_name"));
+                        ROS_ASSERT(addon["board_name"].getType() == XmlRpcValue::TypeString);
+                        ROS_ASSERT(addon.hasMember("get_position_field"));
+                        ROS_ASSERT(addon["get_position_field"].getType() == XmlRpcValue::TypeString);
+                        ROS_ASSERT(addon.hasMember("scale"));
+                        ROS_ASSERT(addon["scale"].getType() == XmlRpcValue::TypeDouble);
+                        ROS_ASSERT(addon.hasMember("offset"));
+                        ROS_ASSERT(addon["offset"].getType() == XmlRpcValue::TypeDouble);
+
+                        std::string board_id = LoadOptionalRubiFieldFromStruct("board_id", addon);
+
+                        std::cout << addon["board_name"] << std::endl;
+
+                        joints_[i] = new aleph2_joint::RubiEncoderAddon(
+                            joints_[i],
+                            addon["board_name"],
+                            board_id,
+                            addon["get_position_field"],
+                            addon["scale"],
+                            addon["offset"]
+                        );
+                    }
+
+                    else
+                    {
+                        ROS_ERROR_STREAM("Incorrect joint addon type: " << addon["type"]);
+                        ROS_BREAK();
+                    }
                 }
             }
 
