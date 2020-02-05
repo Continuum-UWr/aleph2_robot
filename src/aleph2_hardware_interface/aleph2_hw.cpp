@@ -149,9 +149,9 @@ namespace aleph2_hardware_interface
 
                 // Register handles
                 joint_state_interface_.registerHandle(joint_state_handle);
-                effort_joint_interface_.registerHandle(joint_effort_handle);
+                // effort_joint_interface_.registerHandle(joint_effort_handle);
                 velocity_joint_interface_.registerHandle(joint_velocity_handle);
-                position_joint_interface_.registerHandle(joint_position_handle);
+                // position_joint_interface_.registerHandle(joint_position_handle);
 
                 if (has_limits) 
                 {
@@ -240,8 +240,6 @@ namespace aleph2_hardware_interface
                         ROS_ASSERT(addon["offset"].getType() == XmlRpcValue::TypeDouble);
 
                         std::string board_id = LoadOptionalRubiFieldFromStruct("board_id", addon);
-
-                        std::cout << addon["board_name"] << std::endl;
 
                         joints_[i] = new aleph2_joint::RubiEncoderAddon(
                             joints_[i],
