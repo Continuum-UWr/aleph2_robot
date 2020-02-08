@@ -4,9 +4,9 @@
 
     <group ns="gimbal">
 
-        <rosparam file="$(find aleph2_bringup)/config/gimbal/joints.yaml" command="load"/>
-        <rosparam file="$(find aleph2_bringup)/config/gimbal/controllers.yaml" command="load"/>
-        <rosparam file="$(find aleph2_bringup)/config/gimbal/joint_limits.yaml" command="load"/>
+        <rosparam file="$(find aleph2_bringup)/config/control/gimbal/joints.yaml" command="load"/>
+        <rosparam file="$(find aleph2_bringup)/config/control/gimbal/controllers.yaml" command="load"/>
+        <rosparam file="$(find aleph2_bringup)/config/control/gimbal/joint_limits.yaml" command="load"/>
 
         <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="$(arg output)" args="
             controllers/velocity/gimbal1_pan

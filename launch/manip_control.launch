@@ -4,9 +4,9 @@
 
     <group ns="manip">
 
-        <rosparam file="$(find aleph2_bringup)/config/manip/joints.yaml" command="load"/>
-        <rosparam file="$(find aleph2_bringup)/config/manip/controllers.yaml" command="load"/>
-        <rosparam file="$(find aleph2_bringup)/config/manip/joint_limits.yaml" command="load"/>
+        <rosparam file="$(find aleph2_bringup)/config/control/manip/joints.yaml" command="load"/>
+        <rosparam file="$(find aleph2_bringup)/config/control/manip/controllers.yaml" command="load"/>
+        <rosparam file="$(find aleph2_bringup)/config/control/manip/joint_limits.yaml" command="load"/>
 
         <node name="controller_spawner" pkg="controller_manager" type="spawner" output="$(arg output)" args="
             controllers/effort/base

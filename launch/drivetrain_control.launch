@@ -4,9 +4,9 @@
 
     <group ns="drivetrain">
 
-        <rosparam file="$(find aleph2_bringup)/config/drivetrain/joints.yaml" command="load"/>
-        <rosparam file="$(find aleph2_bringup)/config/drivetrain/controllers.yaml" command="load"/>
-        <rosparam file="$(find aleph2_bringup)/config/drivetrain/joint_limits.yaml" command="load"/>
+        <rosparam file="$(find aleph2_bringup)/config/control/drivetrain/joints.yaml" command="load"/>
+        <rosparam file="$(find aleph2_bringup)/config/control/drivetrain/controllers.yaml" command="load"/>
+        <rosparam file="$(find aleph2_bringup)/config/control/drivetrain/joint_limits.yaml" command="load"/>
 
         <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="$(arg output)" args="
             controllers/diff_drive
