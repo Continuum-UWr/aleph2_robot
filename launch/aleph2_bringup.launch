@@ -1,10 +1,13 @@
 <launch>
     <arg name="output" default="log"/>
     <arg name="model" default="$(find aleph2_description)/urdf/aleph2.urdf.xacro"/>
+    <arg name="upload_description" default="true"/>
 
     <group ns="aleph2">
 
-        <param name="robot_description" command="xacro $(arg model)" />
+        <group if="$(arg upload_description)">
+            <param name="robot_description" command="xacro $(arg model)" />
+        </group>
 
         <include file="$(find aleph2_bringup)/launch/drivetrain_control.launch">
             <arg name="output" value="$(arg output)"/>
