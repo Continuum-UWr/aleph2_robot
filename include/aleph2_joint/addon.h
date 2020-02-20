@@ -33,10 +33,15 @@ namespace aleph2_joint
     class RubiEncoderAddon : public JointAddon
     {
     public:
-        RubiEncoderAddon(Joint* joint, std::string position_topic, double offset);
+        RubiEncoderAddon(Joint* joint, 
+                         const std::string& board_name, 
+                         const std::string& board_id,
+                         const std::string& get_position_field,
+                         const double scale,
+                         const double offset);
         virtual double getPosition() override { return position_; }
     private:
-        double position_, offset_;
+        double position_, scale_, offset_;
         ros::NodeHandle nh_;
         ros::Subscriber pos_sub_;
         void positionCallback(const rubi_server::RubiUnsignedIntConstPtr& msg);
