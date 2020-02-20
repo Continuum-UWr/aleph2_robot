@@ -101,6 +101,7 @@ namespace aleph2_joint
 
     private:
         void configCallback(NanotecConfig& config, uint32_t level);
+        void setTarget(double target);
 
         ros::NodeHandle nh_;
         Nanotec* nanotec_;

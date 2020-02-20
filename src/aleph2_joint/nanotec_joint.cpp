@@ -1,5 +1,6 @@
 #include "nanotec_driver/nanotec.h"
 #include "aleph2_joint/joint.h"
+#include "kacanopen/core/sdo_error.h"
  
 namespace aleph2_joint
 {
@@ -96,37 +97,53 @@ namespace aleph2_joint
 
     void NanotecJoint::setEffort(double effort)
     {
-        int32_t eff = static_cast<int32_t>(effort);
-        nanotec_->SetTarget(eff);
+        setTarget(effort);
     }
 
     void NanotecJoint::setVelocity(double velocity)
     {
-        if (!active_braking_)
-        {
-            int32_t vel = static_cast<int32_t>(velocity * scale_);
-            nanotec_->SetTarget(vel);
-        }
+        setTarget(velocity * scale_);
     }
     void NanotecJoint::setPosition(double position)
     {
-        int32_t pos = static_cast<int32_t>(position * scale_);
-        nanotec_->SetTarget(pos);
+        setTarget(position * scale_);
+    }
+
+    void NanotecJoint::setTarget(double target)
+    {
+        int32_t msg = static_cast<int32_t>(target);
+        try {
+            nanotec_->SetTarget(msg);
+        } catch(kaco::sdo_error& ex) {
+            throw "Setting target failed!";
+        }
     }
 
     double NanotecJoint::getEffort()
     {
-        return static_cast<double>(nanotec_->GetTorque());
+        try {
+            return static_cast<double>(nanotec_->GetTorque());
+        } catch(kaco::sdo_error& ex) {
+            throw "Getting effort failed!";
+        }
     }
 
     double NanotecJoint::getVelocity() 
     {
-        return static_cast<double>(nanotec_->GetVelocity()) / scale_;
+        try {
+            return static_cast<double>(nanotec_->GetVelocity()) / scale_;
+        } catch(kaco::sdo_error& ex) {
+            throw "Getting velocity failed!";
+        }
     }
 
     double NanotecJoint::getPosition()
     {
-        return static_cast<double>(nanotec_->GetPosition()) / scale_;
+        try {
+            return static_cast<double>(nanotec_->GetPosition()) / scale_;
+        } catch(kaco::sdo_error& ex) {
+            throw "Getting velocity failed!";
+        }
     }
 
 }

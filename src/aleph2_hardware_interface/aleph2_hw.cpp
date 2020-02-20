@@ -3,6 +3,7 @@
 #include <joint_limits_interface/joint_limits.h>
 #include <joint_limits_interface/joint_limits_rosparam.h>
 #include <nanotec_driver/nanotec.h>
+#include <kacanopen/core/global_config.h>
 
 using namespace hardware_interface;
 using namespace joint_limits_interface;
@@ -15,9 +16,14 @@ namespace aleph2_hardware_interface
 
     void Aleph2HW::init(ros::NodeHandle& robot_hw_nh) {
         XmlRpcValue hardware, can_devices, nanotec_presets;
+        int can_sdo_timeout;
         robot_hw_nh.getParam("joints", hardware);
         robot_hw_nh.getParam("can_devices", can_devices);
         robot_hw_nh.getParam("nanotec_presets", nanotec_presets);
+        robot_hw_nh.getParam("can_sdo_timeout", can_sdo_timeout);
+        robot_hw_nh.param<int>("can_sdo_timeout", can_sdo_timeout, 100);
+
+        kaco::Config::sdo_response_timeout_ms = can_sdo_timeout;
 
         ROS_ASSERT(hardware.getType() == XmlRpcValue::TypeStruct);
         ROS_ASSERT(can_devices.getType() == XmlRpcValue::TypeStruct || !can_devices.valid());
@@ -373,7 +379,7 @@ namespace aleph2_hardware_interface
                     break;
                 }
             } catch (const char* msg) {
-                ROS_ERROR_STREAM(msg);
+                ROS_ERROR_STREAM(joint_names_[i] << ": " << msg);
             }
         }
     }
@@ -409,7 +415,7 @@ namespace aleph2_hardware_interface
                     }
                 }
             } catch (const char* msg) {
-                ROS_ERROR_STREAM(msg);
+                ROS_ERROR_STREAM(joint_names_[i] << ": " << msg);
             }
             
         }
