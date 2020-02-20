@@ -3,6 +3,8 @@ can_devices:
     busname: "can0"
     baudrate: "500K"
 
+can_sdo_timeout: 50
+
 nanotec_presets:
   jezdny:
     Maximum current: 25000
