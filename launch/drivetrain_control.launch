@@ -15,10 +15,10 @@
 
         <node name="controller_spawner_stopped" pkg="controller_manager" type="spawner" respawn="false" output="$(arg output)" args="
             --stopped
-            controllers/velocity/wheelRL
-            controllers/velocity/wheelRR
-            controllers/velocity/wheelFL
-            controllers/velocity/wheelFR
+            controllers/velocity/wheel_RL
+            controllers/velocity/wheel_RR
+            controllers/velocity/wheel_FL
+            controllers/velocity/wheel_FR
         "/>
 
     </group>
