@@ -36,7 +36,7 @@
         "/>
     </group>
 
-    <node name="manip_control_loop" pkg="aleph2_hardware_interface" type="control_loop" output="$(arg output)" required="true">
+    <node name="manip_control_loop" pkg="aleph2_hardware_interface" type="control_loop" output="$(arg output)">
         <param name="loop_rate" value="$(arg loop_rate)"/>
         <param name="hw_namespace" value="manip"/>
         <remap from="manip/joint_states" to="joint_states"/>

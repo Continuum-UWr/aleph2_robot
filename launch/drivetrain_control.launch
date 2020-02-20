@@ -23,7 +23,7 @@
 
     </group>
 
-    <node name="drivetrain_control_loop" pkg="aleph2_hardware_interface" type="control_loop" output="$(arg output)" required="true">
+    <node name="drivetrain_control_loop" pkg="aleph2_hardware_interface" type="control_loop" output="$(arg output)">
         <param name="loop_rate" value="$(arg loop_rate)"/>
         <param name="hw_namespace" value="drivetrain"/>
         <remap from="drivetrain/joint_states" to="joint_states"/>

@@ -29,7 +29,7 @@
         "/>
     </group>
 
-    <node name="gimbal_control_loop" pkg="aleph2_hardware_interface" type="control_loop" output="$(arg output)" required="true">
+    <node name="gimbal_control_loop" pkg="aleph2_hardware_interface" type="control_loop" output="$(arg output)">
         <param name="loop_rate" value="$(arg loop_rate)"/>
         <param name="hw_namespace" value="gimbal"/>
         <remap from="gimbal/joint_states" to="joint_states"/>
