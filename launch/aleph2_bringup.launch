@@ -28,7 +28,7 @@
         <remap from="joint_states" to="aleph2/joint_states"/>
     </node>
 
-    <node name="rubi_server" pkg="rubi_server" type="rubi_server" output="$(arg output)">
+    <node name="rubi_server" pkg="rubi_server" type="rubi_server" output="$(arg output)" respawn="true">
         <param name="cans" value="can1"/>
     </node>
     
