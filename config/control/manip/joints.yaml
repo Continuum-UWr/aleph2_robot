@@ -7,18 +7,6 @@ joints:
     get_velocity_field: speed
     set_effort_field: effort
     scale: 905.5916 # 5690 / (2*pi)
-    addons:
-      - type: rubi_encoder
-        board_name: rubi_encoder1
-        get_position_field: position
-        scale: 100.0
-        offset: 0.0
-      - type: rubi_encoder
-        board_name: rubi_encoder
-        board_id: "02"
-        get_position_field: position
-        scale: 100.0
-        offset: 0.0
   manip_shoulder_joint:
     type: rubi
     board_name: ManipDC_Driver
@@ -58,4 +46,5 @@ joints:
     get_position_field: encoder
     get_velocity_field: speed
     set_effort_field: effort
-    scale: 546430.0 # 12 * 125 / (2*pi)
+#    scale: 546430.0 # 12 * 125 / (2*pi)
+    scale: 797730.0
