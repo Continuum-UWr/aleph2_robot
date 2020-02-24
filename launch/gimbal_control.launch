@@ -1,6 +1,10 @@
 <launch>
     <arg name="output" default="screen"/>
     <arg name="loop_rate" default="10"/>
+    <arg name="debug" default="false"/>
+
+    <arg unless="$(arg debug)" name="launch-prefix" value=""/>
+    <arg if="$(arg debug)" name="launch-prefix" value="gdb -ex run --args"/>
 
     <group ns="gimbal">
 
@@ -29,7 +33,7 @@
         "/>
     </group>
 
-    <node name="gimbal_control_loop" pkg="aleph2_hardware_interface" type="control_loop" output="$(arg output)">
+    <node name="gimbal_control_loop" pkg="aleph2_hardware_interface" type="control_loop" launch-prefix="$(arg launch-prefix)" output="$(arg output)">
         <param name="loop_rate" value="$(arg loop_rate)"/>
         <param name="hw_namespace" value="gimbal"/>
         <remap from="gimbal/joint_states" to="joint_states"/>
