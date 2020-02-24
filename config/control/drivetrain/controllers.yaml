@@ -16,6 +16,7 @@ controllers:
     type: "diff_drive_controller/DiffDriveController"
     left_wheel: ['wheel_RL_joint', 'wheel_FL_joint']
     right_wheel: ['wheel_RR_joint', 'wheel_FR_joint']
+    wheel_separation_multiplier: 1.87
     publish_rate: 50
     pose_covariance_diagonal: [0.001, 0.001, 1000000.0, 1000000.0, 1000000.0, 0.03]
     twist_covariance_diagonal: [0.001, 0.001, 0.001, 1000000.0, 1000000.0, 0.03]
