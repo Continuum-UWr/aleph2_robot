@@ -1,0 +1,119 @@
+controllers:
+
+  effort:
+    base:
+      type: effort_controllers/JointEffortController
+      joint: manip_base_joint
+    shoulder:
+      type: effort_controllers/JointEffortController
+      joint: manip_shoulder_joint
+    elbow:
+      type: effort_controllers/JointEffortController
+      joint: manip_elbow_joint
+    wrist_tilt:
+      type: effort_controllers/JointEffortController
+      joint: manip_wrist_tilt_joint
+    wrist_roll:
+      type: effort_controllers/JointEffortController
+      joint: manip_wrist_roll_joint
+    gripper:
+      type: effort_controllers/JointEffortController
+      joint: manip_gripper_joint
+
+  velocity:
+
+    base:
+      type: effort_controllers/JointVelocityController
+      joint: manip_base_joint
+      pid: { p: 2000.0, i: 0.0, d: 0.0 }
+    shoulder:
+      type: effort_controllers/JointVelocityController
+      joint: manip_shoulder_joint
+      pid: { p: 500.0, i: 0.0, d: 0.0 }
+    elbow:
+      type: effort_controllers/JointVelocityController
+      joint: manip_elbow_joint
+      pid: { p: 500.0, i: 200.0, d: 0.0, i_clamp_min: -1000, i_clamp_max: 1000 }
+    wrist_tilt:
+      type: effort_controllers/JointVelocityController
+      joint: manip_wrist_tilt_joint
+      pid: { p: 50.0, i: 10.0, d: 0.0 }
+    wrist_roll:
+      type: effort_controllers/JointVelocityController
+      joint: manip_wrist_roll_joint
+      pid: { p: 80.0, i: 400.0, d: 0.0, i_clamp_min: -1000, i_clamp_max: 1000 }
+    gripper:
+      type: effort_controllers/JointVelocityController
+      joint: manip_gripper_joint
+      pid: { p: 500.0, i: 0.0, d: 0.0 }
+
+  position:
+    base:
+      type: effort_controllers/JointPositionController
+      joint: manip_base_joint
+      pid: { p: 50.0, i: 10.0, d: 0.0 }
+    shoulder:
+      type: effort_controllers/JointPositionController
+      joint: manip_shoulder_joint
+      pid: { p: 50.0, i: 10.0, d: 0.0 }
+    elbow:
+      type: effort_controllers/JointPositionController
+      joint: manip_elbow_joint
+      pid: { p: 50.0, i: 10.0, d: 0.0 }
+    wrist_tilt:
+      type: effort_controllers/JointPositionController
+      joint: manip_wrist_tilt_joint
+      pid: { p: 50.0, i: 10.0, d: 0.0 }
+    wrist_roll:
+      type: effort_controllers/JointPositionController
+      joint: manip_wrist_roll_joint
+      pid: { p: 50.0, i: 10.0, d: 0.0 }
+    gripper:
+      type: effort_controllers/JointPositionController
+      joint: manip_gripper_joint
+      pid: { p: 50.0, i: 10.0, d: 0.0 }
+
+  state:
+    type: joint_state_controller/JointStateController
+    publish_rate: 20
+
+  trajectory:
+    type: "effort_controllers/JointTrajectoryController"
+    joints:
+      - manip_base_joint
+      - manip_shoulder_joint
+      - manip_elbow_joint
+      - manip_wrist_tilt_joint
+      - manip_wrist_roll_joint
+      - manip_gripper_joint
+    gains:
+      manip_base_joint: { p: 100, d: 1, i: 1, i_clamp: 1 }
+      manip_shoulder_joint: { p: 100, d: 1, i: 1, i_clamp: 1 }
+      manip_elbow_joint: { p: 100, d: 1, i: 1, i_clamp: 1 }
+      manip_wrist_tilt_joint: { p: 100, d: 1, i: 1, i_clamp: 1 }
+      manip_wrist_roll_joint: { p: 100, d: 1, i: 1, i_clamp: 1 }
+      manip_gripper_joint: { p: 100, d: 1, i: 1, i_clamp: 1 }
+    constraints:
+      goal_time: 0.5
+      stopped_velocity_tolerance: 0.02
+      manip_base_joint:
+        trajectory: 0.05
+        goal: 0.02
+      manip_shoulder_joint:
+        trajectory: 0.05
+        goal: 0.02
+      manip_elbow_joint:
+        trajectory: 0.05
+        goal: 0.02
+      manip_wrist_tilt_joint:
+        trajectory: 0.05
+        goal: 0.02
+      manip_wrist_roll_joint:
+        trajectory: 0.05
+        goal: 0.02
+      manip_gripper_joint:
+        trajectory: 0.05
+        goal: 0.02
+    state_publish_rate: 25
+    action_monitor_rate: 30
+    stop_trajectory_duration: 0

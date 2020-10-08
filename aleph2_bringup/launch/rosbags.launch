@@ -1,0 +1,11 @@
+<launch>
+    <arg name="record_cameras" default="false"/>
+
+    <arg unless="$(arg record_cameras)" name="active_rosbags" value="[control, sensors]"/>
+    <arg if="$(arg record_cameras)" name="active_rosbags" value="[control, sensors, cameras]"/>
+
+    <node name="rosbag_recorder" pkg="aleph2_bringup" type="rosbag_recorder">
+        <rosparam param="active" subst_value="True">$(arg active_rosbags)</rosparam>
+        <rosparam command="load" file="$(find aleph2_bringup)/config/rosbags.yaml"/>
+    </node>
+</launch>

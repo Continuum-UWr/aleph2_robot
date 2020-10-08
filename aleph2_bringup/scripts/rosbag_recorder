@@ -1,0 +1,48 @@
+#!/usr/bin/env python
+
+from os import path, makedirs
+import subprocess
+import signal
+import psutil
+from datetime import datetime
+
+import rospy
+from rosparam import dump_params
+
+rospy.init_node("rosbag_recorder")
+
+rosbags = rospy.get_param("~rosbags")
+active = rospy.get_param("~active")
+log_folder = rospy.get_param("~log_folder", "/var/log/ros/rosbags")
+
+date_s = datetime.today().strftime("%Y-%m-%d-%H-%M-%S")
+record_folder = path.join(log_folder, date_s)
+
+makedirs(record_folder)
+
+dump_params(path.join(record_folder, 'parameters.yaml'), "/")
+
+processes = []
+for bag in active:
+    topics = " ".join(rosbags[bag])
+    file = path.join(record_folder, bag + ".bag")
+    rosbag_process = subprocess.Popen(
+        "rosbag record -O %s %s" % (file, topics),
+        shell=True,
+        executable="/bin/bash"
+    )
+    processes.append(rosbag_process)
+
+
+def shutdown_hook():
+    for p in processes:
+        process = psutil.Process(p.pid)
+        for sub_process in process.children(recursive=True):
+            sub_process.send_signal(signal.SIGINT)
+    for p in processes:
+        p.wait()
+
+
+rospy.on_shutdown(shutdown_hook)
+
+rospy.spin()
