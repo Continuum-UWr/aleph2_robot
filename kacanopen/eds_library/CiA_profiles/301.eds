@@ -1,0 +1,944 @@
+[1000]
+ParameterName=Device type
+ObjectType=0x07 # VAR
+DataType=0x0007 # UNSIGNED32
+# Category: Mandatory
+AccessType=ro
+DefaultValue=Profile- or manufacturer-specific
+PDOMapping=0 # No
+ 
+[1001]
+ParameterName=Error register
+ObjectType=0x07 # VAR
+DataType=0x0005 # UNSIGNED8
+# Category: Mandatory
+AccessType=ro
+DefaultValue=No
+PDOMapping=1 # Optional
+ 
+[1002]
+ParameterName=Manufacturer status register
+ObjectType=0x07 # VAR
+DataType=0x0007 # UNSIGNED32
+# Category: Optional
+AccessType=ro
+DefaultValue=No
+PDOMapping=1 # Optional
+ 
+[1003]
+ParameterName=Pre-defined error field
+ObjectType=0x08 # ARRAY
+# SubNumber=3
+ 
+[1003sub00]
+ParameterName=Number of errors
+ObjectType=0x007 # VAR
+DataType=0x0005 # UNSIGNED8
+AccessType=rw
+# DefaultValue=00h
+PDOMapping=0 # No
+ 
+[1003sub01] # repeat until 1003subFE
+ParameterName=Standard error field
+ObjectType=0x007 # VAR
+DataType=0x0007 # UNSIGNED32
+AccessType=ro
+# DefaultValue=No
+PDOMapping=0 # No
+ 
+[1003sub02]
+ParameterName=Standard error field 2
+ObjectType=0x007 # VAR
+DataType=0x0007 # UNSIGNED32
+AccessType=ro
+# DefaultValue=No
+PDOMapping=0 # No
+ 
+[1003sub03]
+ParameterName=Standard error field 3
+ObjectType=0x007 # VAR
+DataType=0x0007 # UNSIGNED32
+AccessType=ro
+# DefaultValue=No
+PDOMapping=0 # No
+ 
+[1003sub04]
+ParameterName=Standard error field 4
+ObjectType=0x007 # VAR
+DataType=0x0007 # UNSIGNED32
+AccessType=ro
+# DefaultValue=No
+PDOMapping=0 # No
+ 
+[1005]
+ParameterName=COB-ID SYNC
+ObjectType=0x07 # VAR
+DataType=0x0007 # UNSIGNED32
+# Category: Conditional;
+AccessType=rw # rw;
+DefaultValue=0000 0080h or 8000 0080h
+PDOMapping=0 # No
+ 
+[1006]
+ParameterName=Communication cycle period
+ObjectType=0x07 # VAR
+DataType=0x0007 # UNSIGNED32
+# Category: Conditional;
+AccessType=rw
+DefaultValue=0000 0000h
+PDOMapping=0 # No
+ 
+[1007]
+ParameterName=Synchronous window length
+ObjectType=0x07 # VAR
+DataType=0x0007 # UNSIGNED32
+# Category: Optional
+AccessType=rw
+DefaultValue=0000 0000h
+PDOMapping=0 # No
+ 
+[1008]
+ParameterName=Manufacturer device name
+ObjectType=0x07 # VAR
+DataType=0x0009 # VISIBLE_STRING
+# Category: Optional
+AccessType=const
+DefaultValue=Manufacturer-specific
+PDOMapping=0 # No
+ 
+[1009]
+ParameterName=Manufacturer hardware version
+ObjectType=0x07 # VAR
+DataType=0x0009 # VISIBLE_STRING
+# Category: Optional
+AccessType=const
+DefaultValue=Manufacturer-specific
+PDOMapping=0 # No
+ 
+[100A]
+ParameterName=Manufacturer software version
+ObjectType=0x07 # VAR
+DataType=0x0009 # VISIBLE_STRING
+# Category: Optional
+AccessType=const
+DefaultValue=Manufacturer-specific
+PDOMapping=0 # No
+ 
+[100C]
+ParameterName=Guard time
+ObjectType=0x07 # VAR
+DataType=0x0006 # UNSIGNED16
+# Category: Conditional;
+AccessType=rw # rw;
+DefaultValue=0000h
+PDOMapping=0 # No
+ 
+[100D]
+ParameterName=Life time factor
+ObjectType=0x07 # VAR
+DataType=0x0005 # UNSIGNED8
+# Category: Conditional;
+AccessType=rw # rw;
+DefaultValue=00h
+PDOMapping=0 # No
+ 
+[1010]
+ParameterName=store parameters
+ObjectType=0x08 # ARRAY
+# SubNumber=5
+ 
+[1010sub00]
+ParameterName=highest sub-index supported
+ObjectType=0x007 # VAR
+DataType=0x0005 # UNSIGNED8
+AccessType=const
+# DefaultValue=profile- or manufacturer-specific
+PDOMapping=0 # No
+ 
+[1010sub01]
+ParameterName=save all parameters
+ObjectType=0x007 # VAR
+DataType=0x0007 # UNSIGNED32
+AccessType=rw
+# DefaultValue=profile- or manufacturer specific
+PDOMapping=0 # No
+ 
+[1010sub02]
+ParameterName=save communication parameters
+ObjectType=0x007 # VAR
+DataType=0x0007 # UNSIGNED32
+AccessType=rw
+# DefaultValue=profile- or manufacturer-specific
+PDOMapping=0 # No
+ 
+[1010sub03]
+ParameterName=save application parameters
+ObjectType=0x007 # VAR
+DataType=0x0007 # UNSIGNED32
+AccessType=rw
+# DefaultValue=profile- or manufacturer-specific
+PDOMapping=0 # No
+ 
+[1010sub04] # repeat until 1010sub7F
+ParameterName=save manufacturer defined parameters
+ObjectType=0x007 # VAR
+DataType=0x0007 # UNSIGNED32
+AccessType=rw
+# DefaultValue=s valid
+PDOMapping=0 # No
+ 
+[1011]
+ParameterName=restore default parameters
+ObjectType=0x08 # ARRAY
+# SubNumber=5
+ 
+[1011sub00]
+ParameterName=highest sub-index supported
+ObjectType=0x007 # VAR
+DataType=0x0005 # UNSIGNED8
+AccessType=const
+# DefaultValue=profile- or manufacturer-specific
+PDOMapping=0 # No
+ 
+[1011sub01]
+ParameterName=restore all default parameters
+ObjectType=0x007 # VAR
+DataType=0x0007 # UNSIGNED32
+AccessType=rw
+# DefaultValue=profile- or manufacturer-specific
+PDOMapping=0 # No
+ 
+[1011sub02]
+ParameterName=restore communication default parameters
+ObjectType=0x007 # VAR
+DataType=0x0007 # UNSIGNED32
+AccessType=rw
+# DefaultValue=profile- or manufacturer-specific
+PDOMapping=0 # No
+ 
+[1011sub03]
+ParameterName=restore application default parameters
+ObjectType=0x007 # VAR
+DataType=0x0007 # UNSIGNED32
+AccessType=rw
+# DefaultValue=profile- or manufacturer-specific
+PDOMapping=0 # No
+ 
+[1011sub04] # repeat until 1011sub7F
+ParameterName=restore manufacturer defined default parameters
+ObjectType=0x007 # VAR
+DataType=0x0007 # UNSIGNED32
+AccessType=rw # 
+# DefaultValue=profile- or manufacturer-specific
+PDOMapping=0 # No
+ 
+[1012]
+ParameterName=COB-ID time stamp message
+ObjectType=0x07 # VAR
+DataType=0x0007 # UNSIGNED32
+# Category: Optional
+AccessType=rw
+DefaultValue=CAN-ID: 100h
+PDOMapping=0 # No
+ 
+[1013]
+ParameterName=high resolution time stamp
+ObjectType=0x07 # VAR
+DataType=0x0007 # UNSIGNED32
+# Category: Optional
+AccessType=rw # rw;
+DefaultValue=0
+PDOMapping=1 # Optional
+ 
+[1014]
+ParameterName=COB-ID emergency message
+ObjectType=0x07 # VAR
+DataType=0x0007 # UNSIGNED32
+# Category: Conditional;
+AccessType=rw # rw;
+DefaultValue=CAN-ID: 80h + Node-ID
+PDOMapping=0 # No
+ 
+[1015]
+ParameterName=inhibit time EMCY
+ObjectType=0x07 # VAR
+DataType=0x0006 # UNSIGNED16
+# Category: Optional
+AccessType=rw
+DefaultValue=0
+PDOMapping=0 # No
+ 
+[1016]
+ParameterName=Consumer heartbeat time
+ObjectType=0x08 # ARRAY
+# SubNumber=3
+ 
+[1016sub00]
+ParameterName=Highest sub-index supported
+ObjectType=0x007 # VAR
+DataType=0x0005 # UNSIGNED8
+AccessType=const
+# DefaultValue=profile- or manufacturer-specific
+PDOMapping=0 # No
+ 
+[1016sub01] # repeat until 1016sub7F
+ParameterName=Consumer heartbeat time
+ObjectType=0x007 # VAR
+DataType=0x0007 # UNSIGNED32
+AccessType=rw
+# DefaultValue=0000 0000h
+PDOMapping=0 # No
+ 
+[1016sub02]
+ParameterName=Consumer heartbeat time 2
+ObjectType=0x007 # VAR
+DataType=0x0007 # UNSIGNED32
+AccessType=rw
+# DefaultValue=0000 0000h
+PDOMapping=0 # No
+ 
+[1016sub03]
+ParameterName=Consumer heartbeat time 3
+ObjectType=0x007 # VAR
+DataType=0x0007 # UNSIGNED32
+AccessType=rw
+# DefaultValue=0000 0000h
+PDOMapping=0 # No
+ 
+[1016sub04]
+ParameterName=Consumer heartbeat time 4
+ObjectType=0x007 # VAR
+DataType=0x0007 # UNSIGNED32
+AccessType=rw
+# DefaultValue=0000 0000h
+PDOMapping=0 # No
+ 
+[1017]
+ParameterName=Producer heartbeat time
+ObjectType=0x07 # VAR
+DataType=0x0006 # UNSIGNED16
+# Category: Conditional;
+AccessType=rw
+DefaultValue=0 or profile-specific
+PDOMapping=0 # No
+ 
+[1018]
+ParameterName=Identity object
+ObjectType=0x09 # RECORD
+# SubNumber=5
+ 
+[1018sub00]
+ParameterName=Highest sub-index supported
+ObjectType=0x007 # VAR
+DataType=0x0005 # Identity
+AccessType=const
+# DefaultValue=profile- or manufacturer-specific
+PDOMapping=0 # No
+ 
+[1018sub01]
+ParameterName=Vendor-ID
+ObjectType=0x007 # VAR
+DataType=0x0007 # Identity
+AccessType=ro
+# DefaultValue=Assigned uniquely to manufacturers by CiA
+PDOMapping=0 # No
+ 
+[1018sub02]
+ParameterName=Product code
+ObjectType=0x007 # VAR
+DataType=0x0007 # Identity
+AccessType=ro
+# DefaultValue=Profile- or manufacturer-specific
+PDOMapping=0 # No
+ 
+[1018sub03]
+ParameterName=Revision number
+ObjectType=0x007 # VAR
+DataType=0x0007 # Identity
+AccessType=ro
+# DefaultValue=Profile- or manufacturer-specific
+PDOMapping=0 # No
+ 
+[1018sub04]
+ParameterName=Serial number
+ObjectType=0x007 # VAR
+DataType=0x0007 # Identity
+AccessType=ro
+# DefaultValue=Profile- or manufacturer-specific
+PDOMapping=0 # No
+ 
+[1019]
+ParameterName=Synchronous counter overflow value
+ObjectType=0x07 # VAR
+DataType=0x0005 # UNSIGNED8
+# Category: Optional
+AccessType=rw # rw;
+DefaultValue=0 or profile-specific
+PDOMapping=0 # No
+ 
+[1020]
+ParameterName=Verify configuration
+ObjectType=0x08 # ARRAY
+# SubNumber=3
+ 
+[1020sub00]
+ParameterName=Highest sub-index supported
+ObjectType=0x007 # VAR
+DataType=0x0005 # UNSIGNED8
+AccessType=const
+# DefaultValue=02h
+PDOMapping=0 # No
+ 
+[1020sub01]
+ParameterName=Configuration date
+ObjectType=0x007 # VAR
+DataType=0x0007 # UNSIGNED32
+AccessType=rw
+# DefaultValue=Manufacturer-specific
+PDOMapping=0 # No
+ 
+[1020sub02]
+ParameterName=Configuration time
+ObjectType=0x007 # VAR
+DataType=0x0007 # UNSIGNED32
+AccessType=rw
+# DefaultValue=Manufacturer-specific
+PDOMapping=0 # No
+ 
+#[1021]
+#ParameterName=Store EDS
+#ObjectType=0x07 # VAR
+#DataType=0x000F # DOMAIN
+# Category: Optional
+#AccessType=ro
+#DefaultValue=No
+#PDOMapping=0 # No
+ 
+[1022]
+ParameterName=Store format
+ObjectType=0x07 # VAR
+DataType=0x0006 # UNSIGNED16
+# Category: Conditional;
+AccessType=ro
+DefaultValue=No
+PDOMapping=0 # No
+ 
+[1023]
+ParameterName=OS command
+ObjectType=0x09 # RECORD
+# SubNumber=4
+ 
+[1023sub00]
+ParameterName=Highest sub-index supported
+ObjectType=0x007 # VAR
+DataType=0x0005 # OS command record
+AccessType=const
+# DefaultValue=03h
+PDOMapping=0 # No
+ 
+[1023sub01]
+ParameterName=Command
+ObjectType=0x007 # VAR
+DataType=0x000A # OS command record
+AccessType=rw # rw;
+# DefaultValue=Manufacturer-specific
+PDOMapping=0 # No
+ 
+[1023sub02]
+ParameterName=Status
+ObjectType=0x007 # VAR
+DataType=0x0005 # OS command record
+AccessType=ro
+# DefaultValue=No
+PDOMapping=0 # No
+ 
+[1023sub03]
+ParameterName=Reply
+ObjectType=0x007 # VAR
+DataType=0x000A # OS command record
+AccessType=ro
+# DefaultValue=No
+PDOMapping=0 # No
+ 
+[1024]
+ParameterName=OS command mode
+ObjectType=0x07 # VAR
+DataType=0x0005 # UNSIGNED8
+# Category: Optional
+AccessType=wo
+DefaultValue=Manufacturer-specific
+PDOMapping=0 # No
+ 
+[1025]
+ParameterName=OS debugger interface
+ObjectType=0x09 # RECORD
+# SubNumber=4
+ 
+[1025sub00]
+ParameterName=Highest sub-index supported
+ObjectType=0x007 # VAR
+DataType=0x0005 # OS debug record
+AccessType=const
+# DefaultValue=03h
+PDOMapping=0 # No
+ 
+[1025sub01]
+ParameterName=Command
+ObjectType=0x007 # VAR
+DataType=0x000A # OS debug record
+AccessType=rw # rw;
+# DefaultValue=Manufacturer-specific
+PDOMapping=0 # No
+ 
+[1025sub02]
+ParameterName=Status
+ObjectType=0x007 # VAR
+DataType=0x0005 # OS debug record
+AccessType=ro
+# DefaultValue=No
+PDOMapping=0 # No
+ 
+[1025sub03]
+ParameterName=Reply
+ObjectType=0x007 # VAR
+DataType=0x000A # OS debug record
+AccessType=ro
+# DefaultValue=No
+PDOMapping=0 # No
+ 
+[1026]
+ParameterName=OS prompt
+ObjectType=0x08 # ARRAY
+# SubNumber=4
+ 
+[1026sub00]
+ParameterName=Highest sub-index supported
+ObjectType=0x007 # VAR
+DataType=0x0005 # UNSIGNED8
+AccessType=const
+# DefaultValue=No
+PDOMapping=0 # No
+ 
+[1026sub01]
+ParameterName=StdIn
+ObjectType=0x007 # VAR
+DataType=0x0005 # UNSIGNED8
+AccessType=wo
+# DefaultValue=Manufacturer-specific
+PDOMapping=1 # Optional
+ 
+[1026sub02]
+ParameterName=StdOut
+ObjectType=0x007 # VAR
+DataType=0x0005 # UNSIGNED8
+AccessType=ro
+# DefaultValue=No
+PDOMapping=1 # Optional
+ 
+[1026sub03]
+ParameterName=StdErr
+ObjectType=0x007 # VAR
+DataType=0x0005 # UNSIGNED8
+AccessType=ro
+# DefaultValue=No
+PDOMapping=1 # Optional
+ 
+[1027]
+ParameterName=Module list
+ObjectType=0x08 # ARRAY
+# SubNumber=3
+ 
+[1027sub00]
+ParameterName=number of connected modules
+ObjectType=0x007 # VAR
+DataType=0x0005 # UNSIGNED8
+AccessType=const
+# DefaultValue=No
+PDOMapping=0 # No
+ 
+[1027sub01]
+ParameterName=Module 1
+ObjectType=0x007 # VAR
+DataType=0x0006 # UNSIGNED16
+AccessType=ro
+# DefaultValue=No
+PDOMapping=0 # No
+ 
+[1027sub02] # repeat until 1027subFE
+ParameterName=Module 2 to Module 254
+ObjectType=0x007 # VAR
+DataType=0x0006 # UNSIGNED16
+AccessType=ro
+# DefaultValue=No
+PDOMapping=0 # No
+ 
+[1028]
+ParameterName=Emergency consumer
+ObjectType=0x08 # ARRAY
+# SubNumber=3
+ 
+[1028sub00]
+ParameterName=Highest sub-index supported
+ObjectType=0x007 # VAR
+DataType=0x0005 # UNSIGNED8
+AccessType=const
+# DefaultValue=profile- or manufacturer-specific
+PDOMapping=0 # No
+ 
+[1028sub01]
+ParameterName=Emergency consumer 1
+ObjectType=0x007 # VAR
+DataType=0x0007 # UNSIGNED32
+AccessType=rw # rw;
+# DefaultValue=profile- or manufacturer-specific
+PDOMapping=0 # No
+ 
+[1028sub02] # repeat until 1028sub7F
+ParameterName=Emergency consumer 2 to 127
+ObjectType=0x007 # VAR
+DataType=0x0007 # UNSIGNED32
+AccessType=rw # rw;
+# DefaultValue=profile- or manufacturer-specific
+PDOMapping=0 # No
+ 
+[1029]
+ParameterName=Error behavior
+ObjectType=0x08 # ARRAY
+# SubNumber=3
+ 
+[1029sub00]
+ParameterName=Highest sub-index supported
+ObjectType=0x007 # VAR
+DataType=0x0005 # UNSIGNED8
+AccessType=const
+# DefaultValue=profile- or manufacturer-specific
+PDOMapping=0 # No
+ 
+[1029sub01]
+ParameterName=Communication error
+ObjectType=0x007 # VAR
+DataType=0x0005 # UNSIGNED8
+AccessType=rw # rw;
+# DefaultValue=00h
+PDOMapping=0 # No
+ 
+[1029sub02] # repeat until 1029subFE
+ParameterName=profile- or manufacturer-specific error
+ObjectType=0x007 # VAR
+DataType=0x0005 # UNSIGNED8
+AccessType=rw # rw;
+# DefaultValue=profile or manufacturer-specific
+PDOMapping=0 # No
+ 
+[1200] # repeat until 127F
+ParameterName=SDO server parameter
+ObjectType=0x09 # RECORD
+# SubNumber=4
+ 
+[1200sub00]
+ParameterName=Highest sub-index supported
+ObjectType=0x007 # VAR
+DataType=0x0005 # SDO parameter record
+AccessType=const
+# DefaultValue=profile or manufacturer-specific
+PDOMapping=0 # No
+ 
+[1200sub01]
+ParameterName=COB-ID client -> server (rx)
+ObjectType=0x007 # VAR
+DataType=0x0007 # SDO parameter record
+AccessType=rw # Index 1200h:               const
+# DefaultValue=Index 1200h:             CAN-ID:   600h + Node-ID
+PDOMapping=1 # Optional
+ 
+[1200sub02]
+ParameterName=COB-ID server -> client (tx)
+ObjectType=0x007 # VAR
+DataType=0x0007 # SDO parameter record
+AccessType=rw # Index 1200h:               ro
+# DefaultValue=Index 1200h:             CAN-ID:   580h + Node-ID
+PDOMapping=1 # Optional
+ 
+[1200sub03]
+ParameterName=Node-ID of the SDO client
+ObjectType=0x007 # VAR
+DataType=0x0005 # SDO parameter record
+AccessType=rw
+# DefaultValue=manufacturer-specific
+PDOMapping=0 # No
+ 
+[1280] # repeat until 12FF
+ParameterName=SDO client parameter
+ObjectType=0x09 # RECORD
+# SubNumber=4
+ 
+[1280sub00]
+ParameterName=Highest sub-index supported
+ObjectType=0x007 # VAR
+DataType=0x0005 # SDO Parameter
+AccessType=const
+# DefaultValue=03h
+PDOMapping=0 # No
+ 
+[1280sub01]
+ParameterName=COB-ID client -> server (tx)
+ObjectType=0x007 # VAR
+DataType=0x0007 # SDO Parameter
+AccessType=rw # rw;
+# DefaultValue=CAN-ID:    manufacturer-specific (see clause 7.3.5)
+PDOMapping=1 # Optional
+ 
+[1280sub02]
+ParameterName=COB-ID server -> client (rx)
+ObjectType=0x007 # VAR
+DataType=0x0007 # SDO Parameter
+AccessType=rw # rw;
+# DefaultValue=CAN-ID:    manufacturer-specific (see clause 7.3.5)
+PDOMapping=1 # Optional
+ 
+[1280sub03]
+ParameterName=Node-ID of the SDO server
+ObjectType=0x007 # VAR
+DataType=0x0005 # SDO Parameter
+AccessType=rw # rw;
+# DefaultValue=manufacturer-specific
+PDOMapping=0 # No
+ 
+[1400] # repeat until 15FF
+ParameterName=RPDO communication parameter
+ObjectType=0x09 # RECORD
+# SubNumber=7
+ 
+[1400sub00]
+ParameterName=highest sub-index supported
+ObjectType=0x007 # VAR
+DataType=0x0005 # PDO communication parameter record
+AccessType=const
+# DefaultValue=No
+PDOMapping=0 # No
+ 
+[1400sub01]
+ParameterName=COB-ID used by RPDO
+ObjectType=0x007 # VAR
+DataType=0x0007 # PDO communication parameter record
+AccessType=rw # rw;
+# DefaultValue=see value definition
+PDOMapping=0 # No
+ 
+[1400sub02]
+ParameterName=transmission type
+ObjectType=0x007 # VAR
+DataType=0x0005 # PDO communication parameter record
+AccessType=rw # rw;
+# DefaultValue=Profile- or manufacturer specific
+PDOMapping=0 # No
+ 
+[1400sub03]
+ParameterName=inhibit time
+ObjectType=0x007 # VAR
+DataType=0x0006 # PDO communication parameter record
+AccessType=rw # rw;
+# DefaultValue=Profile- or manufacturer specific
+PDOMapping=0 # No
+ 
+[1400sub04]
+ParameterName=compatibility entry
+ObjectType=0x007 # VAR
+DataType=0x0005 # PDO communication parameter record
+AccessType=rw
+# DefaultValue=Manufacturer specific
+PDOMapping=0 # No
+ 
+[1400sub05]
+ParameterName=event-timer
+ObjectType=0x007 # VAR
+DataType=0x0006 # PDO communication parameter record
+AccessType=rw # rw;
+# DefaultValue=Profile- or manufacturer specific
+PDOMapping=0 # No
+ 
+[1400sub06]
+ParameterName=SYNC start value
+ObjectType=0x007 # VAR
+DataType=0x0005 # PDO communication parameter record
+AccessType=rw
+# DefaultValue=Profile- or manufacturer specific
+PDOMapping=0 # No
+ 
+[1600] # repeat until 17FF
+ParameterName=RPDO mapping parameter
+ObjectType=0x09 # RECORD
+# SubNumber=3
+ 
+[1600sub00]
+ParameterName=number of mapped application objects in PDO
+ObjectType=0x007 # VAR
+DataType=0x0005 # PDO mapping parameter record
+AccessType=rw # rw;
+# DefaultValue=profile- or manufacturer-specific
+PDOMapping=0 # No
+ 
+[1600sub01]
+ParameterName=1 application object
+ObjectType=0x007 # VAR
+DataType=0x0007 # PDO mapping parameter record
+AccessType=rw # rw;
+# DefaultValue=profile- or manufacturer-specific
+PDOMapping=0 # No
+ 
+[1600sub02] # repeat until 1600sub40
+ParameterName=2        application object to 64 application object
+ObjectType=0x007 # VAR
+DataType=0x0007 # PDO mapping parameter record
+AccessType=rw # rw;
+# DefaultValue=profile- or manufacturer-specific
+PDOMapping=0 # No
+ 
+[1800] # repeat until 19FF
+ParameterName=TPDO communication parameter
+ObjectType=0x09 # RECORD
+# SubNumber=7
+ 
+[1800sub00]
+ParameterName=highest sub-index supported
+ObjectType=0x007 # VAR
+DataType=0x0005 # PDO communication parameter record
+AccessType=const
+# DefaultValue=
+PDOMapping=0 # No
+ 
+[1800sub01]
+ParameterName=COB-ID used by TPDO
+ObjectType=0x007 # VAR
+DataType=0x0007 # PDO communication parameter record
+AccessType=rw # rw;
+# DefaultValue=see value definition
+PDOMapping=0 # No
+ 
+[1800sub02]
+ParameterName=transmission type
+ObjectType=0x007 # VAR
+DataType=0x0005 # PDO communication parameter record
+AccessType=rw # rw;
+# DefaultValue=profile- or manufacturer-specific
+PDOMapping=0 # No
+ 
+[1800sub03]
+ParameterName=inhibit time
+ObjectType=0x007 # VAR
+DataType=0x0006 # PDO communication parameter record
+AccessType=rw # rw;
+# DefaultValue=profile- or manufacturer-specific
+PDOMapping=0 # No
+ 
+[1800sub04]
+ParameterName=reserved
+ObjectType=0x007 # VAR
+DataType=0x0005 # PDO communication parameter record
+AccessType=rw
+# DefaultValue=manufacturer-specific
+PDOMapping=0 # No
+ 
+[1800sub05]
+ParameterName=event timer
+ObjectType=0x007 # VAR
+DataType=0x0006 # PDO communication parameter record
+AccessType=rw # rw;
+# DefaultValue=profile- or manufacturer-specific
+PDOMapping=0 # No
+ 
+[1800sub06]
+ParameterName=SYNC start value
+ObjectType=0x007 # VAR
+DataType=0x0005 # PDO communication parameter record
+AccessType=rw # rw;
+# DefaultValue=profile- or manufacturer-specific
+PDOMapping=0 # No
+ 
+[1A00] # repeat until 1BFF
+ParameterName=TPDO mapping
+ObjectType=0x09 # RECORD
+# SubNumber=3
+ 
+[1A00sub00]
+ParameterName=number of mapped application objects in TPDO
+ObjectType=0x007 # VAR
+DataType=0x0005 # PDO mapping parameter record
+AccessType=rw # rw;
+# DefaultValue=profile- or manufacturer-specific
+PDOMapping=0 # No
+ 
+[1A00sub01]
+ParameterName=1 application object
+ObjectType=0x007 # VAR
+DataType=0x0007 # PDO mapping parameter record
+AccessType=rw # rw;
+# DefaultValue=profile- or manufacturer-specific
+PDOMapping=0 # No
+ 
+[1A00sub02] # repeat until 1A00sub40
+ParameterName=2        application object to 64 application object
+ObjectType=0x007 # VAR
+DataType=0x0007 # PDO mapping parameter record
+AccessType=rw # rw;
+# DefaultValue=profile- or manufacturer-specific
+PDOMapping=0 # No
+ 
+[1FA0] # repeat until 1FCF
+ParameterName=Object scanner list
+ObjectType=0x08 # ARRAY
+# SubNumber=3
+ 
+[1FA0sub00]
+ParameterName=Highest sub-index supported
+ObjectType=0x007 # VAR
+DataType=0x0005 # UNSIGNED8
+AccessType=const
+# DefaultValue=profile- or manufacturer-specific
+PDOMapping=0 # No
+ 
+[1FA0sub01]
+ParameterName=Scan 1
+ObjectType=0x007 # VAR
+DataType=0x0007 # UNSIGNED32
+AccessType=rw # rw;
+# DefaultValue=profile- or manufacturer-specific
+PDOMapping=0 # No
+ 
+[1FA0sub02] # repeat until 1FA0subFE
+ParameterName=Scan 2 to Scan 254
+ObjectType=0x007 # VAR
+DataType=0x0007 # UNSIGNED32
+AccessType=rw # rw;
+# DefaultValue=profile- or manufacturer-specific
+PDOMapping=0 # No
+ 
+[1FD0] # repeat until 1FFF
+ParameterName=Object dispatching list
+ObjectType=0x08 # ARRAY
+# SubNumber=3
+ 
+[1FD0sub00]
+ParameterName=Highest sub-index support
+ObjectType=0x007 # VAR
+DataType=0x0005 # UNSIGNED8
+AccessType=const
+# DefaultValue=profile- or manufacturer-specific
+PDOMapping=0 # No
+ 
+[1FD0sub01]
+ParameterName=Dispatch 1
+ObjectType=0x007 # VAR
+DataType=0x001B # UNSIGNED64
+AccessType=rw # rw;
+# DefaultValue=profile- or manufacturer-specific
+PDOMapping=0 # No
+ 
+[1FD0sub02] # repeat until 1FD0subFE
+ParameterName=Dispatch 2 to Dispatch 254
+ObjectType=0x007 # VAR
+DataType=0x001B # UNSIGNED64
+AccessType=rw # type listed here may vary for certain sub-indices. See detailed object specification.
+# DefaultValue=profile- or manufacturer-specific
+PDOMapping=0 # No
+ 

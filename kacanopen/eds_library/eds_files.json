@@ -1,0 +1,243 @@
+[
+	{
+		"file": "Faulhaber/605.3150.51-V-EK-2-60.eds",
+		"match": {
+			"Identity object/Vendor-ID": 327,
+			"Identity object/Product code": 3150,
+			"Manufacturer software version": "3150.51V"
+		}
+	},
+	{
+		"file": "Faulhaber/605.3150.52-V-EK-2-60.eds",
+		"match": {
+			"Identity object/Vendor-ID": 327,
+			"Identity object/Product code": 3150,
+			"Manufacturer software version": "3150.52V"
+		}
+	},
+	{
+		"file": "Faulhaber/605.3150.55-D-EK-2-60.eds",
+		"match": {
+			"Identity object/Vendor-ID": 327,
+			"Identity object/Product code": 3150,
+			"Manufacturer software version": "3150.55D"
+		}
+	},
+	{
+		"file": "Faulhaber/605.3150.60-B-EK-2-60.eds",
+		"match": {
+			"Identity object/Vendor-ID": 327,
+			"Identity object/Product code": 3150,
+			"Manufacturer software version": "3150.60B"
+		}
+	},
+	{
+		"file": "Faulhaber/605.3150.65-B-EK-2-60.eds",
+		"match": {
+			"Identity object/Vendor-ID": 327,
+			"Identity object/Product code": 3150,
+			"Manufacturer software version": "3150.65B"
+		}
+	},
+	{
+		"file": "Faulhaber/605.3150.66-B-EK-2-60.eds",
+		"match": {
+			"Identity object/Vendor-ID": 327,
+			"Identity object/Product code": 3150,
+			"Manufacturer software version": "3150.66B"
+		}
+	},
+	{
+		"file": "Faulhaber/605.3150.71-A-EK-2-60.eds",
+		"match": {
+			"Identity object/Vendor-ID": 327,
+			"Identity object/Product code": 3150,
+			"Manufacturer software version": "3150.71A"
+		}
+	},
+	{
+		"file": "Faulhaber/605.3150.73-A-EK-2-60.eds",
+		"match": {
+			"Identity object/Vendor-ID": 327,
+			"Identity object/Product code": 3150,
+			"Manufacturer software version": "3150.73A"
+		}
+	},
+	{
+		"file": "Faulhaber/605.3150.67-A-EK-2-60.eds",
+		"match": {
+			"Identity object/Vendor-ID": 327,
+			"Identity object/Product code": 3150,
+			"Manufacturer software version": "3150.67A"
+		}
+	},
+	{
+		"file": "Faulhaber/605.3150.67-B-EK-2-60.eds",
+		"match": {
+			"Identity object/Vendor-ID": 327,
+			"Identity object/Product code": 3150,
+			"Manufacturer software version": "3150.67B"
+		}
+	},
+	{
+		"file": "Faulhaber/605.3150.68-A-EK-2-60.eds",
+		"match": {
+			"Identity object/Vendor-ID": 327,
+			"Identity object/Product code": 3150,
+			"Manufacturer software version": "3150.68A"
+		}
+	},
+	{
+		"file": "Faulhaber/605.3150.68-B-EK-2-60.eds",
+		"match": {
+			"Identity object/Vendor-ID": 327,
+			"Identity object/Product code": 3150,
+			"Manufacturer software version": "3150.68B"
+		}
+	},
+	{
+		"file": "Faulhaber/605.3150.69-A-EK-2-60.eds",
+		"match": {
+			"Identity object/Vendor-ID": 327,
+			"Identity object/Product code": 3150,
+			"Manufacturer software version": "3150.69A"
+		}
+	},
+	{
+		"file": "Faulhaber/605.3150.69-B-EK-2-60.eds",
+		"match": {
+			"Identity object/Vendor-ID": 327,
+			"Identity object/Product code": 3150,
+			"Manufacturer software version": "3150.69B"
+		}
+	},
+	{
+		"file": "Faulhaber/605.3150.70-A-EK-2-60.eds",
+		"match": {
+			"Identity object/Vendor-ID": 327,
+			"Identity object/Product code": 3150,
+			"Manufacturer software version": "3150.70A"
+		}
+	},
+	{
+		"file": "Faulhaber/605.3150.70-B-EK-2-60.eds",
+		"match": {
+			"Identity object/Vendor-ID": 327,
+			"Identity object/Product code": 3150,
+			"Manufacturer software version": "3150.70B"
+		}
+	},
+	{
+		"file": "SysTecElectronic/So-1064/CANopen_Io_X1_3001000/IoX1_16DI_8DO.eds",
+		"match": {
+			"Identity object/Vendor-ID": 63,
+			"Identity object/Product code": 3001000
+		}
+	},
+	{
+		"file": "SysTecElectronic/So-1064/CANopen_Io_X2_3001001/IoX2_24DI.eds",
+		"match": {
+			"Identity object/Vendor-ID": 63,
+			"Identity object/Product code": 3001001
+		}
+	},
+	{
+		"file": "/SysTecElectronic/So-1064/CANopen_Io_X3_3001002/IoX3_24DO.eds",
+		"match": {
+			"Identity object/Vendor-ID": 63,
+			"Identity object/Product code": 3001002
+		}
+	},
+	{
+		"file": "SysTecElectronic/So-1064/CANopen_Io_X4_3001003/IoX4_8AI.eds",
+		"match": {
+			"Identity object/Vendor-ID": 63,
+			"Identity object/Product code": 3001003
+		}
+	},
+	{
+		"file": "SysTecElectronic/So-1064/CANopen_Io_X5_3001004/IoX5_8RTD.eds",
+		"match": {
+			"Identity object/Vendor-ID": 63,
+			"Identity object/Product code": 3001004
+		}
+	},
+	{
+		"file": "SysTecElectronic/So-1064/CANopen_Io_X6_3001005/IoX6_8AO.eds",
+		"match": {
+			"Identity object/Vendor-ID": 63,
+			"Identity object/Product code": 3001005
+		}
+	},
+	{
+		"file": "SysTecElectronic/So-1064/CANopen_Io_X7_3001006/IoX7_8TC.eds",
+		"match": {
+			"Identity object/Vendor-ID": 63,
+			"Identity object/Product code": 3001006
+		}
+	},
+	{
+		"file": "SysTecElectronic/SO-1057/3301002_1.eds",
+		"match": {
+			"Identity object/Vendor-ID": 63,
+			"Identity object/Product code": 3301002
+		}
+	},
+	{
+		"file": "SysTecElectronic/SO-1057/MM217_V3Y_0.eds",
+		"match": {
+			"Identity object/Vendor-ID": 63,
+			"Identity object/Product code": 535,
+			"Manufacturer device name": "CANopen Chip F40 V3"
+		}
+	},
+	{
+		"file": "SysTecElectronic/SO-1057/MM217_Y_0.eds",
+		"match": {
+			"Identity object/Vendor-ID": 63,
+			"Identity object/Product code": 535
+		}
+	},
+	{
+		"file": "SysTecElectronic/SO-1090/3301001_0.eds",
+		"match": {
+			"Identity object/Vendor-ID": 63,
+			"Identity object/Product code": 3301001
+		}
+	},
+	{
+		"file": "SysTecElectronic/eds/phyPS409Y.eds",
+		"match": {
+			"Identity object/Vendor-ID": 63,
+			"Identity object/Product code": 1033
+		}
+	},
+	{
+		"file": "MaxonMotor/epos2_347717.eds",
+		"match": {
+			"Identity object/Vendor-ID": 251,
+			"Identity object/Product code": 1663172608
+		}
+	},
+	{
+		"file": "Nanotec/CL3-E-2-0F.eds",
+		"match": {
+			"Identity object/Vendor-ID": 620,
+			"Identity object/Product code": 13
+		}
+	},
+	{
+		"file": "Nanotec/CL3-E-2-0F.eds",
+		"match": {
+			"Identity object/Vendor-ID": 620,
+			"Identity object/Product code": 14
+		}
+	},
+	{
+		"file": "Nanotec/C5-E-2-09.eds",
+		"match": {
+			"Identity object/Vendor-ID": 620,
+			"Identity object/Product code": 17
+		}
+	}
+]
