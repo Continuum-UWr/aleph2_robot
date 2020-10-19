@@ -1,2 +1,2 @@
 # aleph2_bringup
-This package contains configuration, launch files and additional scripts for starting aleph2 base functionality.
+The purpose of this package is to provide a configuration that enables starting the base functionality of the Aleph2 rover. It contains configuration files in YAML format, ROS launch files and additional scripts (single-file nodes) that are applicable only to the real robot.
