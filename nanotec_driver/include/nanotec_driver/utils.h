@@ -7,7 +7,7 @@
 
 static kaco::Value int_to_value_of_type(int64_t val, kaco::Type type)
 {
-    switch(type)
+    switch (type)
     {
     case kaco::Type::uint8:
         return kaco::Value(static_cast<uint8_t>(val));
@@ -25,5 +25,8 @@ static kaco::Value int_to_value_of_type(int64_t val, kaco::Type type)
         return kaco::Value(static_cast<int32_t>(val));
     case kaco::Type::int64:
         return kaco::Value(val);
+    default:
+        return kaco::Value(val);
     }
 }
+

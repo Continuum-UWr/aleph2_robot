@@ -2,46 +2,93 @@
 #include <cstdint>
 #include <thread>
 #include <unistd.h>
+#include <exception>
+#include <boost/program_options.hpp>
 
 #include "nanotec_driver/nanotec.h"
 
-int Auto(Nanotec *nanotec);
-int Target(Nanotec *nanotec, int32_t target);
-int Quit(Nanotec *nanotec);
+void Auto(Nanotec *nanotec);
+void Target(Nanotec *nanotec, int32_t target);
+void Quit(Nanotec *nanotec);
 void Save(Nanotec *nanotec);
 void Reset(Nanotec *nanotec);
+std::string AskForParameter(std::string askMessage, std::string defaultValue);
 
 int main(int argc, char **argv)
 {
-    uint8_t node_id = 2;
-    std::string busname = "can0";
-    std::string baudrate = "500K";  
+    namespace po = boost::program_options;
+    po::options_description desc;
+    po::variables_map vm;
+    std::ostringstream helpMessageStream;
+
+    helpMessageStream << "usage: nanotec_aurocalib [options]" << std::endl
+                      << std::endl
+                      << "Before using that program you should set proper type of can conneciton by command:" << std::endl
+                      << "\t ip link set [busname] up type can bitrate [baudrate]"
+                      << std::endl;
+
+    desc.add_options()("help", "shows this message");
+    desc.add_options()("node,n", po::value<uint>()->default_value(2), "Driver's node id on CAN line");
+    desc.add_options()("busname,d", po::value<std::string>()->default_value("can0"), "Check ");
+    desc.add_options()("baudrate,b", po::value<std::string>()->default_value("500K"), "CAN bitrate");
+    desc.add_options()("skip,s", "Skip deprecated proces of manual configuration with default values."
+                                 "When the option n,d, or s is used manual configuration is automatically skipped.");
+
+    helpMessageStream << "options: " << std::endl
+                      << desc << std::endl;
+    std::string helpMessage = helpMessageStream.str();
+
+    try
+    {
+        po::store(po::parse_command_line(argc, argv, desc), vm);
+        po::notify(vm);
+    }
+    catch (const std::exception &e)
+    {
+        std::cerr << "Error: " << e.what() << std::endl
+                  << std::endl;
+        std::cout << helpMessage;
+        return 1;
+    }
+
+    if (vm.count("help"))
+    {
+        std::cout << helpMessage;
+        return 1;
+    }
+
+    uint8_t node_id = static_cast<uint8_t>(vm["node"].as<uint>());
+    std::string busname = vm["busname"].as<std::string>();
+    std::string baudrate = vm["baudrate"].as<std::string>();
     int32_t target = -100;
-    
+
     char option = 's';
     bool Exit = false;
     std::string line = "abc";
-        
-    std::cout << "Put node's id. (" << node_id << ")" << std::endl;
-    getline(std::cin, line);
-    if(line != "")
-    {
-        node_id = static_cast<uint8_t>(std::stoi(line));
-    }
-    
-    std::cout << "Put busname. (" << busname << ")" << std::endl;
-    getline(std::cin, line);
-    if(line != "")
-    {
-        busname = line;
-    }
 
-    std::cout << "Put baudrate. (" << baudrate << ")"<< std::endl;
-    std::cin.ignore();
-    getline(std::cin, line);
-    if(line != "")
+    //następny if z jego zawartością prawdopodobnie niedługo nie będzie potrzebny
+    if (vm.count("baudrate") + vm.count("busname") + vm.count("node") + vm.count("skip") == 0)
     {
-        baudrate == line;
+        std::cout << "Put node's id. (" << node_id << ")" << std::endl;
+        getline(std::cin, line);
+        if (line != "")
+        {
+            node_id = static_cast<uint8_t>(std::stoi(line));
+        }
+
+        std::cout << "Put busname. (" << busname << ")" << std::endl;
+        getline(std::cin, line);
+        if (line != "")
+        {
+            busname = line;
+        }
+
+        std::cout << "Put baudrate. (" << baudrate << ")" << std::endl;
+        getline(std::cin, line);
+        if (line != "")
+        {
+            baudrate == line;
+        }
     }
 
     kaco::Master master;
@@ -88,55 +135,55 @@ int main(int argc, char **argv)
 
     Nanotec *nanotec;
 
-    if(mode == 3)
+    if (mode == 3)
     {
-       nanotec = new Nanotec(device, Nanotec::OperationMode::TORQUE); 
+        nanotec = new Nanotec(device, Nanotec::OperationMode::TORQUE);
     }
-    else if(mode == 2)
+    else if (mode == 2)
     {
-       nanotec = new Nanotec(device, Nanotec::OperationMode::POSITION);
+        nanotec = new Nanotec(device, Nanotec::OperationMode::POSITION);
     }
     else
     {
         nanotec = new Nanotec(device, Nanotec::OperationMode::VELOCITY);
     }
 
-    while(!Exit)
-    {    
+    while (!Exit)
+    {
         std::cout << "Choose your option:" << std::endl;
         std::cout << "Autocalib. (a)" << std::endl;
         std::cout << "Set target. (t)" << std::endl;
         std::cout << "Save parameters. (s)" << std::endl;
-        std::cout << "Reset parameters. (r)" << std::endl; 
+        std::cout << "Reset parameters. (r)" << std::endl;
         std::cout << "Quit. (q)" << std::endl;
 
         std::cin >> option;
-        if(option == 'a')
+        if (option == 'a')
         {
             Auto(nanotec);
         }
-        else if(option == 't')
+        else if (option == 't')
         {
             std::cout << "Remember that nominal_current, peak_current and peak_length in SetMotorProtection function are already set." << std::endl;
             std::cout << "target: " << target << std::endl;
             std::cout << "Put target." << std::endl;
             std::cin.ignore();
             getline(std::cin, line);
-            if(line != "")
+            if (line != "")
             {
                 target = static_cast<int32_t>(std::stoi(line));
             }
             Target(nanotec, target);
         }
-        else if(option == 's')
+        else if (option == 's')
         {
             Save(nanotec);
         }
-        else if(option == 'r')
+        else if (option == 'r')
         {
             Reset(nanotec);
         }
-        else if(option == 'q')
+        else if (option == 'q')
         {
             Quit(nanotec);
             Exit = !Exit;
@@ -144,27 +191,27 @@ int main(int argc, char **argv)
     }
 }
 
-int Auto(Nanotec *nanotec)
+void Auto(Nanotec *nanotec)
 {
     std::map<std::string, int64_t> params = nanotec->Autocalib();
 
     std::cout << "Autocalib completed!" << std::endl;
     std::cout << "Parameters:" << std::endl;
 
-    for (auto const& x : params)
+    for (auto const &x : params)
     {
-        std::cout << "\"" << x.first << "\": " << x.second << std::endl;  
+        std::cout << "\"" << x.first << "\": " << x.second << std::endl;
     }
 }
 
-int Target(Nanotec *nanotec, int32_t target)
+void Target(Nanotec *nanotec, int32_t target)
 {
     nanotec->SetPowerMode(Nanotec::PowerMode::ACTIVE);
     nanotec->SetMotorProtection(2000, 2500, 100);
     nanotec->SetTarget(target);
 }
 
-int Quit(Nanotec *nanotec)
+void Quit(Nanotec *nanotec)
 {
     nanotec->SetPowerMode(Nanotec::PowerMode::OFF);
 }
@@ -179,3 +226,12 @@ void Reset(Nanotec *nanotec)
     std::cout << "To be done." << std::endl;
 }
 
+std::string AskForParameter(std::string askMessage, std::string defaultValue = "")
+{
+    std::string line;
+    std::cout << askMessage << " (" << defaultValue << ")" << std::endl;
+    getline(std::cin, line);
+    if (line != "")
+        return line;
+    return defaultValue;
+}
