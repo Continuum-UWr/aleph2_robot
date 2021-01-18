@@ -29,10 +29,8 @@ int main(int argc, char **argv)
 
     desc.add_options()("help", "shows this message");
     desc.add_options()("node,n", po::value<uint>()->default_value(2), "Driver's node id on CAN line");
-    desc.add_options()("busname,d", po::value<std::string>()->default_value("can0"), "Check ");
+    desc.add_options()("busname,d", po::value<std::string>()->default_value("can0"), "Check by ip link");
     desc.add_options()("baudrate,b", po::value<std::string>()->default_value("500K"), "CAN bitrate");
-    desc.add_options()("skip,s", "Skip deprecated proces of manual configuration with default values."
-                                 "When the option n,d, or s is used manual configuration is automatically skipped.");
 
     helpMessageStream << "options: " << std::endl
                       << desc << std::endl;
@@ -65,31 +63,6 @@ int main(int argc, char **argv)
     char option = 's';
     bool Exit = false;
     std::string line = "abc";
-
-    //następny if z jego zawartością prawdopodobnie niedługo nie będzie potrzebny
-    if (vm.count("baudrate") + vm.count("busname") + vm.count("node") + vm.count("skip") == 0)
-    {
-        std::cout << "Put node's id. (" << node_id << ")" << std::endl;
-        getline(std::cin, line);
-        if (line != "")
-        {
-            node_id = static_cast<uint8_t>(std::stoi(line));
-        }
-
-        std::cout << "Put busname. (" << busname << ")" << std::endl;
-        getline(std::cin, line);
-        if (line != "")
-        {
-            busname = line;
-        }
-
-        std::cout << "Put baudrate. (" << baudrate << ")" << std::endl;
-        getline(std::cin, line);
-        if (line != "")
-        {
-            baudrate == line;
-        }
-    }
 
     kaco::Master master;
     if (!master.start(busname, baudrate))
