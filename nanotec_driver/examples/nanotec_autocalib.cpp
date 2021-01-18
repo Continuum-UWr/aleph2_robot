@@ -86,6 +86,7 @@ int main(int argc, char **argv)
                 break;
             }
         }
+        if(found_device) break;
 
         std::cout
             << "Device with ID " << (unsigned)node_id
