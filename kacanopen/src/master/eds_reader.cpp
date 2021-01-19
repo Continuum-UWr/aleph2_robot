@@ -216,7 +216,7 @@ namespace kaco
 				WARN("[EDSReader::parse_var] Entry " << var_name << " already exists. Adding enumerator " << count_max << ".");
 				var_name = new_var_name;
 
-				assert(m_name_to_address.count(var_name) > 0);
+				assert(m_name_to_address.count(var_name) == 0);
 
 				DEBUG_LOG("[EDSReader::parse_var] New entry name: " << var_name);
 				entry.name = var_name;
@@ -414,11 +414,11 @@ namespace kaco
 	std::string EDSReader::trim(const std::string &str)
 	{
 		std::string result = str;
-		size_t found = result.find("#");
-		if (found != std::string::npos)
-		{
-			result = result.substr(0, found);
-		}
+		//size_t found = result.find("#");
+		//if (found != std::string::npos)
+		//{
+		//	result = result.substr(0, found);
+		//}
 		boost::algorithm::trim(result);
 		return result;
 	}
