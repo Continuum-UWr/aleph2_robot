@@ -172,9 +172,18 @@ int main(int argc, char **argv)
             std::cout << device.get_entry(0x6091,1) << std::endl; //motor revolution
             std::cout << device.get_entry(0x6091,2) << std::endl; //shaft revolution
             //std::cout << std::hex <<device.get_entry(0x60A9) << std::endl; //format
-            device.set_entry("Pole pair count",uint32_t(50));
-            device.set_entry(0x6091,1,uint32_t(1853));
-            device.set_entry(0x6091,2,uint32_t(10));
+            uint32_t value = 50;
+            uint16_t address = 0;
+            uint subindex = 0;
+            std::cout<<"Wpisz pole, subindex i wartość:"<<std::endl;
+            std::cin>>std::hex>>address>>subindex>>std::dec>>value;
+            std::cin.ignore();
+            std::cout<<std::hex<<address<<" "<<static_cast<uint8_t>(subindex)<<" "<<std::dec<<value<<std::endl;
+            device.set_entry(address,subindex, kaco::Value(value));
+            //device.set_entry("Pole pair count",uint32_t(1)); //pole pairs count 0x2030
+            device.set_entry(0x6091,1,uint32_t(1));
+            device.set_entry(0x6091,2,uint32_t(1));
+
         }
     }
 }
