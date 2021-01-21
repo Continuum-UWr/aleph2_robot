@@ -86,7 +86,8 @@ int main(int argc, char **argv)
                 break;
             }
         }
-        if(found_device) break;
+        if (found_device)
+            break;
 
         std::cout
             << "Device with ID " << (unsigned)node_id
@@ -161,6 +162,19 @@ int main(int argc, char **argv)
         {
             Quit(nanotec);
             Exit = !Exit;
+        }
+        else if (option == 'd') //debuging
+        {
+            std::cout << device.get_entry("Pole pair count") << std::endl;
+            std::cout << device.get_entry(0x2031) << std::endl; // maximum motor current
+            //std::cout << device.get_entry(0x203B,2) << std::endl;
+            //std::cout << device.get_entry(0x3202) << std::endl;
+            std::cout << device.get_entry(0x6091,1) << std::endl; //motor revolution
+            std::cout << device.get_entry(0x6091,2) << std::endl; //shaft revolution
+            //std::cout << std::hex <<device.get_entry(0x60A9) << std::endl; //format
+            device.set_entry("Pole pair count",uint32_t(50));
+            device.set_entry(0x6091,1,uint32_t(1853));
+            device.set_entry(0x6091,2,uint32_t(10));
         }
     }
 }
