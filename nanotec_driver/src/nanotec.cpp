@@ -52,7 +52,7 @@ const static std::vector<std::string> AUTOCALIB_PARAMETERS = {
     "Motor drive parameter set/Torque current loop, integral gain (open loop)",
 };
 
-Nanotec::Nanotec(kaco::Device &device, OperationMode mode)
+Nanotec::Nanotec(kaco::Device &device, OperationMode mode = Nanotec::OperationMode::NEUTRAL)
     : device_(device), operation_mode_(mode)
 {
     bool closed_loop =

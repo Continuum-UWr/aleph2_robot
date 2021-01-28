@@ -6,6 +6,7 @@
 #include <boost/program_options.hpp>
 
 #include "nanotec_driver/nanotec.h"
+#include "nanotec_driver/utils.h"
 
 void Auto(Nanotec *nanotec);
 void Target(Nanotec *nanotec, int32_t target);
@@ -165,25 +166,49 @@ int main(int argc, char **argv)
         }
         else if (option == 'd') //debuging
         {
-            std::cout << device.get_entry("Pole pair count") << std::endl;
-            std::cout << device.get_entry(0x2031) << std::endl; // maximum motor current
-            //std::cout << device.get_entry(0x203B,2) << std::endl;
-            //std::cout << device.get_entry(0x3202) << std::endl;
-            std::cout << device.get_entry(0x6091,1) << std::endl; //motor revolution
-            std::cout << device.get_entry(0x6091,2) << std::endl; //shaft revolution
+            //device.set_entry("Pole pair count",uint32_t(1)); //pole pairs count 0x2030
+            //std::cout << device.get_entry(0x2031) << std::endl; // maximum motor current
+            //std::cout << device.get_entry(0x6091,1) << std::endl; //motor revolution
+            //std::cout << device.get_entry(0x6091,2) << std::endl; //shaft revolution
             //std::cout << std::hex <<device.get_entry(0x60A9) << std::endl; //format
-            uint32_t value = 50;
+            try{
+            uint64_t value = 0;
             uint16_t address = 0;
             uint subindex = 0;
-            std::cout<<"Wpisz pole, subindex i wartość:"<<std::endl;
-            std::cin>>std::hex>>address>>subindex>>std::dec>>value;
+            std::cout << "Wpisz pole, subindex i wartość:" << std::endl;
+            std::cin >> std::hex >> address >> subindex >> std::dec >> value;
             std::cin.ignore();
-            std::cout<<std::hex<<address<<" "<<static_cast<uint8_t>(subindex)<<" "<<std::dec<<value<<std::endl;
-            device.set_entry(address,subindex, kaco::Value(value));
+            std::cout << std::hex << address << " " << static_cast<uint8_t>(subindex) << " " << std::dec << value << std::endl;
+            kaco::Type type = device.get_entry_type(address,subindex);
+            kaco::Value val = int_to_value_of_type(value, type);
+            device.set_entry(address,subindex, val);
+            }
+            catch(kaco::canopen_error &err)
+            {
+                std::cerr<<"Error: " << err.what();
+            }
+            
+        }
+        else if (option == 'p') //debuging
+        {
             //device.set_entry("Pole pair count",uint32_t(1)); //pole pairs count 0x2030
-            device.set_entry(0x6091,1,uint32_t(1));
-            device.set_entry(0x6091,2,uint32_t(1));
-
+            //std::cout << device.get_entry(0x2031) << std::endl; // maximum motor current
+            //std::cout << device.get_entry(0x6091,1) << std::endl; //motor revolution
+            //std::cout << device.get_entry(0x6091,2) << std::endl; //shaft revolution
+            //std::cout << std::hex <<device.get_entry(0x60A9) << std::endl; //format
+            try
+            {
+                uint16_t address = 0;
+                uint subindex = 0;
+                std::cout << "Wpisz pole i subindex:" << std::endl;
+                std::cin >> std::hex >> address >> std::dec >> subindex;
+                std::cin.ignore();
+                std::cout << std::hex << address << " " << static_cast<uint8_t>(subindex) << " " << std::dec << device.get_entry(address, subindex) << std::endl;
+            }
+            catch(kaco::canopen_error &err)
+            {
+                std::cerr<<"Error: " << err.what();
+            }
         }
     }
 }

@@ -20,6 +20,7 @@ class Nanotec
 
     enum OperationMode
     {
+        NEUTRAL = 0,
         POSITION = 1,
         VELOCITY = 3,
         TORQUE = 4
@@ -32,6 +33,8 @@ class Nanotec
     std::map<std::string, int64_t> Autocalib();
 
     void SetPowerMode(PowerMode mode);
+    void SetOperationMode(OperationMode mode);
+
     void SetVelocityProfile(uint32_t max_acceleration, uint32_t max_deceleration);
     void SetMotorProtection(uint32_t nominal_current, uint32_t peak_current,
                             uint32_t peak_length);
