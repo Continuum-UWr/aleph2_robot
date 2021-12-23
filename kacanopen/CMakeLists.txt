@@ -63,11 +63,8 @@ message(STATUS "Pause between two consecutively sent CAN frames is set to ${CONS
 
 find_package(ament_cmake REQUIRED)
 find_package(Threads)
-find_package(Boost 1.46.1 REQUIRED COMPONENTS 
-    system
-    filesystem
-) 
 find_package(ament_index_cpp REQUIRED)
+include(ConfigExtras.cmake)
 
 # Boost required for property_tree / ini_parser
 if(NOT(Boost_FOUND))
@@ -79,10 +76,6 @@ message(STATUS "Found Boost system library: ${Boost_SYSTEM_LIBRARY}")
 message(STATUS "Found Boost filesystem library: ${Boost_FILESYSTEM_LIBRARY}")
 message(STATUS "Found Threads library: ${CMAKE_THREAD_LIBS_INIT}")
 
-### includes ###
-
-include_directories(include)
-
 ### Drivers
 
 add_subdirectory(drivers)
@@ -93,8 +86,15 @@ add_subdirectory(drivers_lgpl)
 file(GLOB CORE_SRC "src/core/*.cpp")
 
 add_library(kacanopen_core ${CORE_SRC})
-target_link_libraries(kacanopen_core 
-    ${DRIVER_LINK_NAME} ${CMAKE_DL_LIBS}
+target_include_directories(kacanopen_core
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>
+)
+target_link_libraries(kacanopen_core
+    PRIVATE
+        ${DRIVER_LINK_NAME}
+        ${CMAKE_DL_LIBS}
 )
 
 ### Master
@@ -102,13 +102,20 @@ target_link_libraries(kacanopen_core
 file(GLOB MASTER_SRC "src/master/*.cpp")
 
 add_library(kacanopen_master ${MASTER_SRC})
-ament_target_dependencies(kacanopen_master
-    Boost
-    ament_index_cpp
+target_include_directories(kacanopen_master
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>
 )
-target_link_libraries(kacanopen_master 
-    kacanopen_core
-    ${CMAKE_THREAD_LIBS_INIT}
+target_link_libraries(kacanopen_master
+    PRIVATE
+        Boost::system
+        Boost::filesystem
+        Threads::Threads
+    PUBLIC
+        kacanopen_core
+        Boost::boost
+        ament_index_cpp::ament_index_cpp
 )
 
 ### Examples
@@ -132,9 +139,10 @@ endforeach(TARGET_SRC ${EXAMPLES_SRC})
 ### Install targets
 
 # Libraries
-install(TARGETS
-    kacanopen_core kacanopen_master
-    DESTINATION lib
+install(
+    TARGETS kacanopen_core kacanopen_master ${DRIVER_LINK_NAME}
+    EXPORT ${PROJECT_NAME}Targets
+    LIBRARY DESTINATION lib
 )
 
 # Library headers
@@ -152,4 +160,10 @@ install(DIRECTORY eds_library
     DESTINATION share/${PROJECT_NAME}
 )
 
-ament_package()
+
+ament_export_targets(${PROJECT_NAME}Targets)
+ament_export_dependencies(
+    ament_index_cpp
+    Threads
+)
+ament_package(CONFIG_EXTRAS "ConfigExtras.cmake")
