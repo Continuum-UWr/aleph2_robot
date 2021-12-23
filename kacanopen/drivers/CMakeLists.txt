@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.8)
 
 message(STATUS "Configuring drivers")
 
@@ -11,10 +11,6 @@ macro(driver_switch)
 		set(TARGET_NAME "can_${ARGV0}")
 		add_library(${TARGET_NAME} SHARED "${ARGV0}.cpp")
 		target_link_libraries(${TARGET_NAME} ${CMAKE_DL_LIBS})
-
-		install(TARGETS ${TARGET_NAME}
-			LIBRARY DESTINATION lib
-		)
 
 	endif()
 endmacro()

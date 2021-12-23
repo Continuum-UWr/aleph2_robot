@@ -8,8 +8,4 @@ file(GLOB LIB_SRC
 	"*.c"
 )
 
-add_library(${LIB_NAME} SHARED ${LIB_SRC})
-
-install(TARGETS ${LIB_NAME}
-	DESTINATION lib
-)
+add_library(${LIB_NAME} ${LIB_SRC})

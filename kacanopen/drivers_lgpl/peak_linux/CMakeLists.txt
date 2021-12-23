@@ -39,9 +39,5 @@ file(GLOB TARGET_SRC
 
 include_directories(SYSTEM ${LIBPCAN_INCLUDE_DIR} ${PCAN_INCLUDE_DIR})
 
-add_library(${TARGET_NAME} SHARED ${TARGET_SRC})
+add_library(${TARGET_NAME} ${TARGET_SRC})
 target_link_libraries(${TARGET_NAME} ${PCAN_LIBRARY})
-
-install(TARGETS ${LIB_NAME}
-	DESTINATION lib
-)
