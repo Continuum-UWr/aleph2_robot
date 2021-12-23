@@ -441,19 +441,19 @@ std::string Value::to_string() const {
 /// the C++ output type <mtypein>_t
 #define CO_VALUE_TYPE_CAST_OP_INT(mtype) CO_VALUE_TYPE_CAST_OP(mtype##_t, mtype)
 
-CO_VALUE_TYPE_CAST_OP_INT(uint8);
-CO_VALUE_TYPE_CAST_OP_INT(uint16);
-CO_VALUE_TYPE_CAST_OP_INT(uint32);
-CO_VALUE_TYPE_CAST_OP_INT(uint64);
-CO_VALUE_TYPE_CAST_OP_INT(int8);
-CO_VALUE_TYPE_CAST_OP_INT(int16);
-CO_VALUE_TYPE_CAST_OP_INT(int32);
-CO_VALUE_TYPE_CAST_OP_INT(int64);
-CO_VALUE_TYPE_CAST_OP(bool, boolean);
-CO_VALUE_TYPE_CAST_OP(float, real32);
-CO_VALUE_TYPE_CAST_OP(double, real64);
-CO_VALUE_TYPE_CAST_OP(std::string, string);
-CO_VALUE_TYPE_CAST_OP(std::vector<uint8_t>, octet_string);
+CO_VALUE_TYPE_CAST_OP_INT(uint8)
+CO_VALUE_TYPE_CAST_OP_INT(uint16)
+CO_VALUE_TYPE_CAST_OP_INT(uint32)
+CO_VALUE_TYPE_CAST_OP_INT(uint64)
+CO_VALUE_TYPE_CAST_OP_INT(int8)
+CO_VALUE_TYPE_CAST_OP_INT(int16)
+CO_VALUE_TYPE_CAST_OP_INT(int32)
+CO_VALUE_TYPE_CAST_OP_INT(int64)
+CO_VALUE_TYPE_CAST_OP(bool, boolean)
+CO_VALUE_TYPE_CAST_OP(float, real32)
+CO_VALUE_TYPE_CAST_OP(double, real64)
+CO_VALUE_TYPE_CAST_OP(std::string, string)
+CO_VALUE_TYPE_CAST_OP(std::vector<uint8_t>, octet_string)
 
 //-------------------//
 // std::cout Printer //

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.8)
 project(kacanopen)
 
-add_compile_options(-Wall -Wextra)
+add_compile_options(-Wall -Wextra -Wpedantic)
 
 ### settings ###
 
