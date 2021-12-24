@@ -1,0 +1,9 @@
+<library path="aleph2_hardware">
+  <class name="aleph2_hardware/Aleph2NanotecSystem"
+         type="aleph2_hardware::Aleph2NanotecSystem"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+      ROS2 Control system for controlling Aleph2 joints driven by motors with Nanotec drivers.
+    </description>
+  </class>
+</library>

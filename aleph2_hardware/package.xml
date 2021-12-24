@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>aleph2_hardware</name>
+  <version>0.0.0</version>
+  <description>
+    The aleph2_hardware package
+  </description>
+
+  <maintainer email="continuum@cs.uni.wroc.pl">Continuum Rover Team</maintainer>
+  <author>Błażej Sowa</author>
+
+  <license>MIT</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>hardware_interface</depend>
+  <depend>pluginlib</depend>
+  <depend>rclcpp</depend>
+  <depend>rclcpp_lifecycle</depend>
+
+  <depend>nanotec_driver</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+  
+</package>
