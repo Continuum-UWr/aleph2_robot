@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <map>
@@ -7,7 +6,7 @@
 #include "kacanopen/core/logger.h"
 #include "kacanopen/master/master.h"
 
-class Nanotec
+class NanotecDriver
 {
 
   public:
@@ -25,7 +24,7 @@ class Nanotec
         TORQUE = 4
     };
 
-    Nanotec(kaco::Device &device, OperationMode mode);
+    NanotecDriver(kaco::Device &device, OperationMode mode);
 
     void LoadParameters(const std::map<std::string, int64_t>& parameters);
 
