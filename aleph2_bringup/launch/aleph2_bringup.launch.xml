@@ -1,0 +1,4 @@
+<launch version="0.1.1">
+  <include file="$(find-pkg-share aleph2_description)/launch/state_publisher.launch.xml" />
+  <node pkg="controller_manager" exec="ros2_control_node" />
+</launch>
