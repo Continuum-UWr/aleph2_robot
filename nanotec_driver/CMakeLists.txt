@@ -9,7 +9,7 @@ find_package(Boost REQUIRED COMPONENTS
   program_options
 )
 
-add_library(${PROJECT_NAME}
+add_library(${PROJECT_NAME} SHARED
   src/nanotec.cpp
 )
 target_include_directories(${PROJECT_NAME}
