@@ -10,7 +10,7 @@ find_package(Boost REQUIRED COMPONENTS
 )
 
 add_library(${PROJECT_NAME} SHARED
-  src/nanotec.cpp
+  src/nanotec_driver.cpp
 )
 target_include_directories(${PROJECT_NAME}
   PUBLIC
@@ -23,7 +23,7 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 add_executable(nanotec_autocalib
-  examples/nanotec_autocalib.cpp
+  src/examples/nanotec_autocalib.cpp
 )
 target_include_directories(nanotec_autocalib
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
