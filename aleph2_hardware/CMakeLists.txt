@@ -42,7 +42,7 @@ if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
 endif()
 
-ament_export_targets(${PROJECT_NAME}Targets HAS_LIBRARY_TARGETS)
+ament_export_targets(${PROJECT_NAME}Targets HAS_LIBRARY_TARGET)
 ament_export_dependencies(
   hardware_interface
   pluginlib

@@ -51,6 +51,6 @@ install(TARGETS nanotec_autocalib
 	RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 
-ament_export_targets(${PROJECT_NAME}Targets HAS_LIBRARY_TARGETS)
+ament_export_targets(${PROJECT_NAME}Targets HAS_LIBRARY_TARGET)
 ament_export_dependencies(kacanopen)
 ament_package()
