@@ -85,7 +85,10 @@ add_subdirectory(drivers_lgpl)
 
 file(GLOB CORE_SRC "src/core/*.cpp")
 
-add_library(kacanopen_core ${CORE_SRC})
+add_library(kacanopen_core SHARED
+    ${CORE_SRC}
+    $<TARGET_OBJECTS:${DRIVER_LINK_NAME}>
+)
 target_include_directories(kacanopen_core
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -93,15 +96,15 @@ target_include_directories(kacanopen_core
 )
 target_link_libraries(kacanopen_core
     PRIVATE
-        ${DRIVER_LINK_NAME}
         ${CMAKE_DL_LIBS}
+        Threads::Threads
 )
 
 ### Master
 
 file(GLOB MASTER_SRC "src/master/*.cpp")
 
-add_library(kacanopen_master ${MASTER_SRC})
+add_library(kacanopen_master SHARED ${MASTER_SRC})
 target_include_directories(kacanopen_master
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -140,7 +143,7 @@ endforeach(TARGET_SRC ${EXAMPLES_SRC})
 
 # Libraries
 install(
-    TARGETS kacanopen_core kacanopen_master ${DRIVER_LINK_NAME}
+    TARGETS kacanopen_core kacanopen_master
     EXPORT ${PROJECT_NAME}Targets
     LIBRARY DESTINATION lib
 )

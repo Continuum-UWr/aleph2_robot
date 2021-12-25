@@ -9,7 +9,8 @@ macro(driver_switch)
 	if (("${DRIVER}" MATCHES "${ARGV0}") OR (${build_this} GREATER -1) OR (${BUILD_ALL_DRIVERS}))
 
 		set(TARGET_NAME "can_${ARGV0}")
-		add_library(${TARGET_NAME} SHARED "${ARGV0}.cpp")
+		add_library(${TARGET_NAME} OBJECT "${ARGV0}.cpp")
+		set_property(TARGET ${TARGET_NAME} PROPERTY POSITION_INDEPENDENT_CODE 1)
 		target_link_libraries(${TARGET_NAME} ${CMAKE_DL_LIBS})
 
 	endif()
