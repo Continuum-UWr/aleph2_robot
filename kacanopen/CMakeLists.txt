@@ -164,7 +164,7 @@ install(DIRECTORY eds_library
 )
 
 
-ament_export_targets(${PROJECT_NAME}Targets)
+ament_export_targets(${PROJECT_NAME}Targets HAS_LIBRARY_TARGETS)
 ament_export_dependencies(
     ament_index_cpp
     Threads
