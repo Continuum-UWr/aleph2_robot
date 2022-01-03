@@ -1,4 +1,15 @@
 <launch version="0.1.1">
-  <include file="$(find-pkg-share aleph2_description)/launch/state_publisher.launch.xml" />
-  <node pkg="controller_manager" exec="ros2_control_node" />
+  <arg
+    name="model"
+    default="$(find-pkg-share aleph2_description)/urdf/aleph2.urdf.xacro"
+    description="Absolute path to robot urdf.xacro file" />
+
+  <include file="$(find-pkg-share aleph2_description)/launch/state_publisher.launch.xml">
+    <arg name="model" value="$(var model)" />
+  </include>
+
+  <node pkg="controller_manager" exec="ros2_control_node">
+    <param name="robot_description" value="$(command 'xacro $(var model)')" />
+    <param from="$(find-pkg-share aleph2_description)/config/aleph2_controllers.yaml" />
+  </node>
 </launch>
