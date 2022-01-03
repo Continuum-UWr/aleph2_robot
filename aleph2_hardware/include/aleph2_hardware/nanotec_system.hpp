@@ -11,7 +11,7 @@ namespace aleph2_hardware
 class Aleph2NanotecSystem : public hardware_interface::SystemInterface
 {
 public:
-  Aleph2NanotecSystem();
+  Aleph2NanotecSystem() {};
 
   CallbackReturn on_init(const hardware_interface::HardwareInfo & info) override;
 

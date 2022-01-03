@@ -19,6 +19,7 @@ target_include_directories(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
   pluginlib::pluginlib
   rclcpp::rclcpp
+  nanotec_driver::nanotec_driver
 )
 ament_target_dependencies(${PROJECT_NAME}
   hardware_interface
