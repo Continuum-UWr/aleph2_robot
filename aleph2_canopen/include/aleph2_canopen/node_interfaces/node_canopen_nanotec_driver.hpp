@@ -16,7 +16,13 @@ protected:
   std::shared_ptr<LelyMotionControllerBridge> mc_driver_;
   std::shared_ptr<MotorNanotec> motor_;
 
+  rclcpp::TimerBase::SharedPtr timer_;
+  rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr handle_init_service;
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr handle_auto_setup_service;
+
+  uint32_t period_ms_;
+
+  void run();
 
 public:
   NodeCanopenNanotecDriver(rclcpp::Node * node);
@@ -27,6 +33,10 @@ public:
   virtual void deactivate(bool called_from_base) override;
   virtual void add_to_master() override;
   virtual void remove_from_master() override;
+
+  void handle_init(
+    const std_srvs::srv::Trigger::Request::SharedPtr request,
+    std_srvs::srv::Trigger::Response::SharedPtr response);
 
   void handle_auto_setup(
     const std_srvs::srv::Trigger::Request::SharedPtr request,

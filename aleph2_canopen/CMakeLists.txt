@@ -25,6 +25,7 @@ add_library(aleph2_canopen SHARED
   src/node_interfaces/node_canopen_nanotec_driver.cpp
   src/nanotec_driver.cpp
   src/motor.cpp
+  src/auto_setup.cpp
 )
 target_include_directories(aleph2_canopen PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

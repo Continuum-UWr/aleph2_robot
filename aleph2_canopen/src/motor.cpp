@@ -3,6 +3,23 @@
 namespace aleph2_canopen
 {
 
+MotorNanotec::MotorNanotec(std::shared_ptr<LelyMotionControllerBridge> driver)
+: MotorBase(),
+  switching_state_(State402::Switched_On),
+  monitor_mode_(true),
+  state_switch_timeout_(5)
+{
+  this->driver = driver;
+  status_word_entry_ =
+    driver->create_remote_obj(status_word_entry_index, 0U, CODataTypes::COData16);
+  control_word_entry_ = driver->create_remote_obj(
+    control_word_entry_index, 0U, CODataTypes::COData16);
+  op_mode_display_ = driver->create_remote_obj(op_mode_display_index, 0U, CODataTypes::COData8);
+  op_mode_ = driver->create_remote_obj(op_mode_index, 0U, CODataTypes::COData8);
+  supported_drive_modes_ = driver->create_remote_obj(
+    supported_drive_modes_index, 0U, CODataTypes::COData32);
+}
+
 bool MotorNanotec::setTarget(double val)
 {
   if (state_handler_.getState() == State402::Operation_Enable) {
@@ -11,52 +28,49 @@ bool MotorNanotec::setTarget(double val)
   }
   return false;
 }
-bool MotorNanotec::isModeSupported(uint16_t mode)
+bool MotorNanotec::isModeSupported(int8_t mode)
 {
   return mode != MotorBase::Homing && allocMode(mode);
 }
 
-bool MotorNanotec::enterModeAndWait(uint16_t mode)
+bool MotorNanotec::enterModeAndWait(int8_t mode)
 {
   bool okay = mode != MotorBase::Homing && switchMode(mode);
   return okay;
 }
 
-uint16_t MotorNanotec::getMode()
+int8_t MotorNanotec::getMode()
 {
   std::scoped_lock lock(mode_mutex_);
-  return selected_mode_ ? selected_mode_->mode_id_ : (uint16_t)MotorBase::No_Mode;
+  return selected_mode_ ? selected_mode_->mode_id_ : (int8_t)MotorBase::No_Mode;
 }
 
-bool MotorNanotec::isModeSupportedByDevice(uint16_t mode)
+bool MotorNanotec::isModeSupportedByDevice(int8_t mode)
 {
+  if (mode < 0) return true;
   if (!supported_drive_modes_->valid) {
     // THROW_EXCEPTION(std::runtime_error("Supported drive modes (object 6502) is not valid"));
   }
   uint32_t supported_modes = driver->get_remote_obj_cached<uint32_t>(supported_drive_modes_);
-  std::cout << "Supported modes: " << supported_modes << std::endl;
   bool supported = supported_modes & (1 << (mode - 1));
   bool below_max = mode <= 32;
   bool above_min = mode > 0;
-  std::cout << "Mode: " << mode << " Supported: " << supported << std::endl;
   return below_max && above_min && supported;
 }
-void MotorNanotec::registerMode(uint16_t id, const ModeSharedPtr & m)
+void MotorNanotec::registerMode(int8_t id, const ModeSharedPtr & m)
 {
-  std::cout << "Register mode: " << id << std::endl;
   std::scoped_lock map_lock(map_mutex_);
   if (m && m->mode_id_ == id) {
     modes_.insert(std::make_pair(id, m));
   }
 }
 
-ModeSharedPtr MotorNanotec::allocMode(uint16_t mode)
+ModeSharedPtr MotorNanotec::allocMode(int8_t mode)
 {
   ModeSharedPtr res;
   if (isModeSupportedByDevice(mode)) {
-    std::cout << "Is supported! " << "Modes count: " << modes_.size() << std::endl;
     std::scoped_lock map_lock(map_mutex_);
-    std::unordered_map<uint16_t, ModeSharedPtr>::iterator it = modes_.find(mode);
+    std::unordered_map<int8_t, ModeSharedPtr>::iterator it = modes_.find(mode);
     if (it != modes_.end()) {
       res = it->second;
     }
@@ -64,7 +78,7 @@ ModeSharedPtr MotorNanotec::allocMode(uint16_t mode)
   return res;
 }
 
-bool MotorNanotec::switchMode(uint16_t mode)
+bool MotorNanotec::switchMode(int8_t mode)
 {
 
   if (mode == MotorBase::No_Mode) {
@@ -79,12 +93,12 @@ bool MotorNanotec::switchMode(uint16_t mode)
 
   ModeSharedPtr next_mode = allocMode(mode);
   if (!next_mode) {
-    RCLCPP_INFO(rclcpp::get_logger("canopen_402_driver"), "Mode is not supported.");
+    RCLCPP_INFO(rclcpp::get_logger("canopen_nanotec_driver"), "Mode is not supported.");
     return false;
   }
 
   if (!next_mode->start()) {
-    RCLCPP_INFO(rclcpp::get_logger("canopen_402_driver"), "Could not  start mode.");
+    RCLCPP_INFO(rclcpp::get_logger("canopen_nanotec_driver"), "Could not  start mode.");
     return false;
   }
 
@@ -130,7 +144,7 @@ bool MotorNanotec::switchMode(uint16_t mode)
       selected_mode_ = next_mode;
       okay = true;
     } else {
-      RCLCPP_INFO(rclcpp::get_logger("canopen_402_driver"), "Mode switch timed out.");
+      RCLCPP_INFO(rclcpp::get_logger("canopen_nanotec_driver"), "Mode switch timed out.");
       driver->set_remote_obj<int8_t>(op_mode_, mode_id_);
     }
   }
@@ -153,12 +167,12 @@ bool MotorNanotec::switchState(const State402::InternalState & target)
     State402::InternalState next = State402::Unknown;
     bool success = Command402::setTransition(control_word_, state, target_state_, &next);
     if (!success) {
-      RCLCPP_INFO(rclcpp::get_logger("canopen_402_driver"), "Could not set transition.");
+      RCLCPP_INFO(rclcpp::get_logger("canopen_nanotec_driver"), "Could not set transition.");
       return false;
     }
     lock.unlock();
     if (state != next && !state_handler_.waitForNewState(abstime, state)) {
-      RCLCPP_INFO(rclcpp::get_logger("canopen_402_driver"), "Transition timed out.");
+      RCLCPP_INFO(rclcpp::get_logger("canopen_nanotec_driver"), "Transition timed out.");
       return false;
     }
   }
@@ -167,21 +181,20 @@ bool MotorNanotec::switchState(const State402::InternalState & target)
 
 bool MotorNanotec::readState()
 {
-
   uint16_t old_sw, sw = driver->get_remote_obj<uint16_t>(status_word_entry_);   // TODO: added error handling
   old_sw = status_word_.exchange(sw);
 
   state_handler_.read(sw);
 
   std::unique_lock lock(mode_mutex_);
-  uint16_t new_mode;
+  int8_t new_mode;
   new_mode = driver->get_remote_obj<int8_t>(op_mode_display_);
-  // RCLCPP_INFO(rclcpp::get_logger("canopen_402_driver"), "Mode %hhi",new_mode);
+  // RCLCPP_INFO(rclcpp::get_logger("canopen_nanotec_driver"), "Mode %hhi",new_mode);
 
   if (selected_mode_ && selected_mode_->mode_id_ == new_mode) {
     if (!selected_mode_->read(sw)) {
 
-      RCLCPP_INFO(rclcpp::get_logger("canopen_402_driver"), "Mode handler has error.");
+      RCLCPP_INFO(rclcpp::get_logger("canopen_nanotec_driver"), "Mode handler has error.");
     }
   }
   if (new_mode != mode_id_) {
@@ -189,13 +202,13 @@ bool MotorNanotec::readState()
     mode_cond_.notify_all();
   }
   if (selected_mode_ && selected_mode_->mode_id_ != new_mode) {
-    RCLCPP_INFO(rclcpp::get_logger("canopen_402_driver"), "Mode does not match.");
+    RCLCPP_INFO(rclcpp::get_logger("canopen_nanotec_driver"), "Mode does not match.");
   }
   if (sw & (1 << State402::SW_Internal_limit)) {
     if (old_sw & (1 << State402::SW_Internal_limit)) {
-      RCLCPP_INFO(rclcpp::get_logger("canopen_402_driver"), "Internal limit active");
+      RCLCPP_INFO(rclcpp::get_logger("canopen_nanotec_driver"), "Internal limit active");
     } else {
-      RCLCPP_INFO(rclcpp::get_logger("canopen_402_driver"), "Internal limit active");
+      RCLCPP_INFO(rclcpp::get_logger("canopen_nanotec_driver"), "Internal limit active");
     }
   }
 
@@ -224,12 +237,12 @@ void MotorNanotec::handleWrite()
     }
   }
   if (start_fault_reset_.exchange(false)) {
-    RCLCPP_INFO(rclcpp::get_logger("canopen_402_driver"), "Fault reset");
+    RCLCPP_INFO(rclcpp::get_logger("canopen_nanotec_driver"), "Fault reset");
     this->driver->set_remote_obj<uint16_t>(
       control_word_entry_,
       control_word_ & ~(1 << Command402::CW_Fault_Reset));
   } else {
-    // RCLCPP_INFO(rclcpp::get_logger("canopen_402_driver"), "Control Word %s", std::bitset<16>{control_word_}.to_string());
+    // RCLCPP_INFO(rclcpp::get_logger("canopen_nanotec_driver"), "Control Word %s", std::bitset<16>{control_word_}.to_string());
     this->driver->set_remote_obj<uint16_t>(control_word_entry_, control_word_);
   }
 }
@@ -268,12 +281,17 @@ void MotorNanotec::handleDiag()
 }
 bool MotorNanotec::handleInit()
 {
-  for (std::unordered_map<uint16_t, AllocFuncType>::iterator it = mode_allocators_.begin();
+  // Register default modes
+  for (std::unordered_map<int8_t, AllocFuncType>::iterator it = mode_allocators_.begin();
     it != mode_allocators_.end(); ++it)
   {
     (it->second)();
   }
-  RCLCPP_INFO(rclcpp::get_logger("canopen_402_driver"), "Init: Read State");
+
+  // Register nanotec-specific modes
+  // registerMode(MotorNanotec::Auto_Setup, ModeSharedPtr(new AutoSetupMode(driver)));
+
+  RCLCPP_INFO(rclcpp::get_logger("canopen_nanotec_driver"), "Init: Read State");
   if (!readState()) {
     std::cout << "Could not read motor state" << std::endl;
     return false;
@@ -283,37 +301,14 @@ bool MotorNanotec::handleInit()
     control_word_ = 0;
     start_fault_reset_ = true;
   }
-  RCLCPP_INFO(rclcpp::get_logger("canopen_402_driver"), "Init: Enable");
+
+  RCLCPP_INFO(rclcpp::get_logger("canopen_nanotec_driver"), "Init: Enable");
   if (!switchState(State402::Ready_To_Switch_On) || !switchState(State402::Switched_On)) {
     std::cout << "Could not enable motor" << std::endl;
     return false;
   }
 
-  return true;
-
-  ModeSharedPtr m = allocMode(MotorBase::Homing);
-  if (!m) {
-    std::cout << "Homeing mode not supported" << std::endl;
-    return true;    // homing not supported
-  }
-
-  HomingMode * homing = dynamic_cast<HomingMode *>(m.get());
-
-  if (!homing) {
-    std::cout << "Homing mode has incorrect handler" << std::endl;
-    return false;
-  }
-  RCLCPP_INFO(rclcpp::get_logger("canopen_402_driver"), "Init: Switch to homing");
-  if (!switchMode(MotorBase::Homing)) {
-    std::cout << "Could not enter homing mode" << std::endl;
-    return false;
-  }
-  RCLCPP_INFO(rclcpp::get_logger("canopen_402_driver"), "Init: Execute homing");
-  if (!homing->executeHoming()) {
-    std::cout << "Homing failed" << std::endl;
-    return false;
-  }
-  RCLCPP_INFO(rclcpp::get_logger("canopen_402_driver"), "Init: Switch no mode");
+  RCLCPP_INFO(rclcpp::get_logger("canopen_nanotec_driver"), "Init: Switch no mode");
   if (!switchMode(MotorBase::No_Mode)) {
     std::cout << "Could not enter no mode" << std::endl;
     return false;
@@ -365,14 +360,12 @@ bool MotorNanotec::handleRecover()
 
 bool MotorNanotec::handleAutoSetup()
 {
-  this->driver->SubmitRead<std::string>(
-    0x100A, 0x0,
-    [this](uint8_t id, uint16_t idx, uint8_t subidx,
-            ::std::error_code ec, std::string value) mutable
-    {
-      std::cout << "Firmware version: " << value << std::endl;
-    });
-  return true;
+  if (!switchMode(MotorNanotec::Auto_Setup)) {
+    std::cout << "Failed to switch mode to auto setup";
+    return false;
+  }
+  AutoSetupMode *auto_setup = dynamic_cast<AutoSetupMode *>(selected_mode_.get());
+  return auto_setup->executeAutoSetup();
 }
 
 } // namespace aleph2_canopen

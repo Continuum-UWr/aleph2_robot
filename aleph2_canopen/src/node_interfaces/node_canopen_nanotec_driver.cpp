@@ -16,6 +16,8 @@ void NodeCanopenNanotecDriver::init(bool called_from_base)
 {
   RCLCPP_INFO(node_->get_logger(), "init");
   NodeCanopenProxyDriver<rclcpp::Node>::init(false);
+  handle_init_service = this->node_->create_service<std_srvs::srv::Trigger>(
+    "~/init", std::bind(&NodeCanopenNanotecDriver::handle_init, this, _1, _2));
   handle_auto_setup_service = this->node_->create_service<std_srvs::srv::Trigger>(
     "~/auto_setup", std::bind(&NodeCanopenNanotecDriver::handle_auto_setup, this, _1, _2));
 }
@@ -24,18 +26,36 @@ void NodeCanopenNanotecDriver::configure(bool called_from_base)
 {
   RCLCPP_INFO(node_->get_logger(), "configure");
   NodeCanopenProxyDriver<rclcpp::Node>::configure(false);
+
+  period_ms_ = this->config_["period"].as<uint32_t>();
 }
 
 void NodeCanopenNanotecDriver::activate(bool called_from_base)
 {
   RCLCPP_INFO(node_->get_logger(), "activate");
   NodeCanopenProxyDriver<rclcpp::Node>::activate(false);
+
+  motor_->registerDefaultModes();
+  mc_driver_->validate_objs();
+
+  timer_ = this->node_->create_wall_timer(
+    std::chrono::milliseconds(period_ms_),
+    std::bind(&NodeCanopenNanotecDriver::run, this),
+    this->timer_cbg_);
 }
 
 void NodeCanopenNanotecDriver::deactivate(bool called_from_base)
 {
   RCLCPP_INFO(node_->get_logger(), "deactivate");
   NodeCanopenProxyDriver<rclcpp::Node>::deactivate(false);
+
+  timer_->cancel();
+}
+
+void NodeCanopenNanotecDriver::run()
+{
+  motor_->handleRead();
+  motor_->handleWrite();
 }
 
 void NodeCanopenNanotecDriver::add_to_master()
@@ -100,6 +120,15 @@ void NodeCanopenNanotecDriver::remove_from_master()
   auto future_status = f.wait_for(this->non_transmit_timeout_);
   if (future_status != std::future_status::ready) {
     throw DriverException("remove_from_master: removing timed out");
+  }
+}
+
+void NodeCanopenNanotecDriver::handle_init(
+  const std_srvs::srv::Trigger::Request::SharedPtr request,
+  std_srvs::srv::Trigger::Response::SharedPtr response)
+{
+  if (this->activated_.load()) {
+    response->success = this->motor_->handleInit();
   }
 }
 
