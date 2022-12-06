@@ -2,50 +2,29 @@
 
 #include "canopen_402_driver/motor.hpp"
 
+#include "aleph2_canopen/auto_setup.hpp"
+
 using ros2_canopen::State402;
 using ros2_canopen::Command402;
+using ros2_canopen::MotorBase;
 
 namespace aleph2_canopen
 {
 
-class AutoSetupMode : public ros2_canopen::Mode
-{
-protected:
-  std::shared_ptr<LelyMotionControllerBridge> driver;
-  std::atomic_bool execute_;
-
-  enum SW_bits
-  {
-    SW_AutoSetupCompleted = State402::SW_Operation_mode_specific0,
-  };
-
-  enum CW_bits
-  {
-    CW_StartAutoSetup = Command402::CW_Operation_mode_specific0,
-  };
-
-public:
-  AutoSetupMode(std::shared_ptr<LelyMotionControllerBridge> driver);
-
-  virtual bool start() override;
-  virtual bool read(const uint16_t &sw) override;
-  virtual bool write(OpModeAccesser &cw) override;
-  virtual bool executeAutoSetup();
-};
-
-class MotorNanotec : public MotorBase
+class MotorNanotec
 {
 public:
-  enum OperationMode {
+  enum OperationMode
+  {
     Auto_Setup = -2,
   };
 
   MotorNanotec(std::shared_ptr<LelyMotionControllerBridge> driver);
 
-  virtual bool setTarget(double val);
-  virtual bool enterModeAndWait(int8_t mode);
-  virtual bool isModeSupported(int8_t mode);
-  virtual int8_t getMode();
+  bool setTarget(double val);
+  bool enterModeAndWait(int8_t mode);
+  bool isModeSupported(int8_t mode);
+  int8_t getMode();
   bool readState();
   void handleDiag();
 
@@ -53,11 +32,6 @@ public:
 
   /**
    * @brief Initialise the drive
-   *
-   * This function intialises the drive. This means, it first
-   * attempts to bring the device to operational state (CIA402)
-   * and then executes the chosen homing method.
-   *
    */
   bool handleInit();
 
@@ -83,7 +57,7 @@ public:
    * @brief Shutdowns the drive
    *
    * This function shuts down the drive by bringing it into
-   * SwitchOn disbled state.
+   * SwitchOn disabled state.
    *
    */
   bool handleShutdown();
@@ -133,24 +107,6 @@ public:
            .second;
   }
 
-  /**
-   * @brief Tries to register the standard operation modes defined in cia402
-   *
-   */
-  virtual void registerDefaultModes()
-  {
-    registerMode<AutoSetupMode>(MotorNanotec::Auto_Setup, driver);
-    registerMode<ProfiledPositionMode>(MotorBase::Profiled_Position, driver);
-    registerMode<VelocityMode>(MotorBase::Velocity, driver);
-    registerMode<ProfiledVelocityMode>(MotorBase::Profiled_Velocity, driver);
-    registerMode<ProfiledTorqueMode>(MotorBase::Profiled_Torque, driver);
-    registerMode<DefaultHomingMode>(MotorBase::Homing, driver);
-    registerMode<InterpolatedPositionMode>(MotorBase::Interpolated_Position, driver);
-    registerMode<CyclicSynchronousPositionMode>(MotorBase::Cyclic_Synchronous_Position, driver);
-    registerMode<CyclicSynchronousVelocityMode>(MotorBase::Cyclic_Synchronous_Velocity, driver);
-    registerMode<CyclicSynchronousTorqueMode>(MotorBase::Cyclic_Synchronous_Torque, driver);
-  }
-
 private:
   virtual bool isModeSupportedByDevice(int8_t mode);
   void registerMode(int8_t id, const ModeSharedPtr & m);
@@ -177,8 +133,6 @@ private:
   int8_t mode_id_;
   std::condition_variable mode_cond_;
   std::mutex mode_mutex_;
-  const State402::InternalState switching_state_;
-  const bool monitor_mode_;
   const std::chrono::seconds state_switch_timeout_;
 
   std::shared_ptr<LelyMotionControllerBridge> driver;

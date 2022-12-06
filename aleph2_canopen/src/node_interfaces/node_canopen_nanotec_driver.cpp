@@ -35,7 +35,6 @@ void NodeCanopenNanotecDriver::activate(bool called_from_base)
   RCLCPP_INFO(node_->get_logger(), "activate");
   NodeCanopenProxyDriver<rclcpp::Node>::activate(false);
 
-  motor_->registerDefaultModes();
   mc_driver_->validate_objs();
 
   timer_ = this->node_->create_wall_timer(
