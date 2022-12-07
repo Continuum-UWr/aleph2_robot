@@ -20,6 +20,11 @@ void NodeCanopenNanotecDriver::init(bool called_from_base)
     "~/init", std::bind(&NodeCanopenNanotecDriver::handle_init, this, _1, _2));
   handle_auto_setup_service = this->node_->create_service<std_srvs::srv::Trigger>(
     "~/auto_setup", std::bind(&NodeCanopenNanotecDriver::handle_auto_setup, this, _1, _2));
+  handle_set_mode_velocity_service = this->node_->create_service<std_srvs::srv::Trigger>(
+    "~/set_mode_velocity",
+    std::bind(&NodeCanopenNanotecDriver::handle_set_mode_velocity, this, _1, _2));
+  handle_set_target_service = this->node_->create_service<canopen_interfaces::srv::COTargetDouble>(
+    "~/set_target", std::bind(&NodeCanopenNanotecDriver::handle_set_target, this, _1, _2));
 }
 
 void NodeCanopenNanotecDriver::configure(bool called_from_base)
@@ -82,7 +87,8 @@ void NodeCanopenNanotecDriver::add_to_master()
     throw DriverException("add_to_master: Adding timed out.");
   }
   this->mc_driver_ = f.get();
-  this->motor_ = std::make_shared<MotorNanotec>(mc_driver_);
+  this->motor_ =
+    std::make_shared<MotorNanotec>(mc_driver_, node_->get_logger().get_child("MotorNanotec"));
   this->lely_driver_ = std::static_pointer_cast<LelyDriverBridge>(mc_driver_);
   this->driver_ = std::static_pointer_cast<lely::canopen::BasicDriver>(mc_driver_);
   if (!this->mc_driver_->IsReady()) {
@@ -126,18 +132,65 @@ void NodeCanopenNanotecDriver::handle_init(
   const std_srvs::srv::Trigger::Request::SharedPtr request,
   std_srvs::srv::Trigger::Response::SharedPtr response)
 {
-  if (this->activated_.load()) {
-    response->success = this->motor_->handleInit();
-  }
+  response->success = init_motor();
 }
 
 void NodeCanopenNanotecDriver::handle_auto_setup(
   const std_srvs::srv::Trigger::Request::SharedPtr request,
   std_srvs::srv::Trigger::Response::SharedPtr response)
 {
+  response->success = auto_setup();
+}
+
+void NodeCanopenNanotecDriver::handle_set_mode_velocity(
+  const std_srvs::srv::Trigger::Request::SharedPtr request,
+  std_srvs::srv::Trigger::Response::SharedPtr response)
+{
+  response->success = set_mode_velocity();
+}
+
+void NodeCanopenNanotecDriver::handle_set_target(
+  const canopen_interfaces::srv::COTargetDouble::Request::SharedPtr request,
+  canopen_interfaces::srv::COTargetDouble::Response::SharedPtr response)
+{
+  response->success = set_target(request->target);
+}
+
+bool NodeCanopenNanotecDriver::init_motor()
+{
   if (this->activated_.load()) {
-    response->success = this->motor_->handleAutoSetup();
+    bool temp = this->motor_->handleInit();
+    mc_driver_->validate_objs();
+    return temp;
   }
+  return false;
+}
+
+bool NodeCanopenNanotecDriver::auto_setup()
+{
+  if (this->activated_.load()) {
+    return this->motor_->handleAutoSetup();
+  }
+  return false;
+}
+
+bool NodeCanopenNanotecDriver::set_mode_velocity()
+{
+  if (this->activated_.load()) {
+    if (motor_->getMode() != MotorBase::Profiled_Velocity) {
+      return motor_->enterModeAndWait(MotorBase::Profiled_Velocity);
+    }
+    return false;
+  }
+  return false;
+}
+
+bool NodeCanopenNanotecDriver::set_target(double target)
+{
+  if (this->activated_.load()) {
+    return motor_->setTarget(target);
+  }
+  return false;
 }
 
 } // namespace node_interfaces

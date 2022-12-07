@@ -3,8 +3,22 @@
 namespace aleph2_canopen
 {
 
-MotorNanotec::MotorNanotec(std::shared_ptr<LelyMotionControllerBridge> driver)
-: state_switch_timeout_(5)
+const static std::unordered_map<State402::InternalState, std::string> STATE_TO_STRING = {
+  {State402::Start, "Start"},
+  {State402::Not_Ready_To_Switch_On, "Not ready to switch on"},
+  {State402::Switch_On_Disabled, "Switch on disabled"},
+  {State402::Ready_To_Switch_On, "Ready to switch on"},
+  {State402::Switched_On, "Switched on"},
+  {State402::Operation_Enable, "Operation enabled"},
+  {State402::Quick_Stop_Active, "Quick stop active"},
+  {State402::Fault_Reaction_Active, "Fault reaction active"},
+  {State402::Fault, "Fault"},
+};
+
+MotorNanotec::MotorNanotec(
+  std::shared_ptr<LelyMotionControllerBridge> driver,
+  rclcpp::Logger logger)
+: logger_(logger), state_switch_timeout_(5)
 {
   this->driver = driver;
   status_word_entry_ =
@@ -17,15 +31,15 @@ MotorNanotec::MotorNanotec(std::shared_ptr<LelyMotionControllerBridge> driver)
     supported_drive_modes_index, 0U, CODataTypes::COData32);
 
   registerMode<AutoSetupMode>(MotorNanotec::Auto_Setup, driver);
-  registerMode<ProfiledPositionMode>(MotorBase::Profiled_Position, driver);
-  registerMode<VelocityMode>(MotorBase::Velocity, driver);
+  // registerMode<ProfiledPositionMode>(MotorBase::Profiled_Position, driver);
+  // registerMode<VelocityMode>(MotorBase::Velocity, driver);
   registerMode<ProfiledVelocityMode>(MotorBase::Profiled_Velocity, driver);
-  registerMode<ProfiledTorqueMode>(MotorBase::Profiled_Torque, driver);
-  registerMode<DefaultHomingMode>(MotorBase::Homing, driver);
-  registerMode<InterpolatedPositionMode>(MotorBase::Interpolated_Position, driver);
-  registerMode<CyclicSynchronousPositionMode>(MotorBase::Cyclic_Synchronous_Position, driver);
-  registerMode<CyclicSynchronousVelocityMode>(MotorBase::Cyclic_Synchronous_Velocity, driver);
-  registerMode<CyclicSynchronousTorqueMode>(MotorBase::Cyclic_Synchronous_Torque, driver);
+  // registerMode<ProfiledTorqueMode>(MotorBase::Profiled_Torque, driver);
+  // registerMode<DefaultHomingMode>(MotorBase::Homing, driver);
+  // registerMode<InterpolatedPositionMode>(MotorBase::Interpolated_Position, driver);
+  // registerMode<CyclicSynchronousPositionMode>(MotorBase::Cyclic_Synchronous_Position, driver);
+  // registerMode<CyclicSynchronousVelocityMode>(MotorBase::Cyclic_Synchronous_Velocity, driver);
+  // registerMode<CyclicSynchronousTorqueMode>(MotorBase::Cyclic_Synchronous_Torque, driver);
 }
 
 bool MotorNanotec::setTarget(double val)
@@ -103,12 +117,12 @@ bool MotorNanotec::switchMode(int8_t mode)
 
   ModeSharedPtr next_mode = allocMode(mode);
   if (!next_mode) {
-    RCLCPP_INFO(rclcpp::get_logger("canopen_nanotec_driver"), "Mode is not supported.");
+    RCLCPP_INFO(logger_, "Mode is not supported.");
     return false;
   }
 
   if (!next_mode->start()) {
-    RCLCPP_INFO(rclcpp::get_logger("canopen_nanotec_driver"), "Could not  start mode.");
+    RCLCPP_INFO(logger_, "Could not start mode.");
     return false;
   }
 
@@ -144,7 +158,7 @@ bool MotorNanotec::switchMode(int8_t mode)
       selected_mode_ = next_mode;
       okay = true;
     } else {
-      RCLCPP_INFO(rclcpp::get_logger("canopen_nanotec_driver"), "Mode switch timed out.");
+      RCLCPP_INFO(logger_, "Mode switch timed out.");
       driver->set_remote_obj<int8_t>(op_mode_, mode_id_);
     }
   }
@@ -167,12 +181,12 @@ bool MotorNanotec::switchState(const State402::InternalState & target)
     State402::InternalState next = State402::Unknown;
     bool success = Command402::setTransition(control_word_, state, target_state_, &next);
     if (!success) {
-      RCLCPP_INFO(rclcpp::get_logger("canopen_nanotec_driver"), "Could not set transition.");
+      RCLCPP_INFO(logger_, "Could not set transition.");
       return false;
     }
     lock.unlock();
     if (state != next && !state_handler_.waitForNewState(abstime, state)) {
-      RCLCPP_INFO(rclcpp::get_logger("canopen_nanotec_driver"), "Transition timed out.");
+      RCLCPP_INFO(logger_, "Transition timed out.");
       return false;
     }
   }
@@ -181,35 +195,44 @@ bool MotorNanotec::switchState(const State402::InternalState & target)
 
 bool MotorNanotec::readState()
 {
-  uint16_t old_sw, sw = driver->get_remote_obj<uint16_t>(status_word_entry_);   // TODO: added error handling
+  uint16_t old_sw, sw = driver->get_remote_obj<uint16_t>(status_word_entry_);
   old_sw = status_word_.exchange(sw);
 
+  RCLCPP_DEBUG_STREAM(logger_, "Status Word: " << std::bitset<16>{sw}.to_string());
+
+  State402::InternalState old_state = state_handler_.getState();
   state_handler_.read(sw);
+  State402::InternalState new_state = state_handler_.getState();
+
+  if (new_state != old_state) {
+    RCLCPP_INFO_STREAM(logger_, "New state detected: " << STATE_TO_STRING.at(new_state));
+  }
 
   std::unique_lock lock(mode_mutex_);
   int8_t new_mode;
   new_mode = driver->get_remote_obj<int8_t>(op_mode_display_);
-  // RCLCPP_INFO(rclcpp::get_logger("canopen_nanotec_driver"), "Mode %hhi",new_mode);
 
   if (selected_mode_ && selected_mode_->mode_id_ == new_mode) {
     if (!selected_mode_->read(sw)) {
 
-      RCLCPP_INFO(rclcpp::get_logger("canopen_nanotec_driver"), "Mode handler has error.");
+      RCLCPP_INFO(logger_, "Mode handler has error.");
     }
   }
   if (new_mode != mode_id_) {
+    RCLCPP_INFO_STREAM(logger_, "New mode detected: " << (int)new_mode);
+
     mode_id_ = new_mode;
     mode_cond_.notify_all();
   }
   if (selected_mode_ && selected_mode_->mode_id_ != new_mode) {
-    RCLCPP_INFO(rclcpp::get_logger("canopen_nanotec_driver"), "Mode does not match.");
+    RCLCPP_INFO(logger_, "Mode does not match.");
   }
 
   if (sw & (1 << State402::SW_Internal_limit)) {
     if (old_sw & (1 << State402::SW_Internal_limit)) {
-      RCLCPP_INFO(rclcpp::get_logger("canopen_nanotec_driver"), "Internal limit active");
+      RCLCPP_INFO(logger_, "Internal limit active");
     } else {
-      RCLCPP_INFO(rclcpp::get_logger("canopen_nanotec_driver"), "Internal limit active");
+      RCLCPP_INFO(logger_, "Internal limit active");
     }
   }
 
@@ -237,48 +260,16 @@ void MotorNanotec::handleWrite()
     }
   }
   if (start_fault_reset_.exchange(false)) {
-    RCLCPP_INFO(rclcpp::get_logger("canopen_nanotec_driver"), "Fault reset");
+    RCLCPP_INFO(logger_, "Fault reset");
     this->driver->set_remote_obj<uint16_t>(
       control_word_entry_,
       control_word_ & ~(1 << Command402::CW_Fault_Reset));
   } else {
-    // RCLCPP_INFO(rclcpp::get_logger("canopen_nanotec_driver"), "Control Word %s", std::bitset<16>{control_word_}.to_string());
+    RCLCPP_DEBUG_STREAM(logger_, "Control Word: " << std::bitset<16>{control_word_}.to_string());
     this->driver->set_remote_obj<uint16_t>(control_word_entry_, control_word_);
   }
 }
-void MotorNanotec::handleDiag()
-{
-  uint16_t sw = status_word_;
-  State402::InternalState state = state_handler_.getState();
 
-  switch (state) {
-    case State402::Not_Ready_To_Switch_On:
-    case State402::Switch_On_Disabled:
-    case State402::Ready_To_Switch_On:
-    case State402::Switched_On:
-      std::cout << "Motor operation is not enabled" << std::endl;
-    case State402::Operation_Enable:
-      break;
-
-    case State402::Quick_Stop_Active:
-      std::cout << "Quick stop is active" << std::endl;
-      break;
-    case State402::Fault:
-    case State402::Fault_Reaction_Active:
-      std::cout << "Motor has fault" << std::endl;
-      break;
-    case State402::Unknown:
-      std::cout << "State is unknown" << std::endl;
-      break;
-  }
-
-  if (sw & (1 << State402::SW_Warning)) {
-    std::cout << "Warning bit is set" << std::endl;
-  }
-  if (sw & (1 << State402::SW_Internal_limit)) {
-    std::cout << "Internal limit active" << std::endl;
-  }
-}
 bool MotorNanotec::handleInit()
 {
   // Register default modes
@@ -288,9 +279,9 @@ bool MotorNanotec::handleInit()
     (it->second)();
   }
 
-  RCLCPP_INFO(rclcpp::get_logger("canopen_nanotec_driver"), "Init: Read State");
+  RCLCPP_INFO(logger_, "Init: Read State");
   if (!readState()) {
-    std::cout << "Could not read motor state" << std::endl;
+    RCLCPP_ERROR(logger_, "Could not read motor state");
     return false;
   }
   {
@@ -299,15 +290,15 @@ bool MotorNanotec::handleInit()
     start_fault_reset_ = true;
   }
 
-  RCLCPP_INFO(rclcpp::get_logger("canopen_nanotec_driver"), "Init: Enable");
+  RCLCPP_INFO(logger_, "Init: Enable");
   if (!switchState(State402::Ready_To_Switch_On) || !switchState(State402::Switched_On)) {
-    std::cout << "Could not enable motor" << std::endl;
+    RCLCPP_ERROR(logger_, "Could not enable motor");
     return false;
   }
 
-  RCLCPP_INFO(rclcpp::get_logger("canopen_nanotec_driver"), "Init: Switch no mode");
+  RCLCPP_INFO(logger_, "Init: Switch no mode");
   if (!switchMode(MotorBase::No_Mode)) {
-    std::cout << "Could not enter no mode" << std::endl;
+    RCLCPP_ERROR(logger_, "Could not enter no mode");
     return false;
   }
   return true;
@@ -334,7 +325,7 @@ bool MotorNanotec::handleHalt()
   } else {
     target_state_ = State402::Quick_Stop_Active;
     if (!Command402::setTransition(control_word_, state, State402::Quick_Stop_Active, 0)) {
-      std::cout << "Could not quick stop" << std::endl;
+      RCLCPP_ERROR(logger_, "Could not quick stop");
       return false;
     }
   }
@@ -347,12 +338,12 @@ bool MotorNanotec::handleRecover()
   {
     std::scoped_lock lock(mode_mutex_);
     if (selected_mode_ && !selected_mode_->start()) {
-      std::cout << "Could not restart mode." << std::endl;
+      RCLCPP_ERROR(logger_, "Could not restart mode.");
       return false;
     }
   }
   if (!switchState(State402::Operation_Enable)) {
-    std::cout << "Could not enable motor" << std::endl;
+    RCLCPP_ERROR(logger_, "Could not enable operation");
     return false;
   }
   return true;
@@ -361,7 +352,7 @@ bool MotorNanotec::handleRecover()
 bool MotorNanotec::handleAutoSetup()
 {
   if (!switchMode(MotorNanotec::Auto_Setup)) {
-    std::cout << "Failed to switch mode to auto setup";
+    RCLCPP_ERROR(logger_, "Failed to switch mode to auto setup");
     return false;
   }
 

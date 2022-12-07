@@ -19,14 +19,13 @@ public:
     Auto_Setup = -2,
   };
 
-  MotorNanotec(std::shared_ptr<LelyMotionControllerBridge> driver);
+  MotorNanotec(std::shared_ptr<LelyMotionControllerBridge> driver, rclcpp::Logger logger);
 
   bool setTarget(double val);
   bool enterModeAndWait(int8_t mode);
   bool isModeSupported(int8_t mode);
   int8_t getMode();
   bool readState();
-  void handleDiag();
 
   bool handleAutoSetup();
 
@@ -115,6 +114,8 @@ private:
 
   bool switchMode(int8_t mode);
   bool switchState(const State402::InternalState & target);
+
+  rclcpp::Logger logger_;
 
   std::atomic<uint16_t> status_word_;
   uint16_t control_word_;
