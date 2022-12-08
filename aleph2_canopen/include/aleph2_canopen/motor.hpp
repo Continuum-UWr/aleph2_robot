@@ -27,12 +27,12 @@ public:
   int8_t getMode();
   bool readState();
 
-  bool handleAutoSetup();
+  bool autoSetup();
 
   /**
    * @brief Initialise the drive
    */
-  bool handleInit();
+  bool init();
 
   /**
    * @brief Read objects of the drive
@@ -41,7 +41,7 @@ public:
    * from the device and translates it into the devices state.
    *
    */
-  void handleRead();
+  void read();
 
   /**
    * @brief Writes objects to the drive
@@ -50,7 +50,7 @@ public:
    * word to the drive
    *
    */
-  void handleWrite();
+  void write();
 
   /**
    * @brief Shutdowns the drive
@@ -59,7 +59,7 @@ public:
    * SwitchOn disabled state.
    *
    */
-  bool handleShutdown();
+  bool shutdown();
 
   /**
    * @brief Executes a quickstop
@@ -67,7 +67,7 @@ public:
    * The function executes a quickstop.
    *
    */
-  bool handleHalt();
+  bool halt();
 
   /**
    * @brief Recovers the device from fault
@@ -76,7 +76,7 @@ public:
    * put the device back to operational state.
    *
    */
-  bool handleRecover();
+  bool recover();
 
   /**
    * @brief Register a new operation mode for the drive

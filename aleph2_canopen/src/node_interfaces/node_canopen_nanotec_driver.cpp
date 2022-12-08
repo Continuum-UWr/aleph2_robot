@@ -14,22 +14,34 @@ NodeCanopenNanotecDriver::NodeCanopenNanotecDriver(rclcpp::Node * node)
 
 void NodeCanopenNanotecDriver::init(bool called_from_base)
 {
+  (void)called_from_base;
   RCLCPP_INFO(node_->get_logger(), "init");
+
   NodeCanopenProxyDriver<rclcpp::Node>::init(false);
-  handle_init_service = this->node_->create_service<std_srvs::srv::Trigger>(
+
+	pub_joint_state_ = this->node_->create_publisher<sensor_msgs::msg::JointState>("~/joint_states", 1);
+  srv_init_ = this->node_->create_service<std_srvs::srv::Trigger>(
     "~/init", std::bind(&NodeCanopenNanotecDriver::handle_init, this, _1, _2));
-  handle_auto_setup_service = this->node_->create_service<std_srvs::srv::Trigger>(
+  srv_shutdown_ = this->node_->create_service<std_srvs::srv::Trigger>(
+    "~/shutdown", std::bind(&NodeCanopenNanotecDriver::handle_shutdown, this, _1, _2));
+  srv_halt_ = this->node_->create_service<std_srvs::srv::Trigger>(
+    "~/halt", std::bind(&NodeCanopenNanotecDriver::handle_halt, this, _1, _2));
+  srv_recover_ = this->node_->create_service<std_srvs::srv::Trigger>(
+    "~/recover", std::bind(&NodeCanopenNanotecDriver::handle_recover, this, _1, _2));
+  srv_auto_setup_ = this->node_->create_service<std_srvs::srv::Trigger>(
     "~/auto_setup", std::bind(&NodeCanopenNanotecDriver::handle_auto_setup, this, _1, _2));
-  handle_set_mode_velocity_service = this->node_->create_service<std_srvs::srv::Trigger>(
+  srv_set_mode_velocity_ = this->node_->create_service<std_srvs::srv::Trigger>(
     "~/set_mode_velocity",
     std::bind(&NodeCanopenNanotecDriver::handle_set_mode_velocity, this, _1, _2));
-  handle_set_target_service = this->node_->create_service<canopen_interfaces::srv::COTargetDouble>(
+  srv_set_target_ = this->node_->create_service<canopen_interfaces::srv::COTargetDouble>(
     "~/set_target", std::bind(&NodeCanopenNanotecDriver::handle_set_target, this, _1, _2));
 }
 
 void NodeCanopenNanotecDriver::configure(bool called_from_base)
 {
+  (void)called_from_base;
   RCLCPP_INFO(node_->get_logger(), "configure");
+
   NodeCanopenProxyDriver<rclcpp::Node>::configure(false);
 
   period_ms_ = this->config_["period"].as<uint32_t>();
@@ -37,29 +49,47 @@ void NodeCanopenNanotecDriver::configure(bool called_from_base)
 
 void NodeCanopenNanotecDriver::activate(bool called_from_base)
 {
+  (void)called_from_base;
   RCLCPP_INFO(node_->get_logger(), "activate");
+
   NodeCanopenProxyDriver<rclcpp::Node>::activate(false);
 
   mc_driver_->validate_objs();
 
-  timer_ = this->node_->create_wall_timer(
+  update_timer_ = this->node_->create_wall_timer(
     std::chrono::milliseconds(period_ms_),
-    std::bind(&NodeCanopenNanotecDriver::run, this),
+    std::bind(&NodeCanopenNanotecDriver::update, this),
     this->timer_cbg_);
 }
 
 void NodeCanopenNanotecDriver::deactivate(bool called_from_base)
 {
+  (void)called_from_base;
   RCLCPP_INFO(node_->get_logger(), "deactivate");
+
   NodeCanopenProxyDriver<rclcpp::Node>::deactivate(false);
 
-  timer_->cancel();
+  this->motor_->shutdown();
+
+  update_timer_->cancel();
 }
 
-void NodeCanopenNanotecDriver::run()
+void NodeCanopenNanotecDriver::update()
 {
-  motor_->handleRead();
-  motor_->handleWrite();
+  motor_->read();
+  motor_->write();
+  publish();
+}
+
+void NodeCanopenNanotecDriver::publish()
+{
+  sensor_msgs::msg::JointState js_msg;
+  js_msg.header.stamp = this->node_->get_clock()->now();
+	js_msg.name.push_back(this->node_->get_name());
+	js_msg.position.push_back(mc_driver_->get_position());
+	js_msg.velocity.push_back(mc_driver_->get_speed());
+	js_msg.effort.push_back(0.0);
+	pub_joint_state_->publish(js_msg);
 }
 
 void NodeCanopenNanotecDriver::add_to_master()
@@ -132,60 +162,110 @@ void NodeCanopenNanotecDriver::handle_init(
   const std_srvs::srv::Trigger::Request::SharedPtr request,
   std_srvs::srv::Trigger::Response::SharedPtr response)
 {
-  response->success = init_motor();
+  (void)request;
+  response->success = motor_init();
+}
+
+void NodeCanopenNanotecDriver::handle_shutdown(
+  const std_srvs::srv::Trigger::Request::SharedPtr request,
+  std_srvs::srv::Trigger::Response::SharedPtr response)
+{
+  (void)request;
+  response->success = motor_shutdown();
+}
+
+void NodeCanopenNanotecDriver::handle_halt(
+  const std_srvs::srv::Trigger::Request::SharedPtr request,
+  std_srvs::srv::Trigger::Response::SharedPtr response)
+{
+  (void)request;
+  response->success = motor_halt();
+}
+
+void NodeCanopenNanotecDriver::handle_recover(
+  const std_srvs::srv::Trigger::Request::SharedPtr request,
+  std_srvs::srv::Trigger::Response::SharedPtr response)
+{
+  (void)request;
+  response->success = motor_recover();
 }
 
 void NodeCanopenNanotecDriver::handle_auto_setup(
   const std_srvs::srv::Trigger::Request::SharedPtr request,
   std_srvs::srv::Trigger::Response::SharedPtr response)
 {
-  response->success = auto_setup();
+  (void)request;
+  response->success = motor_auto_setup();
 }
 
 void NodeCanopenNanotecDriver::handle_set_mode_velocity(
   const std_srvs::srv::Trigger::Request::SharedPtr request,
   std_srvs::srv::Trigger::Response::SharedPtr response)
 {
-  response->success = set_mode_velocity();
+  (void)request;
+  response->success = motor_set_mode_velocity();
 }
 
 void NodeCanopenNanotecDriver::handle_set_target(
   const canopen_interfaces::srv::COTargetDouble::Request::SharedPtr request,
   canopen_interfaces::srv::COTargetDouble::Response::SharedPtr response)
 {
-  response->success = set_target(request->target);
+  response->success = motor_set_target(request->target);
 }
 
-bool NodeCanopenNanotecDriver::init_motor()
+bool NodeCanopenNanotecDriver::motor_init()
 {
   if (this->activated_.load()) {
-    bool temp = this->motor_->handleInit();
+    bool temp = this->motor_->init();
     mc_driver_->validate_objs();
     return temp;
   }
   return false;
 }
 
-bool NodeCanopenNanotecDriver::auto_setup()
+bool NodeCanopenNanotecDriver::motor_halt()
 {
   if (this->activated_.load()) {
-    return this->motor_->handleAutoSetup();
+    return this->motor_->halt();
   }
   return false;
 }
 
-bool NodeCanopenNanotecDriver::set_mode_velocity()
+bool NodeCanopenNanotecDriver::motor_shutdown()
+{
+  if (this->activated_.load()) {
+    return this->motor_->shutdown();
+  }
+  return false;
+}
+
+bool NodeCanopenNanotecDriver::motor_recover()
+{
+  if (this->activated_.load()) {
+    return this->motor_->recover();
+  }
+  return false;
+}
+
+bool NodeCanopenNanotecDriver::motor_auto_setup()
+{
+  if (this->activated_.load()) {
+    return this->motor_->autoSetup();
+  }
+  return false;
+}
+
+bool NodeCanopenNanotecDriver::motor_set_mode_velocity()
 {
   if (this->activated_.load()) {
     if (motor_->getMode() != MotorBase::Profiled_Velocity) {
       return motor_->enterModeAndWait(MotorBase::Profiled_Velocity);
     }
-    return false;
   }
   return false;
 }
 
-bool NodeCanopenNanotecDriver::set_target(double target)
+bool NodeCanopenNanotecDriver::motor_set_target(double target)
 {
   if (this->activated_.load()) {
     return motor_->setTarget(target);

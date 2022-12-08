@@ -238,11 +238,11 @@ bool MotorNanotec::readState()
 
   return true;
 }
-void MotorNanotec::handleRead()
+void MotorNanotec::read()
 {
   readState();
 }
-void MotorNanotec::handleWrite()
+void MotorNanotec::write()
 {
   std::scoped_lock lock(cw_mutex_);
   control_word_ |= (1 << Command402::CW_Halt);
@@ -270,9 +270,8 @@ void MotorNanotec::handleWrite()
   }
 }
 
-bool MotorNanotec::handleInit()
+bool MotorNanotec::init()
 {
-  // Register default modes
   for (std::unordered_map<int8_t, AllocFuncType>::iterator it = mode_allocators_.begin();
     it != mode_allocators_.end(); ++it)
   {
@@ -304,16 +303,15 @@ bool MotorNanotec::handleInit()
   return true;
 }
 
-bool MotorNanotec::handleShutdown()
+bool MotorNanotec::shutdown()
 {
   switchMode(MotorBase::No_Mode);
   return switchState(State402::Switch_On_Disabled);
 }
 
-bool MotorNanotec::handleHalt()
+bool MotorNanotec::halt()
 {
   State402::InternalState state = state_handler_.getState();
-  std::scoped_lock lock(cw_mutex_);
 
   // do not demand quickstop in case of fault
   if (state == State402::Fault_Reaction_Active || state == State402::Fault) {
@@ -323,16 +321,15 @@ bool MotorNanotec::handleHalt()
   if (state != State402::Operation_Enable) {
     target_state_ = state;
   } else {
-    target_state_ = State402::Quick_Stop_Active;
-    if (!Command402::setTransition(control_word_, state, State402::Quick_Stop_Active, 0)) {
-      RCLCPP_ERROR(logger_, "Could not quick stop");
+    if (!switchState(State402::Switched_On)) {
+      RCLCPP_ERROR(logger_, "Could not disable operation");
       return false;
     }
   }
   return true;
 }
 
-bool MotorNanotec::handleRecover()
+bool MotorNanotec::recover()
 {
   start_fault_reset_ = true;
   {
@@ -349,7 +346,7 @@ bool MotorNanotec::handleRecover()
   return true;
 }
 
-bool MotorNanotec::handleAutoSetup()
+bool MotorNanotec::autoSetup()
 {
   if (!switchMode(MotorNanotec::Auto_Setup)) {
     RCLCPP_ERROR(logger_, "Failed to switch mode to auto setup");
