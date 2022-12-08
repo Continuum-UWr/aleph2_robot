@@ -3,6 +3,7 @@ master:
   driver: "ros2_canopen::MasterDriver"
   package: canopen_master_driver
   sync_period: 20000
+  heartbeat_producer: 100
 
 nanotec3:
   node_id: 3
@@ -11,6 +12,7 @@ nanotec3:
   driver: "aleph2_canopen::NanotecDriver"
   package: "aleph2_canopen"
   period: 20
+  heartbeat_consumer: true
   enable_lazy_load: false
   sdo:
     - { index: 0x2030, sub_index: 0, value: 8 } # Pole Pair Count
