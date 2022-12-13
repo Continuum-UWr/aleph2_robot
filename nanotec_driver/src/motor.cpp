@@ -1,6 +1,6 @@
-#include "aleph2_canopen/motor.hpp"
+#include "nanotec_driver/motor.hpp"
 
-namespace aleph2_canopen
+namespace nanotec_driver
 {
 
 const static std::unordered_map<State402::InternalState, std::string> STATE_TO_STRING = {
@@ -357,4 +357,4 @@ bool MotorNanotec::autoSetup()
   return auto_setup->executeAutoSetup();
 }
 
-} // namespace aleph2_canopen
+} // namespace nanotec_driver

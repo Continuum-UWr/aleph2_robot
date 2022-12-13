@@ -2,13 +2,13 @@
 
 #include "canopen_402_driver/motor.hpp"
 
-#include "aleph2_canopen/auto_setup.hpp"
+#include "nanotec_driver/auto_setup.hpp"
 
 using ros2_canopen::State402;
 using ros2_canopen::Command402;
 using ros2_canopen::MotorBase;
 
-namespace aleph2_canopen
+namespace nanotec_driver
 {
 
 class MotorNanotec
@@ -149,4 +149,4 @@ private:
   const uint16_t supported_drive_modes_index = 0x6502;
 };
 
-} // namespace aleph2_canopen
+} // namespace nanotec_driver

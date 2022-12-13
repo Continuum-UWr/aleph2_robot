@@ -1,9 +1,9 @@
 #pragma once
 
-#include "aleph2_canopen/node_interfaces/node_canopen_nanotec_driver.hpp"
+#include "nanotec_driver/node_interfaces/node_canopen_nanotec_driver.hpp"
 #include "canopen_core/driver_node.hpp"
 
-namespace aleph2_canopen
+namespace nanotec_driver
 {
 
 class NanotecDriver : public ros2_canopen::CanopenDriver
@@ -15,4 +15,4 @@ public:
 
 };
 
-} // namespace aleph2_canopen
+} // namespace nanotec_driver

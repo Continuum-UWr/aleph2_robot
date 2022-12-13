@@ -1,7 +1,7 @@
-#include "aleph2_canopen/auto_setup.hpp"
-#include "aleph2_canopen/motor.hpp"
+#include "nanotec_driver/auto_setup.hpp"
+#include "nanotec_driver/motor.hpp"
 
-namespace aleph2_canopen
+namespace nanotec_driver
 {
 
 AutoSetupMode::AutoSetupMode(std::shared_ptr<LelyMotionControllerBridge> driver)
@@ -63,4 +63,4 @@ bool AutoSetupMode::executeAutoSetup()
 }
 
 
-} // namespace aleph2_canopen
+} // namespace nanotec_driver

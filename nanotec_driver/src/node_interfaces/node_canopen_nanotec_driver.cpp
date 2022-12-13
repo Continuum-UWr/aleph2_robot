@@ -1,8 +1,8 @@
-#include "aleph2_canopen/node_interfaces/node_canopen_nanotec_driver.hpp"
+#include "nanotec_driver/node_interfaces/node_canopen_nanotec_driver.hpp"
 
 using namespace std::placeholders;
 
-namespace aleph2_canopen
+namespace nanotec_driver
 {
 namespace node_interfaces
 {
@@ -274,4 +274,4 @@ bool NodeCanopenNanotecDriver::motor_set_target(double target)
 }
 
 } // namespace node_interfaces
-} // namespace aleph2_canopen
+} // namespace nanotec_driver

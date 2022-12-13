@@ -2,7 +2,7 @@
 
 #include "canopen_402_driver/motor.hpp"
 
-namespace aleph2_canopen
+namespace nanotec_driver
 {
 
 class AutoSetupMode : public ros2_canopen::Mode
@@ -34,4 +34,4 @@ public:
   virtual bool executeAutoSetup();
 };
 
-} // namespace aleph2_canopen
+} // namespace nanotec_driver

@@ -1,5 +1,5 @@
 <launch version="0.1.1">
-  <let name="bus_config_path" value="$(find-pkg-share aleph2_canopen)/config/nanotec"/>
+  <let name="bus_config_path" value="$(find-pkg-share nanotec_driver)/config/nanotec"/>
   <include file="$(find-pkg-share canopen_core)/launch/canopen.launch.py">
     <arg name="master_config" value="$(var bus_config_path)/master.dcf"/>
     <arg name="master_bin" value="$(var bus_config_path)/master.bin"/>

@@ -1,13 +1,13 @@
 #pragma once
 
-#include "aleph2_canopen/motor.hpp"
+#include "nanotec_driver/motor.hpp"
 
 #include "canopen_proxy_driver/node_interfaces/node_canopen_proxy_driver.hpp"
 #include "canopen_402_driver/lely_motion_controller_bridge.hpp"
 #include "canopen_interfaces/srv/co_target_double.hpp"
 #include "sensor_msgs/msg/joint_state.hpp"
 
-namespace aleph2_canopen
+namespace nanotec_driver
 {
 namespace node_interfaces
 {
@@ -81,4 +81,4 @@ public:
 };
 
 } // namespace node_interfaces
-} // namespace aleph2_canopen
+} // namespace nanotec_driver

@@ -1,16 +1,17 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>aleph2_canopen</name>
+  <name>nanotec_driver</name>
   <version>0.0.0</version>
   <description>
-    Aleph2 CANOpen configuration package
+    Driver for Nanotec motor controllers that uses ros2_canopen stack
   </description>
   
   <maintainer email="continuum@cs.uni.wroc.pl">Continuum Rover Team</maintainer>
-  <author>Błażej Sowa</author>
   
   <license>MIT</license>
+
+  <author>Błażej Sowa</author>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 

@@ -8,9 +8,9 @@ master:
 nanotec3:
   node_id: 3
   dcf: "C5-E-2-09.eds"
-  dcf_path: "install/share/aleph2_canopen/config/nanotec"
-  driver: "aleph2_canopen::NanotecDriver"
-  package: "aleph2_canopen"
+  dcf_path: "@BUS_CONFIG_PATH@"
+  driver: "nanotec_driver::NanotecDriver"
+  package: "nanotec_driver"
   period: 20
   boot: true
   heartbeat_consumer: true
