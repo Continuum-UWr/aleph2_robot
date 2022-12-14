@@ -7,16 +7,11 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-find_package(lely_core_libraries REQUIRED)
-find_package(rclcpp REQUIRED)
-find_package(rclcpp_lifecycle REQUIRED)
-find_package(rclcpp_components REQUIRED)
-find_package(canopen_core REQUIRED)
-find_package(canopen_base_driver REQUIRED)
-find_package(canopen_proxy_driver REQUIRED)
 find_package(canopen_402_driver REQUIRED)
-find_package(std_msgs REQUIRED)
-find_package(std_srvs REQUIRED)
+find_package(canopen_interfaces REQUIRED)
+find_package(canopen_proxy_driver REQUIRED)
+find_package(lely_core_libraries REQUIRED)
+find_package(rclcpp_components REQUIRED)
 find_package(sensor_msgs REQUIRED)
 
 generate_dcf(nanotec)
@@ -31,8 +26,13 @@ target_include_directories(${PROJECT_NAME} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
 target_link_libraries(${PROJECT_NAME}
-  canopen_proxy_driver::node_canopen_proxy_driver
   canopen_402_driver::lely_motion_controller_bridge
+  canopen_proxy_driver::node_canopen_proxy_driver
+  rclcpp_components::component
+)
+ament_target_dependencies(${PROJECT_NAME}
+  canopen_interfaces
+  sensor_msgs
 )
 rclcpp_components_register_nodes(${PROJECT_NAME} "nanotec_driver::NanotecDriver")
 
