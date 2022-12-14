@@ -10,7 +10,9 @@ find_package(ament_cmake REQUIRED)
 find_package(canopen_402_driver REQUIRED)
 find_package(canopen_interfaces REQUIRED)
 find_package(canopen_proxy_driver REQUIRED)
+find_package(hardware_interface REQUIRED)
 find_package(lely_core_libraries REQUIRED)
+find_package(pluginlib REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(sensor_msgs REQUIRED)
 
@@ -21,6 +23,7 @@ add_library(${PROJECT_NAME} SHARED
   src/nanotec_driver.cpp
   src/motor.cpp
   src/auto_setup.cpp
+  src/nanotec_system.cpp
 )
 target_include_directories(${PROJECT_NAME} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -32,9 +35,13 @@ target_link_libraries(${PROJECT_NAME}
 )
 ament_target_dependencies(${PROJECT_NAME}
   canopen_interfaces
+  hardware_interface
   sensor_msgs
 )
+
 rclcpp_components_register_nodes(${PROJECT_NAME} "nanotec_driver::NanotecDriver")
+
+pluginlib_export_plugin_description_file(hardware_interface plugins.xml)
 
 install(
   TARGETS ${PROJECT_NAME}

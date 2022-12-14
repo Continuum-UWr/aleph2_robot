@@ -19,7 +19,9 @@
   <depend>canopen_core</depend>
   <depend>canopen_interfaces</depend>
   <depend>canopen_proxy_driver</depend>
+  <depend>hardware_interface</depend>
   <depend>lely_core_libraries</depend>
+  <depend>pluginlib</depend>
   <depend>rclcpp_components</depend>
   <depend>sensor_msgs</depend>
 

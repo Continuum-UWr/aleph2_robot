@@ -1,0 +1,9 @@
+<library path="nanotec_driver">
+  <class name="nanotec_driver/NanotecSystem"
+    type="nanotec_driver::NanotecSystem"
+    base_class_type="hardware_interface::SystemInterface">
+    <description>
+      ros2_control hardware interface.
+    </description>
+  </class>
+</library>
