@@ -19,7 +19,8 @@ void NodeCanopenNanotecDriver::init(bool called_from_base)
 
   NodeCanopenProxyDriver<rclcpp::Node>::init(false);
 
-	pub_joint_state_ = this->node_->create_publisher<sensor_msgs::msg::JointState>("~/joint_states", 1);
+  pub_joint_state_ =
+    this->node_->create_publisher<sensor_msgs::msg::JointState>("~/joint_states", 1);
   srv_init_ = this->node_->create_service<std_srvs::srv::Trigger>(
     "~/init", std::bind(&NodeCanopenNanotecDriver::handle_init, this, _1, _2));
   srv_shutdown_ = this->node_->create_service<std_srvs::srv::Trigger>(
@@ -85,11 +86,11 @@ void NodeCanopenNanotecDriver::publish()
 {
   sensor_msgs::msg::JointState js_msg;
   js_msg.header.stamp = this->node_->get_clock()->now();
-	js_msg.name.push_back(this->node_->get_name());
-	js_msg.position.push_back(mc_driver_->get_position());
-	js_msg.velocity.push_back(mc_driver_->get_speed());
-	js_msg.effort.push_back(0.0);
-	pub_joint_state_->publish(js_msg);
+  js_msg.name.push_back(this->node_->get_name());
+  js_msg.position.push_back(mc_driver_->get_position());
+  js_msg.velocity.push_back(mc_driver_->get_speed());
+  js_msg.effort.push_back(0.0);
+  pub_joint_state_->publish(js_msg);
 }
 
 void NodeCanopenNanotecDriver::add_to_master()
