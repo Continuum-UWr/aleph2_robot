@@ -1,0 +1,3 @@
+[submodule "ros2_canopen"]
+	path = ros2_canopen
+	url = https://gitlab.continuum.ii.uni.wroc.pl/continuum/software/ros2_canopen.git
