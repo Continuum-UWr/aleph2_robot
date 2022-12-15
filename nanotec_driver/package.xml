@@ -19,11 +19,14 @@
   <depend>canopen_core</depend>
   <depend>canopen_interfaces</depend>
   <depend>canopen_proxy_driver</depend>
+  <depend>controller_manager</depend>
   <depend>hardware_interface</depend>
   <depend>lely_core_libraries</depend>
   <depend>pluginlib</depend>
   <depend>rclcpp_components</depend>
   <depend>sensor_msgs</depend>
+
+  <exec_depend>robot_state_publisher</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>

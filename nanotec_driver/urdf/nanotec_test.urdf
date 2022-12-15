@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<robot name="nanotec_test">
+
+  <link name="base_link" />
+
+  <joint name="nanotec3_joint" type="continuous">
+    <parent link="base_link" />
+    <child link="nanotec3_link" />
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <axis xyz="0 0 1" />
+  </joint>
+
+  <link name="nanotec3_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <cylinder radius="0.1" length="1.0" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <cylinder radius="0.1" length="1.0" />
+      </geometry>
+    </collision>
+  </link>
+
+  <ros2_control name="nanotec_test_system" type="system">
+    <hardware>
+      <plugin>nanotec_driver/NanotecSystem</plugin>
+      <param name="bus_config">package://nanotec_driver/config/nanotec/bus.yml</param>
+      <param name="master_config">package://nanotec_driver/config/nanotec/master.dcf</param>
+      <param name="master_bin">package://nanotec_driver/config/nanotec/master.bin</param>
+      <param name="can_interface">can0</param>
+    </hardware>
+    <joint name="nanotec3_joint">
+      <param name="node_id">3</param>
+    </joint>
+  </ros2_control>
+
+</robot>

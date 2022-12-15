@@ -1,0 +1,15 @@
+<launch version="0.1.1">
+  <arg name="model" default="$(find-pkg-share nanotec_driver)/urdf/nanotec_test.urdf" />
+
+  <let name="robot_description_text" value="$(command 'cat $(var model)')" />
+
+  <node pkg="robot_state_publisher" exec="robot_state_publisher">
+    <param name="robot_description" value="$(var robot_description_text)" />
+  </node>
+
+  <node pkg="controller_manager" exec="ros2_control_node">
+    <param name="robot_description" value="$(var robot_description_text)" />
+    <param from="$(find-pkg-share nanotec_driver)/config/nanotec/ros2_control.yml" />
+  </node>
+
+</launch>
