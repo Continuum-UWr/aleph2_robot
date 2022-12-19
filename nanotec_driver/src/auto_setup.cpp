@@ -63,4 +63,4 @@ bool AutoSetupMode::executeAutoSetup()
 }
 
 
-} // namespace nanotec_driver
+}  // namespace nanotec_driver

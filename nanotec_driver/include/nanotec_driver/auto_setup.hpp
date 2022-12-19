@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "canopen_402_driver/motor.hpp"
 
 namespace nanotec_driver
@@ -26,12 +28,12 @@ protected:
   };
 
 public:
-  AutoSetupMode(std::shared_ptr<LelyMotionControllerBridge> driver);
+  explicit AutoSetupMode(std::shared_ptr<LelyMotionControllerBridge> driver);
 
-  virtual bool start() override;
-  virtual bool read(const uint16_t & sw) override;
-  virtual bool write(OpModeAccesser & cw) override;
-  virtual bool executeAutoSetup();
+  bool start() override;
+  bool read(const uint16_t & sw) override;
+  bool write(OpModeAccesser & cw) override;
+  bool executeAutoSetup();
 };
 
-} // namespace nanotec_driver
+}  // namespace nanotec_driver

@@ -13,7 +13,7 @@ NanotecDriver::NanotecDriver(rclcpp::NodeOptions node_options)
     node_canopen_nanotec_driver_);
 }
 
-} // namespace nanotec_driver
+}  // namespace nanotec_driver
 
 #include "rclcpp_components/register_node_macro.hpp"
 RCLCPP_COMPONENTS_REGISTER_NODE(nanotec_driver::NanotecDriver)

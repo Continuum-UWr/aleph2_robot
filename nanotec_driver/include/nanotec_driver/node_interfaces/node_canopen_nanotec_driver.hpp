@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "nanotec_driver/motor.hpp"
 
 #include "canopen_proxy_driver/node_interfaces/node_canopen_proxy_driver.hpp"
@@ -12,7 +14,8 @@ namespace nanotec_driver
 namespace node_interfaces
 {
 
-class NodeCanopenNanotecDriver : public ros2_canopen::node_interfaces::NodeCanopenProxyDriver<rclcpp::Node>
+class NodeCanopenNanotecDriver
+  : public ros2_canopen::node_interfaces::NodeCanopenProxyDriver<rclcpp::Node>
 {
 protected:
   std::shared_ptr<LelyMotionControllerBridge> mc_driver_;
@@ -62,14 +65,14 @@ protected:
     canopen_interfaces::srv::COTargetDouble::Response::SharedPtr response);
 
 public:
-  NodeCanopenNanotecDriver(rclcpp::Node * node);
+  explicit NodeCanopenNanotecDriver(rclcpp::Node * node);
 
-  virtual void init(bool called_from_base) override;
-  virtual void configure(bool called_from_base) override;
-  virtual void activate(bool called_from_base) override;
-  virtual void deactivate(bool called_from_base) override;
-  virtual void add_to_master() override;
-  virtual void remove_from_master() override;
+  void init(bool called_from_base) override;
+  void configure(bool called_from_base) override;
+  void activate(bool called_from_base) override;
+  void deactivate(bool called_from_base) override;
+  void add_to_master() override;
+  void remove_from_master() override;
 
   bool motor_init();
   bool motor_shutdown();
@@ -80,5 +83,5 @@ public:
   bool motor_set_target(double target);
 };
 
-} // namespace node_interfaces
-} // namespace nanotec_driver
+}  // namespace node_interfaces
+}  // namespace nanotec_driver

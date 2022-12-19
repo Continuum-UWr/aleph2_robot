@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "nanotec_driver/node_interfaces/node_canopen_nanotec_driver.hpp"
 #include "canopen_core/driver_node.hpp"
 
@@ -11,8 +13,7 @@ class NanotecDriver : public ros2_canopen::CanopenDriver
   std::shared_ptr<node_interfaces::NodeCanopenNanotecDriver> node_canopen_nanotec_driver_;
 
 public:
-  NanotecDriver(rclcpp::NodeOptions node_options = rclcpp::NodeOptions());
-
+  explicit NanotecDriver(rclcpp::NodeOptions node_options = rclcpp::NodeOptions());
 };
 
-} // namespace nanotec_driver
+}  // namespace nanotec_driver

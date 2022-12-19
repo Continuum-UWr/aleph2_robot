@@ -1,5 +1,8 @@
 #pragma once
 
+#include <memory>
+#include <unordered_map>
+
 #include "canopen_402_driver/motor.hpp"
 
 #include "nanotec_driver/auto_setup.hpp"
@@ -149,4 +152,4 @@ private:
   const uint16_t supported_drive_modes_index = 0x6502;
 };
 
-} // namespace nanotec_driver
+}  // namespace nanotec_driver

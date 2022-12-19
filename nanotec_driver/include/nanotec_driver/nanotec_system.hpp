@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include "hardware_interface/system_interface.hpp"
 
 namespace nanotec_driver
@@ -42,4 +44,4 @@ public:
   write(const rclcpp::Time & time, const rclcpp::Duration & period) override;
 };
 
-} // namespace nanotec_driver
+}  // namespace nanotec_driver

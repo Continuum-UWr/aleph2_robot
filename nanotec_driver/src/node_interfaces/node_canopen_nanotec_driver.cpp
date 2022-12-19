@@ -274,5 +274,5 @@ bool NodeCanopenNanotecDriver::motor_set_target(double target)
   return false;
 }
 
-} // namespace node_interfaces
-} // namespace nanotec_driver
+}  // namespace node_interfaces
+}  // namespace nanotec_driver

@@ -3,7 +3,7 @@
 namespace nanotec_driver
 {
 
-const static std::unordered_map<State402::InternalState, std::string> STATE_TO_STRING = {
+static const std::unordered_map<State402::InternalState, std::string> STATE_TO_STRING = {
   {State402::Start, "Start"},
   {State402::Not_Ready_To_Switch_On, "Not ready to switch on"},
   {State402::Switch_On_Disabled, "Switch on disabled"},
@@ -104,11 +104,10 @@ ModeSharedPtr MotorNanotec::allocMode(int8_t mode)
 
 bool MotorNanotec::switchMode(int8_t mode)
 {
-
   if (mode == MotorBase::No_Mode) {
     std::scoped_lock lock(mode_mutex_);
     selected_mode_.reset();
-    try { // try to set mode
+    try {  // try to set mode
       driver->set_remote_obj<int8_t>(op_mode_, mode);
     } catch (...) {
     }
@@ -214,7 +213,6 @@ bool MotorNanotec::readState()
 
   if (selected_mode_ && selected_mode_->mode_id_ == new_mode) {
     if (!selected_mode_->read(sw)) {
-
       RCLCPP_INFO(logger_, "Mode handler has error.");
     }
   }
@@ -357,4 +355,4 @@ bool MotorNanotec::autoSetup()
   return auto_setup->executeAutoSetup();
 }
 
-} // namespace nanotec_driver
+}  // namespace nanotec_driver
