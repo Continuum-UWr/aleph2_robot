@@ -1,0 +1,16 @@
+image: docker.io/ros:rolling
+stages:
+  - build
+build:
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+  stage: build
+  before_script:
+  - apt update
+  - apt install python3-wheel
+  - rosdep update
+  - git clone https://gitlab.continuum.ii.uni.wroc.pl/continuum/software/aleph2_common
+  script:
+  - rosdep install --from-paths . --ignore-src -y
+  - colcon build
+  - colcon test --return-code-on-test-failure --event-handlers desktop_notification- status- terminal_title- console_cohesion+
