@@ -5,12 +5,22 @@ build:
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
   stage: build
+  cache:
+   key: $CI_COMMIT_REF_SLUG
+   paths:
+   - build/
+   - install/
+   - logs/
   before_script:
   - apt update
-  - apt install python3-wheel
+  - apt install python3-wheel python3-pip python3-colcon-clean -y
+  - pip3 install git+https://github.com/ruffsl/colcon-cache.git
   - rosdep update
   - git clone https://gitlab.continuum.ii.uni.wroc.pl/continuum/software/aleph2_common
+
   script:
   - rosdep install --from-paths . --ignore-src -y
-  - colcon build
+  - colcon cache lock
+  - colcon build --packages-skip-cache-valid
   - colcon test --return-code-on-test-failure --event-handlers desktop_notification- status- terminal_title- console_cohesion+
+  - colcon clean packages --packages-select-cache-invalid --packages-select-cache-key build --base-select install -y
