@@ -16,7 +16,8 @@ find_package(pluginlib REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(sensor_msgs REQUIRED)
 
-generate_dcf(nanotec)
+generate_dcf(nanotec_c5)
+generate_dcf(nanotec_cl3)
 
 add_library(${PROJECT_NAME} SHARED
   src/node_interfaces/node_canopen_nanotec_driver.cpp

@@ -1,5 +1,5 @@
 master:
-  node_id: 10
+  node_id: 100
   driver: "ros2_canopen::MasterDriver"
   package: canopen_master_driver
   sync_period: 20000
