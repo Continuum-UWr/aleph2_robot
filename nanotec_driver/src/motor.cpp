@@ -15,6 +15,49 @@ static const std::unordered_map<State402::InternalState, std::string> STATE_TO_S
   {State402::Fault, "Fault"},
 };
 
+const static std::unordered_map<uint8_t, std::string> ERROR_NUMBER_TO_DESCRIPTION = {
+  {0, "Watchdog-Reset"},
+  {1, "Input voltage (+Ub) too high"},
+  {2, "Output current too high"},
+  {3, "Input voltage (+Ub) too low"},
+  {4, "Error at fieldbus"},
+  {6, "NMT master takes too long to send Nodeguarding request"},
+  {7, "Sensor 1 (see 3204h): Error through electrical fault or defective hardware"},
+  {8, "Sensor 2 (see 3204h): Error through electrical fault or defective hardware"},
+  {9, "Sensor 3 (see 3204h): Error through electrical fault or defective hardware"},
+  {10, "Warning: Positive limit switch exceeded"},
+  {11, "Warning: Negative limit switch exceeded"},
+  {12, "Overtemperature error"},
+  {13, "The values of object 6065h (Following Error Window) and object 6066h "
+    "(Following Error Time Out) were exceeded; a fault was triggered."},
+  {14, "Warning: Nonvolatile memory full. The current save process could not be "
+    "completed; parts of the data of the save process are lost. Controller must be "
+    "restarted for cleanup work."},
+  {15, "Motor blocked"},
+  {16, "Warning: Nonvolatile memory damaged; controller must be restarted for "
+    "cleanup work (all saved objects are reset to default)"},
+  {17, "Slave took too long to send PDO messages."},
+  {18, "Sensor n (see 3204h), where n is greater than 3: Error through electrical "
+    "fault or defective hardware"},
+  {19, "PDO not processed due to a length error"},
+  {20, "PDO length exceeded"},
+  {21, "Warning: Restart the controller to avoid future errors when saving "
+    "(nonvolatile memory full/corrupt)."},
+  {22, "Rated current must be set (203Bh:01h/6075h)"},
+  {23, "Encoder resolution, number of pole pairs and some other values are "
+    "incorrect."},
+  {24, "Motor current is too high, adjust the PI parameters."},
+  {25, "Internal software error, generic"},
+  {26, "Current too high at digital output"},
+  {27, "Unexpected sync length"},
+  {30, "Error in speed monitoring: slippage error too large"},
+  {32, "Internal error: Correction factor for reference voltage missing in the OTP"},
+  {40, "Warning: Ballast resistor thermally overloaded"},
+  {46, "Interlock error: Bit 3 in 60FDh is set to \"0\", the motor may not start (see the "
+    "section Interlock function in the chapter Digital inputs)"},
+};
+
+
 MotorNanotec::MotorNanotec(
   std::shared_ptr<LelyMotionControllerBridge> driver,
   rclcpp::Logger logger)
@@ -30,16 +73,10 @@ MotorNanotec::MotorNanotec(
   supported_drive_modes_ = driver->create_remote_obj(
     supported_drive_modes_index, 0U, CODataTypes::COData32);
 
-  registerMode<AutoSetupMode>(MotorNanotec::Auto_Setup, driver);
-  // registerMode<ProfiledPositionMode>(MotorBase::Profiled_Position, driver);
-  // registerMode<VelocityMode>(MotorBase::Velocity, driver);
-  registerMode<ProfiledVelocityMode>(MotorBase::Profiled_Velocity, driver);
-  // registerMode<ProfiledTorqueMode>(MotorBase::Profiled_Torque, driver);
-  // registerMode<DefaultHomingMode>(MotorBase::Homing, driver);
-  // registerMode<InterpolatedPositionMode>(MotorBase::Interpolated_Position, driver);
-  // registerMode<CyclicSynchronousPositionMode>(MotorBase::Cyclic_Synchronous_Position, driver);
-  // registerMode<CyclicSynchronousVelocityMode>(MotorBase::Cyclic_Synchronous_Velocity, driver);
-  // registerMode<CyclicSynchronousTorqueMode>(MotorBase::Cyclic_Synchronous_Torque, driver);
+  registerMode(std::make_shared<AutoSetupMode>(driver));
+  registerMode(std::make_shared<ProfiledPositionMode>(driver));
+  registerMode(std::make_shared<ProfiledVelocityMode>(driver));
+  registerMode(std::make_shared<ProfiledTorqueMode>(driver));
 }
 
 bool MotorNanotec::setTarget(double val)
@@ -51,54 +88,37 @@ bool MotorNanotec::setTarget(double val)
   return false;
 }
 
-bool MotorNanotec::isModeSupported(int8_t mode)
-{
-  return mode != MotorBase::Homing && allocMode(mode);
-}
-
-bool MotorNanotec::enterModeAndWait(int8_t mode)
-{
-  bool okay = mode != MotorBase::Homing && switchMode(mode);
-  return okay;
-}
-
 int8_t MotorNanotec::getMode()
 {
   std::scoped_lock lock(mode_mutex_);
   return selected_mode_ ? selected_mode_->mode_id_ : (int8_t)MotorBase::No_Mode;
 }
 
-bool MotorNanotec::isModeSupportedByDevice(int8_t mode)
+void MotorNanotec::on_emcy(ros2_canopen::COEmcy emcy)
 {
-  if (mode < 0) {return true;}
-  if (!supported_drive_modes_->valid) {
-    // THROW_EXCEPTION(std::runtime_error("Supported drive modes (object 6502) is not valid"));
+  uint8_t error_number = emcy.msef[0];
+  auto error = ERROR_NUMBER_TO_DESCRIPTION.find(error_number);
+  if (error == ERROR_NUMBER_TO_DESCRIPTION.end()) {
+    RCLCPP_ERROR_STREAM(logger_, "EMCY: Unknown error number: " << +error_number);
+  } else {
+    RCLCPP_ERROR_STREAM(logger_, "EMCY: " << error->second);
   }
-  uint32_t supported_modes = driver->get_remote_obj_cached<uint32_t>(supported_drive_modes_);
-  bool supported = supported_modes & (1 << (mode - 1));
-  bool below_max = mode <= 32;
-  bool above_min = mode > 0;
-  return below_max && above_min && supported;
 }
 
-void MotorNanotec::registerMode(int8_t id, const ModeSharedPtr & m)
+void MotorNanotec::registerMode(const ModeSharedPtr & m)
 {
-  std::scoped_lock map_lock(map_mutex_);
-  if (m && m->mode_id_ == id) {
-    modes_.insert(std::make_pair(id, m));
-  }
+  modes_.insert(std::make_pair(m->mode_id_, m));
 }
 
 ModeSharedPtr MotorNanotec::allocMode(int8_t mode)
 {
   ModeSharedPtr res;
-  if (isModeSupportedByDevice(mode)) {
-    std::scoped_lock map_lock(map_mutex_);
-    std::unordered_map<int8_t, ModeSharedPtr>::iterator it = modes_.find(mode);
-    if (it != modes_.end()) {
-      res = it->second;
-    }
+
+  std::unordered_map<int8_t, ModeSharedPtr>::iterator it = modes_.find(mode);
+  if (it != modes_.end()) {
+    res = it->second;
   }
+
   return res;
 }
 
@@ -228,7 +248,6 @@ bool MotorNanotec::readState()
 
   if (sw & (1 << State402::SW_Internal_limit)) {
     if (old_sw & (1 << State402::SW_Internal_limit)) {
-      RCLCPP_INFO(logger_, "Internal limit active");
     } else {
       RCLCPP_INFO(logger_, "Internal limit active");
     }
@@ -236,10 +255,12 @@ bool MotorNanotec::readState()
 
   return true;
 }
+
 void MotorNanotec::read()
 {
   readState();
 }
+
 void MotorNanotec::write()
 {
   std::scoped_lock lock(cw_mutex_);
@@ -270,12 +291,6 @@ void MotorNanotec::write()
 
 bool MotorNanotec::init()
 {
-  for (std::unordered_map<int8_t, AllocFuncType>::iterator it = mode_allocators_.begin();
-    it != mode_allocators_.end(); ++it)
-  {
-    (it->second)();
-  }
-
   RCLCPP_INFO(logger_, "Init: Read State");
   if (!readState()) {
     RCLCPP_ERROR(logger_, "Could not read motor state");
@@ -307,23 +322,47 @@ bool MotorNanotec::shutdown()
   return switchState(State402::Switch_On_Disabled);
 }
 
-bool MotorNanotec::halt()
+bool MotorNanotec::enable_operation()
 {
   State402::InternalState state = state_handler_.getState();
 
-  // do not demand quickstop in case of fault
-  if (state == State402::Fault_Reaction_Active || state == State402::Fault) {
+  if (state == State402::Operation_Enable) {
+    RCLCPP_ERROR(logger_, "Could not enable operation: Already in \"Operation Enabled\" state");
     return false;
   }
 
-  if (state != State402::Operation_Enable) {
-    target_state_ = state;
-  } else {
-    if (!switchState(State402::Switched_On)) {
-      RCLCPP_ERROR(logger_, "Could not disable operation");
-      return false;
-    }
+  if (state == State402::Fault || state == State402::Fault_Reaction_Active) {
+    RCLCPP_ERROR(logger_, "Could not enable operation: Motor is in fault state");
+    return false;
   }
+
+  if (mode_id_ == MotorBase::No_Mode) {
+    RCLCPP_ERROR(logger_, "Could not enable operation: No operation mode selected");
+    return false;
+  }
+
+  if (!switchState(State402::Operation_Enable)) {
+    RCLCPP_ERROR(logger_, "Could not enable operation: Failed to switch state");
+    return false;
+  }
+
+  return true;
+}
+
+bool MotorNanotec::disable_operation()
+{
+  State402::InternalState state = state_handler_.getState();
+
+  if (state != State402::Operation_Enable) {
+    RCLCPP_ERROR(logger_, "Could not disable operation: Not in \"Operation Enabled\" state");
+    return false;
+  }
+
+  if (!switchState(State402::Switched_On)) {
+    RCLCPP_ERROR(logger_, "Could not disable operation: Failed to switch state");
+    return false;
+  }
+
   return true;
 }
 

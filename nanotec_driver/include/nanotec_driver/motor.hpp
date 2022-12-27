@@ -24,11 +24,13 @@ public:
 
   MotorNanotec(std::shared_ptr<LelyMotionControllerBridge> driver, rclcpp::Logger logger);
 
+  bool switchMode(int8_t mode);
+  bool switchState(const State402::InternalState & target);
   bool setTarget(double val);
-  bool enterModeAndWait(int8_t mode);
-  bool isModeSupported(int8_t mode);
+
   int8_t getMode();
-  bool readState();
+
+  void on_emcy(ros2_canopen::COEmcy emcy);
 
   bool autoSetup();
 
@@ -36,6 +38,28 @@ public:
    * @brief Initialise the drive
    */
   bool init();
+
+  /**
+   * @brief Shutdowns the drive
+   *
+   * This function shuts down the drive by bringing it into
+   * SwitchOn disabled state.
+   *
+   */
+  bool shutdown();
+
+  bool enable_operation();
+
+  bool disable_operation();
+
+  /**
+   * @brief Recovers the device from fault
+   *
+   * This function tries to reset faults and
+   * put the device back to operational state.
+   *
+   */
+  bool recover();
 
   /**
    * @brief Read objects of the drive
@@ -55,68 +79,11 @@ public:
    */
   void write();
 
-  /**
-   * @brief Shutdowns the drive
-   *
-   * This function shuts down the drive by bringing it into
-   * SwitchOn disabled state.
-   *
-   */
-  bool shutdown();
-
-  /**
-   * @brief Executes a quickstop
-   *
-   * The function executes a quickstop.
-   *
-   */
-  bool halt();
-
-  /**
-   * @brief Recovers the device from fault
-   *
-   * This function tries to reset faults and
-   * put the device back to operational state.
-   *
-   */
-  bool recover();
-
-  /**
-   * @brief Register a new operation mode for the drive
-   *
-   * This function will register an operation mode for the drive.
-   * It will check if the mode is supported by the drive by reading
-   * 0x6508 object.
-   *
-   * @tparam T
-   * @tparam Args
-   * @param mode
-   * @param args
-   * @return true
-   * @return false
-   */
-  template<typename T, typename ... Args>
-  bool registerMode(int8_t mode, Args &&... args)
-  {
-    return mode_allocators_.insert(
-      std::make_pair(
-        mode, [args ..., mode, this]()
-        {
-          if (isModeSupportedByDevice(mode)) {
-            registerMode(mode, ModeSharedPtr(new T(args ...)));
-          }
-        }))
-           .second;
-  }
-
 private:
-  virtual bool isModeSupportedByDevice(int8_t mode);
-  void registerMode(int8_t id, const ModeSharedPtr & m);
+  bool readState();
+  void registerMode(const ModeSharedPtr & m);
 
   ModeSharedPtr allocMode(int8_t mode);
-
-  bool switchMode(int8_t mode);
-  bool switchState(const State402::InternalState & target);
 
   rclcpp::Logger logger_;
 
@@ -128,10 +95,7 @@ private:
 
   State402 state_handler_;
 
-  std::mutex map_mutex_;
   std::unordered_map<int8_t, ModeSharedPtr> modes_;
-  typedef std::function<void ()> AllocFuncType;
-  std::unordered_map<int8_t, AllocFuncType> mode_allocators_;
 
   ModeSharedPtr selected_mode_;
   int8_t mode_id_;

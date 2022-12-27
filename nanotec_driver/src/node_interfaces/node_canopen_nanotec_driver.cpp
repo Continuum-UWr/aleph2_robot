@@ -25,8 +25,12 @@ void NodeCanopenNanotecDriver::init(bool called_from_base)
     "~/init", std::bind(&NodeCanopenNanotecDriver::handle_init, this, _1, _2));
   srv_shutdown_ = this->node_->create_service<std_srvs::srv::Trigger>(
     "~/shutdown", std::bind(&NodeCanopenNanotecDriver::handle_shutdown, this, _1, _2));
-  srv_halt_ = this->node_->create_service<std_srvs::srv::Trigger>(
-    "~/halt", std::bind(&NodeCanopenNanotecDriver::handle_halt, this, _1, _2));
+  srv_enable_operation_ = this->node_->create_service<std_srvs::srv::Trigger>(
+    "~/enable_operation",
+    std::bind(&NodeCanopenNanotecDriver::handle_enable_operation, this, _1, _2));
+  srv_disable_operation_ = this->node_->create_service<std_srvs::srv::Trigger>(
+    "~/disable_operation",
+    std::bind(&NodeCanopenNanotecDriver::handle_disable_operation, this, _1, _2));
   srv_recover_ = this->node_->create_service<std_srvs::srv::Trigger>(
     "~/recover", std::bind(&NodeCanopenNanotecDriver::handle_recover, this, _1, _2));
   srv_auto_setup_ = this->node_->create_service<std_srvs::srv::Trigger>(
@@ -167,6 +171,11 @@ void NodeCanopenNanotecDriver::handle_init(
   response->success = motor_init();
 }
 
+void NodeCanopenNanotecDriver::on_emcy(ros2_canopen::COEmcy emcy)
+{
+  this->motor_->on_emcy(emcy);
+}
+
 void NodeCanopenNanotecDriver::handle_shutdown(
   const std_srvs::srv::Trigger::Request::SharedPtr request,
   std_srvs::srv::Trigger::Response::SharedPtr response)
@@ -175,12 +184,20 @@ void NodeCanopenNanotecDriver::handle_shutdown(
   response->success = motor_shutdown();
 }
 
-void NodeCanopenNanotecDriver::handle_halt(
+void NodeCanopenNanotecDriver::handle_enable_operation(
   const std_srvs::srv::Trigger::Request::SharedPtr request,
   std_srvs::srv::Trigger::Response::SharedPtr response)
 {
   (void)request;
-  response->success = motor_halt();
+  response->success = motor_enable_operation();
+}
+
+void NodeCanopenNanotecDriver::handle_disable_operation(
+  const std_srvs::srv::Trigger::Request::SharedPtr request,
+  std_srvs::srv::Trigger::Response::SharedPtr response)
+{
+  (void)request;
+  response->success = motor_disable_operation();
 }
 
 void NodeCanopenNanotecDriver::handle_recover(
@@ -218,16 +235,7 @@ bool NodeCanopenNanotecDriver::motor_init()
 {
   if (this->activated_.load()) {
     bool temp = this->motor_->init();
-    mc_driver_->validate_objs();
     return temp;
-  }
-  return false;
-}
-
-bool NodeCanopenNanotecDriver::motor_halt()
-{
-  if (this->activated_.load()) {
-    return this->motor_->halt();
   }
   return false;
 }
@@ -236,6 +244,23 @@ bool NodeCanopenNanotecDriver::motor_shutdown()
 {
   if (this->activated_.load()) {
     return this->motor_->shutdown();
+  }
+  return false;
+}
+
+
+bool NodeCanopenNanotecDriver::motor_enable_operation()
+{
+  if (this->activated_.load()) {
+    return this->motor_->enable_operation();
+  }
+  return false;
+}
+
+bool NodeCanopenNanotecDriver::motor_disable_operation()
+{
+  if (this->activated_.load()) {
+    return this->motor_->disable_operation();
   }
   return false;
 }
@@ -260,7 +285,7 @@ bool NodeCanopenNanotecDriver::motor_set_mode_velocity()
 {
   if (this->activated_.load()) {
     if (motor_->getMode() != MotorBase::Profiled_Velocity) {
-      return motor_->enterModeAndWait(MotorBase::Profiled_Velocity);
+      return motor_->switchMode(MotorBase::Profiled_Velocity);
     }
   }
   return false;

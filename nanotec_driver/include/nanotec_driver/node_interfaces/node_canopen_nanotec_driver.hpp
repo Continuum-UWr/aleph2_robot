@@ -25,7 +25,8 @@ protected:
   rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr pub_joint_state_;
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_init_;
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_shutdown_;
-  rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_halt_;
+  rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_enable_operation_;
+  rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_disable_operation_;
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_recover_;
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_auto_setup_;
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_set_mode_velocity_;
@@ -44,7 +45,11 @@ protected:
     const std_srvs::srv::Trigger::Request::SharedPtr request,
     std_srvs::srv::Trigger::Response::SharedPtr response);
 
-  void handle_halt(
+  void handle_enable_operation(
+    const std_srvs::srv::Trigger::Request::SharedPtr request,
+    std_srvs::srv::Trigger::Response::SharedPtr response);
+
+  void handle_disable_operation(
     const std_srvs::srv::Trigger::Request::SharedPtr request,
     std_srvs::srv::Trigger::Response::SharedPtr response);
 
@@ -73,10 +78,12 @@ public:
   void deactivate(bool called_from_base) override;
   void add_to_master() override;
   void remove_from_master() override;
+  void on_emcy(ros2_canopen::COEmcy emcy) override;
 
   bool motor_init();
   bool motor_shutdown();
-  bool motor_halt();
+  bool motor_enable_operation();
+  bool motor_disable_operation();
   bool motor_recover();
   bool motor_auto_setup();
   bool motor_set_mode_velocity();
