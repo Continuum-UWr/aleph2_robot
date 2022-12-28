@@ -15,7 +15,7 @@ static const std::unordered_map<State402::InternalState, std::string> STATE_TO_S
   {State402::Fault, "Fault"},
 };
 
-const static std::unordered_map<uint8_t, std::string> ERROR_NUMBER_TO_DESCRIPTION = {
+static const std::unordered_map<uint8_t, std::string> ERROR_NUMBER_TO_DESCRIPTION = {
   {0, "Watchdog-Reset"},
   {1, "Input voltage (+Ub) too high"},
   {2, "Output current too high"},
