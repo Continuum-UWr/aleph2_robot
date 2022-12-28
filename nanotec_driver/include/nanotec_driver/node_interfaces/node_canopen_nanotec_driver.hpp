@@ -29,7 +29,9 @@ protected:
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_disable_operation_;
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_recover_;
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_auto_setup_;
+  rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_set_mode_position_;
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_set_mode_velocity_;
+  rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_set_mode_torque_;
   rclcpp::Service<canopen_interfaces::srv::COTargetDouble>::SharedPtr srv_set_target_;
 
   uint32_t period_ms_;
@@ -61,7 +63,15 @@ protected:
     const std_srvs::srv::Trigger::Request::SharedPtr request,
     std_srvs::srv::Trigger::Response::SharedPtr response);
 
+  void handle_set_mode_position(
+    const std_srvs::srv::Trigger::Request::SharedPtr request,
+    std_srvs::srv::Trigger::Response::SharedPtr response);
+
   void handle_set_mode_velocity(
+    const std_srvs::srv::Trigger::Request::SharedPtr request,
+    std_srvs::srv::Trigger::Response::SharedPtr response);
+
+  void handle_set_mode_torque(
     const std_srvs::srv::Trigger::Request::SharedPtr request,
     std_srvs::srv::Trigger::Response::SharedPtr response);
 
@@ -87,7 +97,9 @@ public:
   bool motor_disable_operation();
   bool motor_recover();
   bool motor_auto_setup();
+  bool motor_set_mode_position();
   bool motor_set_mode_velocity();
+  bool motor_set_mode_torque();
   bool motor_set_target(double target);
 };
 

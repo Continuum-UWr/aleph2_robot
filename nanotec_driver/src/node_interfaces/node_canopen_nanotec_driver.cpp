@@ -35,9 +35,15 @@ void NodeCanopenNanotecDriver::init(bool called_from_base)
     "~/recover", std::bind(&NodeCanopenNanotecDriver::handle_recover, this, _1, _2));
   srv_auto_setup_ = this->node_->create_service<std_srvs::srv::Trigger>(
     "~/auto_setup", std::bind(&NodeCanopenNanotecDriver::handle_auto_setup, this, _1, _2));
+  srv_set_mode_position_ = this->node_->create_service<std_srvs::srv::Trigger>(
+    "~/set_mode_position",
+    std::bind(&NodeCanopenNanotecDriver::handle_set_mode_position, this, _1, _2));
   srv_set_mode_velocity_ = this->node_->create_service<std_srvs::srv::Trigger>(
     "~/set_mode_velocity",
     std::bind(&NodeCanopenNanotecDriver::handle_set_mode_velocity, this, _1, _2));
+  srv_set_mode_torque_ = this->node_->create_service<std_srvs::srv::Trigger>(
+    "~/set_mode_torque",
+    std::bind(&NodeCanopenNanotecDriver::handle_set_mode_torque, this, _1, _2));
   srv_set_target_ = this->node_->create_service<canopen_interfaces::srv::COTargetDouble>(
     "~/set_target", std::bind(&NodeCanopenNanotecDriver::handle_set_target, this, _1, _2));
 }
@@ -216,12 +222,28 @@ void NodeCanopenNanotecDriver::handle_auto_setup(
   response->success = motor_auto_setup();
 }
 
+void NodeCanopenNanotecDriver::handle_set_mode_position(
+  const std_srvs::srv::Trigger::Request::SharedPtr request,
+  std_srvs::srv::Trigger::Response::SharedPtr response)
+{
+  (void)request;
+  response->success = motor_set_mode_velocity();
+}
+
 void NodeCanopenNanotecDriver::handle_set_mode_velocity(
   const std_srvs::srv::Trigger::Request::SharedPtr request,
   std_srvs::srv::Trigger::Response::SharedPtr response)
 {
   (void)request;
   response->success = motor_set_mode_velocity();
+}
+
+void NodeCanopenNanotecDriver::handle_set_mode_torque(
+  const std_srvs::srv::Trigger::Request::SharedPtr request,
+  std_srvs::srv::Trigger::Response::SharedPtr response)
+{
+  (void)request;
+  response->success = motor_set_mode_torque();
 }
 
 void NodeCanopenNanotecDriver::handle_set_target(
@@ -281,12 +303,26 @@ bool NodeCanopenNanotecDriver::motor_auto_setup()
   return false;
 }
 
+bool NodeCanopenNanotecDriver::motor_set_mode_position()
+{
+  if (this->activated_.load()) {
+    return motor_->switch_mode(MotorBase::Profiled_Position);
+  }
+  return false;
+}
+
 bool NodeCanopenNanotecDriver::motor_set_mode_velocity()
 {
   if (this->activated_.load()) {
-    if (motor_->get_mode_id() != MotorBase::Profiled_Velocity) {
-      return motor_->switch_mode(MotorBase::Profiled_Velocity);
-    }
+    return motor_->switch_mode(MotorBase::Profiled_Velocity);
+  }
+  return false;
+}
+
+bool NodeCanopenNanotecDriver::motor_set_mode_torque()
+{
+  if (this->activated_.load()) {
+    return motor_->switch_mode(MotorBase::Profiled_Torque);
   }
   return false;
 }
