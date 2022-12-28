@@ -33,7 +33,7 @@ public:
   bool start() override;
   bool read(const uint16_t & sw) override;
   bool write(OpModeAccesser & cw) override;
-  bool executeAutoSetup();
+  bool execute_auto_setup();
 };
 
 }  // namespace nanotec_driver

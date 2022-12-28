@@ -276,7 +276,7 @@ bool NodeCanopenNanotecDriver::motor_recover()
 bool NodeCanopenNanotecDriver::motor_auto_setup()
 {
   if (this->activated_.load()) {
-    return this->motor_->autoSetup();
+    return this->motor_->auto_setup();
   }
   return false;
 }
@@ -284,8 +284,8 @@ bool NodeCanopenNanotecDriver::motor_auto_setup()
 bool NodeCanopenNanotecDriver::motor_set_mode_velocity()
 {
   if (this->activated_.load()) {
-    if (motor_->getMode() != MotorBase::Profiled_Velocity) {
-      return motor_->switchMode(MotorBase::Profiled_Velocity);
+    if (motor_->get_mode_id() != MotorBase::Profiled_Velocity) {
+      return motor_->switch_mode(MotorBase::Profiled_Velocity);
     }
   }
   return false;
@@ -294,7 +294,7 @@ bool NodeCanopenNanotecDriver::motor_set_mode_velocity()
 bool NodeCanopenNanotecDriver::motor_set_target(double target)
 {
   if (this->activated_.load()) {
-    return motor_->setTarget(target);
+    return motor_->set_target(target);
   }
   return false;
 }

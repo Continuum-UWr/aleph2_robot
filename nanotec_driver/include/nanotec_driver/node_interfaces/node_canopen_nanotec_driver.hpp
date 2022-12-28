@@ -69,6 +69,8 @@ protected:
     const canopen_interfaces::srv::COTargetDouble::Request::SharedPtr request,
     canopen_interfaces::srv::COTargetDouble::Response::SharedPtr response);
 
+  void on_emcy(ros2_canopen::COEmcy emcy) override;
+
 public:
   explicit NodeCanopenNanotecDriver(rclcpp::Node * node);
 
@@ -78,7 +80,6 @@ public:
   void deactivate(bool called_from_base) override;
   void add_to_master() override;
   void remove_from_master() override;
-  void on_emcy(ros2_canopen::COEmcy emcy) override;
 
   bool motor_init();
   bool motor_shutdown();

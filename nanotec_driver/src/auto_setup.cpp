@@ -37,7 +37,7 @@ bool AutoSetupMode::write(OpModeAccesser & cw)
   return true;
 }
 
-bool AutoSetupMode::executeAutoSetup()
+bool AutoSetupMode::execute_auto_setup()
 {
   std::unique_lock lock(status_mutex_);
   bool okay = true;

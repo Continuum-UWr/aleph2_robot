@@ -24,15 +24,14 @@ public:
 
   MotorNanotec(std::shared_ptr<LelyMotionControllerBridge> driver, rclcpp::Logger logger);
 
-  bool switchMode(int8_t mode);
-  bool switchState(const State402::InternalState & target);
-  bool setTarget(double val);
+  bool switch_mode(int8_t mode);
+  bool set_target(double val);
 
-  int8_t getMode();
+  int8_t get_mode_id();
 
   void on_emcy(ros2_canopen::COEmcy emcy);
 
-  bool autoSetup();
+  bool auto_setup();
 
   /**
    * @brief Initialise the drive
@@ -80,10 +79,10 @@ public:
   void write();
 
 private:
-  bool readState();
-  void registerMode(const ModeSharedPtr & m);
-
-  ModeSharedPtr allocMode(int8_t mode);
+  bool switch_state(const State402::InternalState & target);
+  bool read_state();
+  void register_mode(const ModeSharedPtr & m);
+  ModeSharedPtr get_mode(int8_t mode_id);
 
   rclcpp::Logger logger_;
 
@@ -98,7 +97,7 @@ private:
   std::unordered_map<int8_t, ModeSharedPtr> modes_;
 
   ModeSharedPtr selected_mode_;
-  int8_t mode_id_;
+  int8_t current_mode_id_;
   std::condition_variable mode_cond_;
   std::mutex mode_mutex_;
   const std::chrono::seconds state_switch_timeout_;
@@ -109,6 +108,7 @@ private:
   std::shared_ptr<RemoteObject> op_mode_display_;
   std::shared_ptr<RemoteObject> op_mode_;
   std::shared_ptr<RemoteObject> supported_drive_modes_;
+
   const uint16_t status_word_entry_index = 0x6041;
   const uint16_t control_word_entry_index = 0x6040;
   const uint16_t op_mode_display_index = 0x6061;
