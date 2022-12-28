@@ -24,6 +24,10 @@ public:
 
   MotorNanotec(std::shared_ptr<LelyMotionControllerBridge> driver, rclcpp::Logger logger);
 
+  double get_position() {return position_;}
+  double get_velocity() {return velocity_;}
+  double get_torque() {return torque_;}
+
   bool switch_mode(int8_t mode);
   bool set_target(double val);
 
@@ -84,6 +88,10 @@ private:
   void register_mode(const ModeSharedPtr & m);
   ModeSharedPtr get_mode(int8_t mode_id);
 
+  double position_;
+  double velocity_;
+  double torque_;
+
   rclcpp::Logger logger_;
 
   std::atomic<uint16_t> status_word_;
@@ -107,13 +115,17 @@ private:
   std::shared_ptr<RemoteObject> control_word_entry_;
   std::shared_ptr<RemoteObject> op_mode_display_;
   std::shared_ptr<RemoteObject> op_mode_;
-  std::shared_ptr<RemoteObject> supported_drive_modes_;
+  std::shared_ptr<RemoteObject> position_actual_value_;
+  std::shared_ptr<RemoteObject> velocity_actual_value_;
+  std::shared_ptr<RemoteObject> torque_actual_value_;
 
   const uint16_t status_word_entry_index = 0x6041;
   const uint16_t control_word_entry_index = 0x6040;
   const uint16_t op_mode_display_index = 0x6061;
   const uint16_t op_mode_index = 0x6060;
-  const uint16_t supported_drive_modes_index = 0x6502;
+  const uint16_t position_actual_value_index = 0x6064;
+  const uint16_t velocity_actual_value_index = 0x606C;
+  const uint16_t torque_actual_value_index = 0x6077;
 };
 
 }  // namespace nanotec_driver

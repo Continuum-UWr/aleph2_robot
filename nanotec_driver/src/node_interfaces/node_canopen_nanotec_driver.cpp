@@ -97,9 +97,9 @@ void NodeCanopenNanotecDriver::publish()
   sensor_msgs::msg::JointState js_msg;
   js_msg.header.stamp = this->node_->get_clock()->now();
   js_msg.name.push_back(this->node_->get_name());
-  js_msg.position.push_back(mc_driver_->get_position());
-  js_msg.velocity.push_back(mc_driver_->get_speed());
-  js_msg.effort.push_back(0.0);
+  js_msg.position.push_back(this->motor_->get_position());
+  js_msg.velocity.push_back(this->motor_->get_velocity());
+  js_msg.effort.push_back(this->motor_->get_torque());
   pub_joint_state_->publish(js_msg);
 }
 
@@ -227,7 +227,7 @@ void NodeCanopenNanotecDriver::handle_set_mode_position(
   std_srvs::srv::Trigger::Response::SharedPtr response)
 {
   (void)request;
-  response->success = motor_set_mode_velocity();
+  response->success = motor_set_mode_position();
 }
 
 void NodeCanopenNanotecDriver::handle_set_mode_velocity(
