@@ -21,16 +21,14 @@ void NodeCanopenNanotecDriver::init(bool called_from_base)
 
   pub_joint_state_ =
     this->node_->create_publisher<sensor_msgs::msg::JointState>("~/joint_states", 1);
-  srv_init_ = this->node_->create_service<std_srvs::srv::Trigger>(
-    "~/init", std::bind(&NodeCanopenNanotecDriver::handle_init, this, _1, _2));
-  srv_shutdown_ = this->node_->create_service<std_srvs::srv::Trigger>(
-    "~/shutdown", std::bind(&NodeCanopenNanotecDriver::handle_shutdown, this, _1, _2));
-  srv_enable_operation_ = this->node_->create_service<std_srvs::srv::Trigger>(
-    "~/enable_operation",
-    std::bind(&NodeCanopenNanotecDriver::handle_enable_operation, this, _1, _2));
-  srv_disable_operation_ = this->node_->create_service<std_srvs::srv::Trigger>(
-    "~/disable_operation",
-    std::bind(&NodeCanopenNanotecDriver::handle_disable_operation, this, _1, _2));
+  srv_switch_off_ = this->node_->create_service<std_srvs::srv::Trigger>(
+    "~/switch_off", std::bind(&NodeCanopenNanotecDriver::handle_switch_off, this, _1, _2));
+  srv_switch_enabled_ = this->node_->create_service<std_srvs::srv::Trigger>(
+    "~/switch_enabled",
+    std::bind(&NodeCanopenNanotecDriver::handle_switch_enabled, this, _1, _2));
+  srv_switch_operational_ = this->node_->create_service<std_srvs::srv::Trigger>(
+    "~/switch_operational",
+    std::bind(&NodeCanopenNanotecDriver::handle_switch_operational, this, _1, _2));
   srv_recover_ = this->node_->create_service<std_srvs::srv::Trigger>(
     "~/recover", std::bind(&NodeCanopenNanotecDriver::handle_recover, this, _1, _2));
   srv_auto_setup_ = this->node_->create_service<std_srvs::srv::Trigger>(
@@ -80,7 +78,7 @@ void NodeCanopenNanotecDriver::deactivate(bool called_from_base)
 
   NodeCanopenProxyDriver<rclcpp::Node>::deactivate(false);
 
-  this->motor_->shutdown();
+  this->motor_->switch_off();
 
   update_timer_->cancel();
 }
@@ -169,41 +167,33 @@ void NodeCanopenNanotecDriver::remove_from_master()
   }
 }
 
-void NodeCanopenNanotecDriver::handle_init(
-  const std_srvs::srv::Trigger::Request::SharedPtr request,
-  std_srvs::srv::Trigger::Response::SharedPtr response)
-{
-  (void)request;
-  response->success = motor_init();
-}
-
 void NodeCanopenNanotecDriver::on_emcy(ros2_canopen::COEmcy emcy)
 {
   this->motor_->on_emcy(emcy);
 }
 
-void NodeCanopenNanotecDriver::handle_shutdown(
+void NodeCanopenNanotecDriver::handle_switch_off(
   const std_srvs::srv::Trigger::Request::SharedPtr request,
   std_srvs::srv::Trigger::Response::SharedPtr response)
 {
   (void)request;
-  response->success = motor_shutdown();
+  response->success = motor_switch_off();
 }
 
-void NodeCanopenNanotecDriver::handle_enable_operation(
+void NodeCanopenNanotecDriver::handle_switch_enabled(
   const std_srvs::srv::Trigger::Request::SharedPtr request,
   std_srvs::srv::Trigger::Response::SharedPtr response)
 {
   (void)request;
-  response->success = motor_enable_operation();
+  response->success = motor_switch_enabled();
 }
 
-void NodeCanopenNanotecDriver::handle_disable_operation(
+void NodeCanopenNanotecDriver::handle_switch_operational(
   const std_srvs::srv::Trigger::Request::SharedPtr request,
   std_srvs::srv::Trigger::Response::SharedPtr response)
 {
   (void)request;
-  response->success = motor_disable_operation();
+  response->success = motor_switch_operational();
 }
 
 void NodeCanopenNanotecDriver::handle_recover(
@@ -253,36 +243,27 @@ void NodeCanopenNanotecDriver::handle_set_target(
   response->success = motor_set_target(request->target);
 }
 
-bool NodeCanopenNanotecDriver::motor_init()
+bool NodeCanopenNanotecDriver::motor_switch_off()
 {
   if (this->activated_.load()) {
-    bool temp = this->motor_->init();
-    return temp;
-  }
-  return false;
-}
-
-bool NodeCanopenNanotecDriver::motor_shutdown()
-{
-  if (this->activated_.load()) {
-    return this->motor_->shutdown();
+    return this->motor_->switch_off();
   }
   return false;
 }
 
 
-bool NodeCanopenNanotecDriver::motor_enable_operation()
+bool NodeCanopenNanotecDriver::motor_switch_enabled()
 {
   if (this->activated_.load()) {
-    return this->motor_->enable_operation();
+    return this->motor_->switch_enabled();
   }
   return false;
 }
 
-bool NodeCanopenNanotecDriver::motor_disable_operation()
+bool NodeCanopenNanotecDriver::motor_switch_operational()
 {
   if (this->activated_.load()) {
-    return this->motor_->disable_operation();
+    return this->motor_->switch_operational();
   }
   return false;
 }
@@ -306,7 +287,7 @@ bool NodeCanopenNanotecDriver::motor_auto_setup()
 bool NodeCanopenNanotecDriver::motor_set_mode_position()
 {
   if (this->activated_.load()) {
-    return motor_->switch_mode(MotorBase::Profiled_Position);
+    return motor_->set_mode(MotorBase::Profiled_Position);
   }
   return false;
 }
@@ -314,7 +295,7 @@ bool NodeCanopenNanotecDriver::motor_set_mode_position()
 bool NodeCanopenNanotecDriver::motor_set_mode_velocity()
 {
   if (this->activated_.load()) {
-    return motor_->switch_mode(MotorBase::Profiled_Velocity);
+    return motor_->set_mode(MotorBase::Profiled_Velocity);
   }
   return false;
 }
@@ -322,7 +303,7 @@ bool NodeCanopenNanotecDriver::motor_set_mode_velocity()
 bool NodeCanopenNanotecDriver::motor_set_mode_torque()
 {
   if (this->activated_.load()) {
-    return motor_->switch_mode(MotorBase::Profiled_Torque);
+    return motor_->set_mode(MotorBase::Profiled_Torque);
   }
   return false;
 }

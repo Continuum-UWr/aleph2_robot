@@ -129,26 +129,28 @@ ModeSharedPtr MotorNanotec::get_mode(int8_t mode)
   return res;
 }
 
-bool MotorNanotec::switch_mode(int8_t mode_id)
+bool MotorNanotec::set_mode(int8_t mode_id)
 {
   if (mode_id == MotorBase::No_Mode) {
     std::scoped_lock lock(mode_mutex_);
+
+    State402::InternalState state = state_handler_.getState();
+
+    if (state == State402::Operation_Enable) {switch_enabled();}
+
     selected_mode_.reset();
-    try {  // try to set mode
-      driver->set_remote_obj<int8_t>(op_mode_, mode_id);
-    } catch (...) {
-    }
+    driver->set_remote_obj<int8_t>(op_mode_, mode_id);
     return true;
   }
 
   ModeSharedPtr next_mode = get_mode(mode_id);
   if (!next_mode) {
-    RCLCPP_INFO(logger_, "Could not switch mode: Mode is not supported.");
+    RCLCPP_INFO(logger_, "Could not set mode: Mode is not supported.");
     return false;
   }
 
   if (!next_mode->start()) {
-    RCLCPP_INFO(logger_, "Could not switch mode: Failed to start mode.");
+    RCLCPP_INFO(logger_, "Could not set mode: Failed to start mode.");
     return false;
   }
 
@@ -162,10 +164,6 @@ bool MotorNanotec::switch_mode(int8_t mode_id)
 
     selected_mode_.reset();
   }
-
-  // if (!switch_state(State402::Switched_On)) {
-  //   return false;
-  // }
 
   driver->set_remote_obj<int8_t>(op_mode_, mode_id);
 
@@ -184,14 +182,10 @@ bool MotorNanotec::switch_mode(int8_t mode_id)
       selected_mode_ = next_mode;
       okay = true;
     } else {
-      RCLCPP_INFO(logger_, "Could not switch mode: Timed out.");
+      RCLCPP_INFO(logger_, "Could not set mode: Timed out.");
       driver->set_remote_obj<int8_t>(op_mode_, current_mode_id_);
     }
   }
-
-  // if (!switch_state(State402::Operation_Enable)) {
-  //   return false;
-  // }
 
   return okay;
 }
@@ -219,7 +213,7 @@ bool MotorNanotec::switch_state(const State402::InternalState & target)
   return state == target;
 }
 
-bool MotorNanotec::read_state()
+void MotorNanotec::read()
 {
   uint16_t old_sw, sw = driver->get_remote_obj<uint16_t>(status_word_entry_);
   old_sw = status_word_.exchange(sw);
@@ -253,19 +247,9 @@ bool MotorNanotec::read_state()
     RCLCPP_INFO(logger_, "Mode does not match.");
   }
 
-  if (sw & (1 << State402::SW_Internal_limit)) {
-    if (old_sw & (1 << State402::SW_Internal_limit)) {
-    } else {
-      RCLCPP_INFO(logger_, "Internal limit active");
-    }
+  if ((sw & (1 << State402::SW_Internal_limit)) && !(old_sw & (1 << State402::SW_Internal_limit))) {
+    RCLCPP_INFO(logger_, "Internal limit active");
   }
-
-  return true;
-}
-
-void MotorNanotec::read()
-{
-  read_state();
 
   position_ = static_cast<double>(driver->get_remote_obj<int32_t>(position_actual_value_));
   velocity_ = static_cast<double>(driver->get_remote_obj<int32_t>(velocity_actual_value_));
@@ -300,45 +284,53 @@ void MotorNanotec::write()
   }
 }
 
-bool MotorNanotec::init()
+bool MotorNanotec::switch_off()
 {
-  RCLCPP_INFO(logger_, "Init: Read State");
-  if (!read_state()) {
-    RCLCPP_ERROR(logger_, "Could not read motor state");
-    return false;
-  }
-  {
-    std::scoped_lock lock(cw_mutex_);
-    control_word_ = 0;
-    start_fault_reset_ = true;
-  }
+  start_fault_reset_ = true;
 
-  RCLCPP_INFO(logger_, "Init: Enable");
-  if (!switch_state(State402::Ready_To_Switch_On) || !switch_state(State402::Switched_On)) {
-    RCLCPP_ERROR(logger_, "Could not enable motor");
+  if (!switch_state(State402::Switch_On_Disabled)) {
+    RCLCPP_ERROR(logger_, "Could not switch motor off: Failed to switch state");
     return false;
   }
 
-  RCLCPP_INFO(logger_, "Init: Switch no mode");
-  if (!switch_mode(MotorBase::No_Mode)) {
-    RCLCPP_ERROR(logger_, "Could not enter no mode");
-    return false;
-  }
   return true;
 }
 
-bool MotorNanotec::shutdown()
+bool MotorNanotec::switch_enabled()
 {
-  switch_mode(MotorBase::No_Mode);
-  return switch_state(State402::Switch_On_Disabled);
+  State402::InternalState state = state_handler_.getState();
+
+  if (state == State402::Switched_On) {
+    RCLCPP_WARN(logger_, "Motor already enabled");
+    return true;
+  }
+
+  if (state == State402::Fault || state == State402::Fault_Reaction_Active) {
+    RCLCPP_ERROR(logger_, "Could not enable motor: Motor is in fault state");
+    return false;
+  }
+
+  if (state == State402::Switch_On_Disabled && !switch_state(State402::Ready_To_Switch_On)) {
+    RCLCPP_ERROR(
+      logger_,
+      "Could not enable motor: Failed to switch to \"Ready To Switch On\" state");
+    return false;
+  }
+
+  if (!switch_state(State402::Switched_On)) {
+    RCLCPP_ERROR(logger_, "Could not enable motor: Failed to switch to \"Switched On\" state");
+    return false;
+  }
+
+  return true;
 }
 
-bool MotorNanotec::enable_operation()
+bool MotorNanotec::switch_operational()
 {
   State402::InternalState state = state_handler_.getState();
 
   if (state == State402::Operation_Enable) {
-    RCLCPP_WARN(logger_, "Already in \"Operation Enabled\" state");
+    RCLCPP_WARN(logger_, "Motor already in operational state");
     return true;
   }
 
@@ -360,53 +352,41 @@ bool MotorNanotec::enable_operation()
   return true;
 }
 
-bool MotorNanotec::disable_operation()
-{
-  State402::InternalState state = state_handler_.getState();
-
-  if (state != State402::Operation_Enable) {
-    RCLCPP_ERROR(logger_, "Could not disable operation: Not in \"Operation Enabled\" state");
-    return false;
-  }
-
-  if (!switch_state(State402::Switched_On)) {
-    RCLCPP_ERROR(logger_, "Could not disable operation: Failed to switch state");
-    return false;
-  }
-
-  return true;
-}
-
 bool MotorNanotec::recover()
 {
   start_fault_reset_ = true;
   {
     std::scoped_lock lock(mode_mutex_);
     if (selected_mode_ && !selected_mode_->start()) {
-      RCLCPP_ERROR(logger_, "Could not restart mode.");
+      RCLCPP_ERROR(logger_, "Could not recover from fault: Failed to restart mode");
       return false;
     }
   }
-  if (!switch_state(State402::Operation_Enable)) {
-    RCLCPP_ERROR(logger_, "Could not enable operation");
+
+  if (!switch_state(target_state_)) {
+    RCLCPP_ERROR_STREAM(
+      logger_,
+      "Could not recover from fault: Failed to switch to \"" <<
+        STATE_TO_STRING.at(target_state_) << "\" state");
     return false;
   }
+
   return true;
 }
 
 bool MotorNanotec::auto_setup()
 {
-  if (!switch_mode(MotorNanotec::Auto_Setup)) {
-    RCLCPP_ERROR(logger_, "Failed to switch mode to auto setup");
+  if (!set_mode(MotorNanotec::Auto_Setup)) {
+    RCLCPP_ERROR(logger_, "Failed to set mode to auto setup");
     return false;
   }
 
-  if (!enable_operation()) {
+  if (!switch_operational()) {
     return false;
   }
 
   AutoSetupMode * auto_setup = dynamic_cast<AutoSetupMode *>(selected_mode_.get());
-  return auto_setup->execute_auto_setup() && disable_operation() && switch_mode(MotorBase::No_Mode);
+  return auto_setup->execute_auto_setup() && switch_enabled() && set_mode(MotorBase::No_Mode);
 }
 
 }  // namespace nanotec_driver

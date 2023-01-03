@@ -28,32 +28,14 @@ public:
   double get_velocity() {return velocity_;}
   double get_torque() {return torque_;}
 
-  bool switch_mode(int8_t mode);
+  bool set_mode(int8_t mode);
   bool set_target(double val);
-
   int8_t get_mode_id();
-
   void on_emcy(ros2_canopen::COEmcy emcy);
-
   bool auto_setup();
-
-  /**
-   * @brief Initialise the drive
-   */
-  bool init();
-
-  /**
-   * @brief Shutdowns the drive
-   *
-   * This function shuts down the drive by bringing it into
-   * SwitchOn disabled state.
-   *
-   */
-  bool shutdown();
-
-  bool enable_operation();
-
-  bool disable_operation();
+  bool switch_off();
+  bool switch_enabled();
+  bool switch_operational();
 
   /**
    * @brief Recovers the device from fault
@@ -84,7 +66,6 @@ public:
 
 private:
   bool switch_state(const State402::InternalState & target);
-  bool read_state();
   void register_mode(const ModeSharedPtr & m);
   ModeSharedPtr get_mode(int8_t mode_id);
 

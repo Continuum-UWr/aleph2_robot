@@ -23,10 +23,9 @@ protected:
 
   rclcpp::TimerBase::SharedPtr update_timer_;
   rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr pub_joint_state_;
-  rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_init_;
-  rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_shutdown_;
-  rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_enable_operation_;
-  rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_disable_operation_;
+  rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_switch_off_;
+  rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_switch_enabled_;
+  rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_switch_operational_;
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_recover_;
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_auto_setup_;
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_set_mode_position_;
@@ -39,19 +38,15 @@ protected:
   void update();
   void publish();
 
-  void handle_init(
+  void handle_switch_off(
     const std_srvs::srv::Trigger::Request::SharedPtr request,
     std_srvs::srv::Trigger::Response::SharedPtr response);
 
-  void handle_shutdown(
+  void handle_switch_enabled(
     const std_srvs::srv::Trigger::Request::SharedPtr request,
     std_srvs::srv::Trigger::Response::SharedPtr response);
 
-  void handle_enable_operation(
-    const std_srvs::srv::Trigger::Request::SharedPtr request,
-    std_srvs::srv::Trigger::Response::SharedPtr response);
-
-  void handle_disable_operation(
+  void handle_switch_operational(
     const std_srvs::srv::Trigger::Request::SharedPtr request,
     std_srvs::srv::Trigger::Response::SharedPtr response);
 
@@ -91,10 +86,9 @@ public:
   void add_to_master() override;
   void remove_from_master() override;
 
-  bool motor_init();
-  bool motor_shutdown();
-  bool motor_enable_operation();
-  bool motor_disable_operation();
+  bool motor_switch_off();
+  bool motor_switch_enabled();
+  bool motor_switch_operational();
   bool motor_recover();
   bool motor_auto_setup();
   bool motor_set_mode_position();
