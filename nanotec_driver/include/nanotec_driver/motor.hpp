@@ -86,6 +86,7 @@ private:
   std::unordered_map<int8_t, ModeSharedPtr> modes_;
 
   ModeSharedPtr selected_mode_;
+  int8_t selected_mode_id_;
   int8_t current_mode_id_;
   std::condition_variable mode_cond_;
   std::mutex mode_mutex_;
