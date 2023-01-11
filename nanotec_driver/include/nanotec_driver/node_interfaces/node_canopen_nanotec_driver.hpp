@@ -33,6 +33,18 @@ protected:
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_set_mode_torque_;
   rclcpp::Service<canopen_interfaces::srv::COTargetDouble>::SharedPtr srv_set_target_;
 
+  std::shared_ptr<RemoteObject> current_controller_kp_for_iq_;
+  std::shared_ptr<RemoteObject> current_controller_ti_for_iq_;
+  std::shared_ptr<RemoteObject> current_controller_kp_for_id_;
+  std::shared_ptr<RemoteObject> current_controller_ti_for_id_;
+  std::shared_ptr<RemoteObject> velocity_controller_kp_;
+  std::shared_ptr<RemoteObject> velocity_controller_ti_;
+  std::shared_ptr<RemoteObject> position_controller_kp_;
+  std::shared_ptr<RemoteObject> position_controller_ti_;
+
+  rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr
+    on_set_parameter_callback_handle_;
+
   uint32_t period_ms_;
 
   void update();
@@ -73,6 +85,9 @@ protected:
   void handle_set_target(
     const canopen_interfaces::srv::COTargetDouble::Request::SharedPtr request,
     canopen_interfaces::srv::COTargetDouble::Response::SharedPtr response);
+
+  rcl_interfaces::msg::SetParametersResult handle_on_set_parameters(
+    const std::vector<rclcpp::Parameter> & parameters);
 
   void on_emcy(ros2_canopen::COEmcy emcy) override;
 

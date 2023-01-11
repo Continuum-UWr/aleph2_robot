@@ -44,6 +44,13 @@ void NodeCanopenNanotecDriver::init(bool called_from_base)
     std::bind(&NodeCanopenNanotecDriver::handle_set_mode_torque, this, _1, _2));
   srv_set_target_ = this->node_->create_service<canopen_interfaces::srv::COTargetDouble>(
     "~/set_target", std::bind(&NodeCanopenNanotecDriver::handle_set_target, this, _1, _2));
+
+  this->node_->declare_parameter("current_controller_kp", 0);
+  this->node_->declare_parameter("current_controller_ti", 0);
+  this->node_->declare_parameter("velocity_controller_kp", 0);
+  this->node_->declare_parameter("velocity_controller_ti", 0);
+  this->node_->declare_parameter("position_controller_kp", 0);
+  this->node_->declare_parameter("position_controller_ti", 0);
 }
 
 void NodeCanopenNanotecDriver::configure(bool called_from_base)
@@ -69,6 +76,37 @@ void NodeCanopenNanotecDriver::activate(bool called_from_base)
     std::chrono::milliseconds(period_ms_),
     std::bind(&NodeCanopenNanotecDriver::update, this),
     this->timer_cbg_);
+
+  this->node_->set_parameter(
+    rclcpp::Parameter(
+      "current_controller_kp",
+      (int)this->mc_driver_->get_remote_obj<uint32_t>(current_controller_kp_for_iq_)));
+  this->node_->set_parameter(
+    rclcpp::Parameter(
+      "current_controller_ti",
+      (int)this->mc_driver_->get_remote_obj<uint32_t>(current_controller_ti_for_iq_)));
+  this->node_->set_parameter(
+    rclcpp::Parameter(
+      "velocity_controller_kp",
+      (int)this->mc_driver_->get_remote_obj<uint32_t>(velocity_controller_kp_)));
+  this->node_->set_parameter(
+    rclcpp::Parameter(
+      "velocity_controller_ti",
+      (int)this->mc_driver_->get_remote_obj<uint32_t>(velocity_controller_ti_)));
+  this->node_->set_parameter(
+    rclcpp::Parameter(
+      "position_controller_kp",
+      (int)this->mc_driver_->get_remote_obj<uint32_t>(position_controller_kp_)));
+  this->node_->set_parameter(
+    rclcpp::Parameter(
+      "position_controller_ti",
+      (int)this->mc_driver_->get_remote_obj<uint32_t>(position_controller_ti_)));
+
+  on_set_parameter_callback_handle_ =
+    this->node_->add_on_set_parameters_callback(
+    std::bind(
+      &NodeCanopenNanotecDriver::
+      handle_on_set_parameters, this, std::placeholders::_1));
 }
 
 void NodeCanopenNanotecDriver::deactivate(bool called_from_base)
@@ -77,6 +115,8 @@ void NodeCanopenNanotecDriver::deactivate(bool called_from_base)
   RCLCPP_INFO(node_->get_logger(), "deactivate");
 
   NodeCanopenProxyDriver<rclcpp::Node>::deactivate(false);
+
+  on_set_parameter_callback_handle_.reset();
 
   this->motor_->switch_off();
 
@@ -128,6 +168,20 @@ void NodeCanopenNanotecDriver::add_to_master()
   this->mc_driver_ = f.get();
   this->motor_ =
     std::make_shared<MotorNanotec>(mc_driver_, node_->get_logger().get_child("MotorNanotec"));
+
+  current_controller_kp_for_iq_ = this->mc_driver_->create_remote_obj(
+    0x321A, 1U, CODataTypes::COData32);
+  current_controller_ti_for_iq_ = this->mc_driver_->create_remote_obj(
+    0x321A, 2U, CODataTypes::COData32);
+  current_controller_kp_for_id_ = this->mc_driver_->create_remote_obj(
+    0x321A, 3U, CODataTypes::COData32);
+  current_controller_ti_for_id_ = this->mc_driver_->create_remote_obj(
+    0x321A, 4U, CODataTypes::COData32);
+  velocity_controller_kp_ = this->mc_driver_->create_remote_obj(0x321B, 1U, CODataTypes::COData32);
+  velocity_controller_ti_ = this->mc_driver_->create_remote_obj(0x321B, 2U, CODataTypes::COData32);
+  position_controller_kp_ = this->mc_driver_->create_remote_obj(0x321C, 1U, CODataTypes::COData32);
+  position_controller_ti_ = this->mc_driver_->create_remote_obj(0x321C, 2U, CODataTypes::COData32);
+
   this->lely_driver_ = std::static_pointer_cast<LelyDriverBridge>(mc_driver_);
   this->driver_ = std::static_pointer_cast<lely::canopen::BasicDriver>(mc_driver_);
   if (!this->mc_driver_->IsReady()) {
@@ -241,6 +295,45 @@ void NodeCanopenNanotecDriver::handle_set_target(
   canopen_interfaces::srv::COTargetDouble::Response::SharedPtr response)
 {
   response->success = motor_set_target(request->target);
+}
+
+rcl_interfaces::msg::SetParametersResult NodeCanopenNanotecDriver::handle_on_set_parameters(
+  const std::vector<rclcpp::Parameter> & parameters)
+{
+  rcl_interfaces::msg::SetParametersResult result;
+  result.successful = true;
+
+  for (auto & param : parameters) {
+    if (param.get_name() == "current_controller_kp") {
+      this->mc_driver_->set_remote_obj<uint32_t>(
+        current_controller_kp_for_id_, (uint32_t)param.as_int());
+      this->mc_driver_->set_remote_obj<uint32_t>(
+        current_controller_kp_for_iq_, (uint32_t)param.as_int());
+    } else if (param.get_name() == "current_controller_ti") {
+      this->mc_driver_->set_remote_obj<uint32_t>(
+        current_controller_ti_for_id_, (uint32_t)param.as_int());
+      this->mc_driver_->set_remote_obj<uint32_t>(
+        current_controller_ti_for_iq_, (uint32_t)param.as_int());
+    } else if (param.get_name() == "velocity_controller_kp") {
+      this->mc_driver_->set_remote_obj<uint32_t>(
+        velocity_controller_kp_, (uint32_t)param.as_int());
+    } else if (param.get_name() == "velocity_controller_ti") {
+      this->mc_driver_->set_remote_obj<uint32_t>(
+        velocity_controller_ti_, (uint32_t)param.as_int());
+    } else if (param.get_name() == "position_controller_kp") {
+      this->mc_driver_->set_remote_obj<uint32_t>(
+        position_controller_kp_, (uint32_t)param.as_int());
+    } else if (param.get_name() == "position_controller_ti") {
+      this->mc_driver_->set_remote_obj<uint32_t>(
+        position_controller_ti_, (uint32_t)param.as_int());
+    }
+
+    RCLCPP_INFO_STREAM(
+      this->node_->get_logger(),
+      "Parameter \"" << param.get_name() << "\" changed to " << param.value_to_string());
+  }
+
+  return result;
 }
 
 bool NodeCanopenNanotecDriver::motor_switch_off()
