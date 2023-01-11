@@ -13,6 +13,7 @@ build:
    - logs/
   before_script:
   - apt update
+  - apt upgrade -y
   - apt install python3-wheel python3-pip python3-colcon-clean -y
   - pip3 install git+https://github.com/ruffsl/colcon-cache.git
   - rosdep update
