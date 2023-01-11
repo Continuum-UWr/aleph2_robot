@@ -80,27 +80,27 @@ void NodeCanopenNanotecDriver::activate(bool called_from_base)
   this->node_->set_parameter(
     rclcpp::Parameter(
       "current_controller_kp",
-      (int)this->mc_driver_->get_remote_obj<uint32_t>(current_controller_kp_for_iq_)));
+      static_cast<int>(this->mc_driver_->get_remote_obj<uint32_t>(current_controller_kp_for_iq_))));
   this->node_->set_parameter(
     rclcpp::Parameter(
       "current_controller_ti",
-      (int)this->mc_driver_->get_remote_obj<uint32_t>(current_controller_ti_for_iq_)));
+      static_cast<int>(this->mc_driver_->get_remote_obj<uint32_t>(current_controller_ti_for_iq_))));
   this->node_->set_parameter(
     rclcpp::Parameter(
       "velocity_controller_kp",
-      (int)this->mc_driver_->get_remote_obj<uint32_t>(velocity_controller_kp_)));
+      static_cast<int>(this->mc_driver_->get_remote_obj<uint32_t>(velocity_controller_kp_))));
   this->node_->set_parameter(
     rclcpp::Parameter(
       "velocity_controller_ti",
-      (int)this->mc_driver_->get_remote_obj<uint32_t>(velocity_controller_ti_)));
+      static_cast<int>(this->mc_driver_->get_remote_obj<uint32_t>(velocity_controller_ti_))));
   this->node_->set_parameter(
     rclcpp::Parameter(
       "position_controller_kp",
-      (int)this->mc_driver_->get_remote_obj<uint32_t>(position_controller_kp_)));
+      static_cast<int>(this->mc_driver_->get_remote_obj<uint32_t>(position_controller_kp_))));
   this->node_->set_parameter(
     rclcpp::Parameter(
       "position_controller_ti",
-      (int)this->mc_driver_->get_remote_obj<uint32_t>(position_controller_ti_)));
+      static_cast<int>(this->mc_driver_->get_remote_obj<uint32_t>(position_controller_ti_))));
 
   on_set_parameter_callback_handle_ =
     this->node_->add_on_set_parameters_callback(
