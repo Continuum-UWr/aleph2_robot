@@ -7,6 +7,7 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(ament_index_cpp REQUIRED)
 find_package(canopen_402_driver REQUIRED)
 find_package(canopen_interfaces REQUIRED)
 find_package(canopen_proxy_driver REQUIRED)
@@ -33,6 +34,7 @@ target_link_libraries(${PROJECT_NAME}
   canopen_402_driver::lely_motion_controller_bridge
   canopen_proxy_driver::node_canopen_proxy_driver
   rclcpp_components::component
+  ament_index_cpp::ament_index_cpp
 )
 ament_target_dependencies(${PROJECT_NAME}
   canopen_interfaces

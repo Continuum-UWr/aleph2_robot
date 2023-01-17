@@ -1,11 +1,32 @@
 #pragma once
 
 #include <vector>
+#include <memory>
+#include <string>
+#include <limits>
 
+#include "canopen_core/device_container.hpp"
 #include "hardware_interface/system_interface.hpp"
+#include "rclcpp/executors.hpp"
+
+#include "nanotec_driver/nanotec_driver.hpp"
+#include "nanotec_driver/motor.hpp"
 
 namespace nanotec_driver
 {
+
+struct NanotecJoint
+{
+  std::string name;
+  uint8_t node_id;
+  double position = std::numeric_limits<double>::quiet_NaN();
+  double velocity = std::numeric_limits<double>::quiet_NaN();
+  double effort = std::numeric_limits<double>::quiet_NaN();
+  double position_cmd = std::numeric_limits<double>::quiet_NaN();
+  double velocity_cmd = std::numeric_limits<double>::quiet_NaN();
+  double effort_cmd = std::numeric_limits<double>::quiet_NaN();
+  std::shared_ptr<MotorNanotec> motor;
+};
 
 class NanotecSystem : public hardware_interface::SystemInterface
 {
@@ -42,6 +63,24 @@ public:
 
   hardware_interface::return_type
   write(const rclcpp::Time & time, const rclcpp::Duration & period) override;
+
+private:
+  void initDeviceContainer();
+  void spin();
+  void clean();
+
+  rclcpp::Logger logger_;
+
+  std::shared_ptr<ros2_canopen::DeviceContainer> device_container_;
+  std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> executor_;
+
+  std::unique_ptr<std::thread> spin_thread_;
+  std::unique_ptr<std::thread> init_thread_;
+
+  std::vector<NanotecJoint> joints_;
+
+  std::vector<hardware_interface::StateInterface> state_interfaces_;
+  std::vector<hardware_interface::CommandInterface> command_interfaces_;
 };
 
 }  // namespace nanotec_driver

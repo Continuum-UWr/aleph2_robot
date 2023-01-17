@@ -14,6 +14,11 @@ class NanotecDriver : public ros2_canopen::CanopenDriver
 
 public:
   explicit NanotecDriver(rclcpp::NodeOptions node_options = rclcpp::NodeOptions());
+
+  std::shared_ptr<MotorNanotec> get_motor()
+  {
+    return node_canopen_nanotec_driver_->get_motor();
+  }
 };
 
 }  // namespace nanotec_driver

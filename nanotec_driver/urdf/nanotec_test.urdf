@@ -28,10 +28,9 @@
   <ros2_control name="nanotec_test_system" type="system">
     <hardware>
       <plugin>nanotec_driver/NanotecSystem</plugin>
-      <param name="bus_config">package://nanotec_driver/config/nanotec/bus.yml</param>
-      <param name="master_config">package://nanotec_driver/config/nanotec/master.dcf</param>
-      <param name="master_bin">package://nanotec_driver/config/nanotec/master.bin</param>
-      <param name="can_interface">can0</param>
+      <param name="can_interface_name">can0</param>
+      <param name="bus_config_package">nanotec_driver</param>
+      <param name="bus_config_name">nanotec_c5</param>
     </hardware>
     <joint name="nanotec3_joint">
       <param name="node_id">3</param>
