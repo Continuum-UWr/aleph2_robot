@@ -102,15 +102,7 @@ public:
   void add_to_master() override;
   void remove_from_master() override;
 
-  bool motor_switch_off();
-  bool motor_switch_enabled();
-  bool motor_switch_operational();
-  bool motor_recover();
-  bool motor_auto_setup();
-  bool motor_set_mode_position();
-  bool motor_set_mode_velocity();
-  bool motor_set_mode_torque();
-  bool motor_set_target(double target);
+  std::shared_ptr<MotorNanotec> get_motor();
 };
 
 }  // namespace node_interfaces
