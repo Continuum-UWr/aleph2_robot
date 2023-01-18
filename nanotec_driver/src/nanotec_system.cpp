@@ -147,21 +147,27 @@ NanotecSystem::perform_command_mode_switch(
   for (auto & interface : start_interfaces) {
     for (auto & joint : joints_) {
       if (interface == joint.name + "/" + hardware_interface::HW_IF_POSITION) {
-        if (!joint.motor->set_mode(MotorBase::Profiled_Position)) {
+        if (!joint.motor->set_mode(MotorBase::Profiled_Position) ||
+          !joint.motor->switch_operational())
+        {
           return hardware_interface::return_type::ERROR;
         }
         joint.control_method = ControlMethod::POSITION;
         break;
       }
       if (interface == joint.name + "/" + hardware_interface::HW_IF_VELOCITY) {
-        if (!joint.motor->set_mode(MotorBase::Profiled_Velocity)) {
+        if (!joint.motor->set_mode(MotorBase::Profiled_Velocity) ||
+          !joint.motor->switch_operational())
+        {
           return hardware_interface::return_type::ERROR;
         }
         joint.control_method = ControlMethod::VELOCITY;
         break;
       }
       if (interface == joint.name + "/" + hardware_interface::HW_IF_EFFORT) {
-        if (!joint.motor->set_mode(MotorBase::Profiled_Torque)) {
+        if (!joint.motor->set_mode(MotorBase::Profiled_Torque) ||
+          !joint.motor->switch_operational())
+        {
           return hardware_interface::return_type::ERROR;
         }
         joint.control_method = ControlMethod::EFFORT;
