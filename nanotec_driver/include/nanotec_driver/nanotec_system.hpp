@@ -15,6 +15,14 @@
 namespace nanotec_driver
 {
 
+enum class ControlMethod
+{
+  NONE,
+  POSITION,
+  VELOCITY,
+  EFFORT
+};
+
 struct NanotecJoint
 {
   std::string name;
@@ -25,6 +33,7 @@ struct NanotecJoint
   double position_cmd = std::numeric_limits<double>::quiet_NaN();
   double velocity_cmd = std::numeric_limits<double>::quiet_NaN();
   double effort_cmd = std::numeric_limits<double>::quiet_NaN();
+  ControlMethod control_method = ControlMethod::NONE;
   std::shared_ptr<MotorNanotec> motor;
 };
 
@@ -42,6 +51,11 @@ public:
 
   std::vector<hardware_interface::CommandInterface>
   export_command_interfaces() override;
+
+  hardware_interface::return_type
+  perform_command_mode_switch(
+    const std::vector<std::string> & start_interfaces,
+    const std::vector<std::string> & stop_interfaces) override;
 
   hardware_interface::CallbackReturn
   on_configure(const rclcpp_lifecycle::State & previous_state) override;
@@ -65,7 +79,6 @@ public:
   write(const rclcpp::Time & time, const rclcpp::Duration & period) override;
 
 private:
-  void initDeviceContainer();
   void spin();
   void clean();
 
@@ -75,7 +88,6 @@ private:
   std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> executor_;
 
   std::unique_ptr<std::thread> spin_thread_;
-  std::unique_ptr<std::thread> init_thread_;
 
   std::vector<NanotecJoint> joints_;
 

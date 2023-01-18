@@ -13,22 +13,7 @@ namespace nanotec_driver
 NanotecSystem::NanotecSystem()
 : logger_(rclcpp::get_logger("NanotecSystem")) {}
 
-NanotecSystem::~NanotecSystem() {clean();}
-
-void NanotecSystem::clean()
-{
-  init_thread_->join();
-  init_thread_.reset();
-
-  executor_->cancel();
-  spin_thread_->join();
-
-  device_container_.reset();
-  executor_.reset();
-
-  executor_.reset();
-  spin_thread_.reset();
-}
+NanotecSystem::~NanotecSystem() {}
 
 hardware_interface::CallbackReturn
 NanotecSystem::on_init(const hardware_interface::HardwareInfo & info)
@@ -47,7 +32,7 @@ NanotecSystem::on_init(const hardware_interface::HardwareInfo & info)
 
     if (joint_info.parameters.find("node_id") == joint_info.parameters.end()) {
       RCLCPP_ERROR_STREAM(logger_, "Joint \"" << joint_name << "\" missing \"node_id\" parameter");
-      return CallbackReturn::FAILURE;
+      return CallbackReturn::ERROR;
     }
 
     joints_[i].node_id = static_cast<uint8_t>(std::stoi(joint_info.parameters.at("node_id")));
@@ -76,38 +61,9 @@ NanotecSystem::on_configure(const rclcpp_lifecycle::State &)
   device_container_ = std::make_shared<ros2_canopen::DeviceContainer>(executor_);
   executor_->add_node(device_container_);
 
-  // threads
+  // Spin asynchronously
   spin_thread_ = std::make_unique<std::thread>(&NanotecSystem::spin, this);
-  init_thread_ = std::make_unique<std::thread>(&NanotecSystem::initDeviceContainer, this);
 
-  // actually wait for init phase to end
-  if (init_thread_->joinable()) {
-    init_thread_->join();
-  } else {
-    RCLCPP_ERROR(logger_, "Could not join init thread!");
-    return CallbackReturn::ERROR;
-  }
-
-  for (auto & joint : joints_) {
-    if (!joint.motor) {
-      RCLCPP_ERROR(logger_, "Missing driver for joint: '%s'", joint.name.c_str());
-      return CallbackReturn::FAILURE;
-    }
-  }
-
-  return CallbackReturn::SUCCESS;
-}
-
-void NanotecSystem::spin()
-{
-  executor_->spin();
-  executor_->remove_node(device_container_);
-
-  RCLCPP_INFO(logger_, "Exiting spin thread...");
-}
-
-void NanotecSystem::initDeviceContainer()
-{
   std::string bus_config_package = info_.hardware_parameters["bus_config_package"];
 
   fs::path bus_config_path =
@@ -146,6 +102,25 @@ void NanotecSystem::initDeviceContainer()
   }
 
   RCLCPP_INFO(device_container_->get_logger(), "Initialisation successful.");
+
+  for (auto & joint : joints_) {
+    if (!joint.motor) {
+      RCLCPP_ERROR(logger_, "Missing driver for joint: '%s'", joint.name.c_str());
+      return CallbackReturn::ERROR;
+    }
+  }
+
+  return CallbackReturn::SUCCESS;
+}
+
+void NanotecSystem::spin()
+{
+  RCLCPP_INFO(logger_, "Entering spin thread..");
+
+  executor_->spin();
+  executor_->remove_node(device_container_);
+
+  RCLCPP_INFO(logger_, "Exiting spin thread...");
 }
 
 std::vector<hardware_interface::StateInterface>
@@ -160,17 +135,62 @@ NanotecSystem::export_command_interfaces()
   return std::move(command_interfaces_);
 }
 
+hardware_interface::return_type
+NanotecSystem::perform_command_mode_switch(
+  const std::vector<std::string> & start_interfaces,
+  const std::vector<std::string> & stop_interfaces)
+{
+  // TODO(blazej) Verify that at most one of [position, velocity, effort] interfaces is claimed
+  // TODO(blazej) Switch to NO_MODE when none of [position, velocity, effort] interfaces are claimed
+  // anymore
+
+  for (auto & interface : start_interfaces) {
+    for (auto & joint : joints_) {
+      if (interface == joint.name + "/" + hardware_interface::HW_IF_POSITION) {
+        if (!joint.motor->set_mode(MotorBase::Profiled_Position)) {
+          return hardware_interface::return_type::ERROR;
+        }
+        joint.control_method = ControlMethod::POSITION;
+        break;
+      }
+      if (interface == joint.name + "/" + hardware_interface::HW_IF_VELOCITY) {
+        if (!joint.motor->set_mode(MotorBase::Profiled_Velocity)) {
+          return hardware_interface::return_type::ERROR;
+        }
+        joint.control_method = ControlMethod::VELOCITY;
+        break;
+      }
+      if (interface == joint.name + "/" + hardware_interface::HW_IF_EFFORT) {
+        if (!joint.motor->set_mode(MotorBase::Profiled_Torque)) {
+          return hardware_interface::return_type::ERROR;
+        }
+        joint.control_method = ControlMethod::EFFORT;
+        break;
+      }
+    }
+  }
+
+  return hardware_interface::return_type::OK;
+}
+
 hardware_interface::CallbackReturn
 NanotecSystem::on_cleanup(const rclcpp_lifecycle::State &)
 {
-  clean();
+  joints_.clear();
+
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
 hardware_interface::CallbackReturn
 NanotecSystem::on_shutdown(const rclcpp_lifecycle::State &)
 {
-  clean();
+  executor_->cancel();
+  spin_thread_->join();
+
+  device_container_.reset();
+  executor_.reset();
+  spin_thread_.reset();
+
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
@@ -183,6 +203,12 @@ NanotecSystem::on_activate(const rclcpp_lifecycle::State &)
 hardware_interface::CallbackReturn
 NanotecSystem::on_deactivate(const rclcpp_lifecycle::State &)
 {
+  for (auto & joint : joints_) {
+    if (!joint.motor->switch_off()) {
+      return CallbackReturn::ERROR;
+    }
+  }
+
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
@@ -201,9 +227,24 @@ NanotecSystem::read(const rclcpp::Time &, const rclcpp::Duration &)
 hardware_interface::return_type
 NanotecSystem::write(const rclcpp::Time &, const rclcpp::Duration &)
 {
+  for (auto & joint : joints_) {
+    if (joint.control_method == ControlMethod::POSITION) {
+      if (!std::isnan(joint.position_cmd)) {
+        joint.motor->set_target(joint.position_cmd);
+      }
+    } else if (joint.control_method == ControlMethod::VELOCITY) {
+      if (!std::isnan(joint.velocity_cmd)) {
+        joint.motor->set_target(joint.velocity_cmd);
+      }
+    } else if (joint.control_method == ControlMethod::EFFORT) {
+      if (!std::isnan(joint.effort_cmd)) {
+        joint.motor->set_target(joint.effort_cmd);
+      }
+    }
+  }
+
   return hardware_interface::return_type::OK;
 }
-
 
 }  // namespace nanotec_driver
 
