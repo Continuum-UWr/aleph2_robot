@@ -28,6 +28,8 @@
   <depend>sensor_msgs</depend>
 
   <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>joint_state_broadcaster</exec_depend>
+  <exec_depend>forward_command_controller</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_cmake_cpplint</test_depend>

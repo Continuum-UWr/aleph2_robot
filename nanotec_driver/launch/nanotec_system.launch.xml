@@ -9,7 +9,12 @@
 
   <node pkg="controller_manager" exec="ros2_control_node">
     <param name="robot_description" value="$(var robot_description_text)" />
-    <param from="$(find-pkg-share nanotec_driver)/config/nanotec/ros2_control.yml" />
+    <param from="$(find-pkg-share nanotec_driver)/config/nanotec_c5/ros2_control.yml" />
   </node>
+
+  <node pkg="controller_manager" exec="spawner"
+    args="joint_state_broadcaster -c /controller_manager" />
+  <node pkg="controller_manager" exec="spawner"
+    args="forward_velocity_controller -c /controller_manager" />
 
 </launch>
