@@ -4,8 +4,20 @@
     default="$(find-pkg-share aleph2_description)/urdf/aleph2.urdf.xacro"
     description="Absolute path to robot urdf.xacro file" />
 
-  <include file="$(find-pkg-share aleph2_description)/launch/state_publisher.launch.xml">
-    <arg name="model" value="$(var model)" />
-  </include>
+  <let name="robot_description_text" value="$(command 'xacro $(var model)')" />
+
+  <node pkg="robot_state_publisher" exec="robot_state_publisher">
+    <param name="robot_description" value="$(var robot_description_text)" />
+  </node>
+
+  <node pkg="controller_manager" exec="ros2_control_node">
+    <param name="robot_description" value="$(var robot_description_text)" />
+    <param from="$(find-pkg-share nanotec_driver)/config/nanotec_c5/ros2_control.yml" />
+  </node>
+
+  <node pkg="controller_manager" exec="spawner"
+    args="joint_state_broadcaster -c /controller_manager" />
+  <node pkg="controller_manager" exec="spawner"
+    args="diff_drive_controller -c /controller_manager" />
 
 </launch>
