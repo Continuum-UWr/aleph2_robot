@@ -13,7 +13,11 @@
 
   <buildtool_depend>ament_cmake_ros</buildtool_depend>
 
+  <build_depend>lely_core_libraries</build_depend>
+
   <exec_depend>aleph2_description</exec_depend>
+  <exec_depend>nanotec_driver</exec_depend>
+  <exec_depend>xacro</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_cmake_lint_cmake</test_depend>
