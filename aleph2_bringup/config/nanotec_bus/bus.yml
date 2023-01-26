@@ -7,6 +7,8 @@ master:
   package: canopen_master_driver
   sync_period: 20000
   heartbeat_producer: 100
+  start_nodes: false
+  reset_all_nodes: true
 
 nanotec1:
   node_id: 1
@@ -14,8 +16,8 @@ nanotec1:
   driver: "nanotec_driver::NanotecDriver"
   package: "nanotec_driver"
   period: 20
-  boot: false
-  heartbeat_consumer: false
+  boot: true
+  heartbeat_consumer: true
   enable_lazy_load: false
   sdo:
     - { index: 0x2030, sub_index: 0, value: 8 } # Pole Pair Count
@@ -77,8 +79,8 @@ nanotec2:
   driver: "nanotec_driver::NanotecDriver"
   package: "nanotec_driver"
   period: 20
-  boot: false
-  heartbeat_consumer: false
+  boot: true
+  heartbeat_consumer: true
   enable_lazy_load: false
   sdo:
     - { index: 0x2030, sub_index: 0, value: 8 } # Pole Pair Count
@@ -168,6 +170,7 @@ nanotec3:
     - { index: 0x60A8, sub_index: 0, value: 0xFD100000 } # SI Unit Position - rad, factor 1e-3
     - { index: 0x60A9, sub_index: 0, value: 0xFD100300 } # SI Unit Velocity - rad/s, factor 1e-3
     - { index: 0x6091, sub_index: 1, value: 12 } # Gear ratio - 12:1
+    - { index: 0x607E, sub_index: 0, value: 0b11000000 } # Polarity - Reversed
   tpdo:
     1:
       enabled: true
@@ -231,6 +234,7 @@ nanotec4:
     - { index: 0x60A8, sub_index: 0, value: 0xFD100000 } # SI Unit Position - rad, factor 1e-3
     - { index: 0x60A9, sub_index: 0, value: 0xFD100300 } # SI Unit Velocity - rad/s, factor 1e-3
     - { index: 0x6091, sub_index: 1, value: 12 } # Gear ratio - 12:1
+    - { index: 0x607E, sub_index: 0, value: 0b11000000 } # Polarity - Reversed
   tpdo:
     1:
       enabled: true
