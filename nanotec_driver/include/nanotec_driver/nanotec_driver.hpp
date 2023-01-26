@@ -19,6 +19,12 @@ public:
   {
     return node_canopen_nanotec_driver_->get_motor();
   }
+
+  bool start_node_nmt_command()
+  {
+    return node_canopen_nanotec_driver_->start_node_nmt_command();
+  }
+
 };
 
 }  // namespace nanotec_driver

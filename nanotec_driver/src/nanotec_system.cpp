@@ -96,6 +96,8 @@ NanotecSystem::on_configure(const rclcpp_lifecycle::State &)
       }
     }
 
+    nanotec_driver->start_node_nmt_command();
+
     if (!joint_found) {
       RCLCPP_WARN(logger_, "No joint specified for node_id: '%u'", node_id);
     }
@@ -222,9 +224,9 @@ hardware_interface::return_type
 NanotecSystem::read(const rclcpp::Time &, const rclcpp::Duration &)
 {
   for (auto & joint : joints_) {
-    joint.position = joint.motor->get_position();
-    joint.velocity = joint.motor->get_velocity();
-    joint.effort = joint.motor->get_torque();
+    joint.position = joint.motor->get_position() / 1000.0;
+    joint.velocity = joint.motor->get_velocity() / 1000.0;
+    joint.effort = joint.motor->get_torque() / 1000.0;
   }
 
   return hardware_interface::return_type::OK;
@@ -236,11 +238,11 @@ NanotecSystem::write(const rclcpp::Time &, const rclcpp::Duration &)
   for (auto & joint : joints_) {
     if (joint.control_method == ControlMethod::POSITION) {
       if (!std::isnan(joint.position_cmd)) {
-        joint.motor->set_target(joint.position_cmd);
+        joint.motor->set_target(joint.position_cmd * 1000.0);
       }
     } else if (joint.control_method == ControlMethod::VELOCITY) {
       if (!std::isnan(joint.velocity_cmd)) {
-        joint.motor->set_target(joint.velocity_cmd);
+        joint.motor->set_target(joint.velocity_cmd * 1000.0);
       }
     } else if (joint.control_method == ControlMethod::EFFORT) {
       if (!std::isnan(joint.effort_cmd)) {
