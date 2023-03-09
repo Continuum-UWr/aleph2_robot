@@ -52,6 +52,7 @@ nanotec1:
       mapping:
         - { index: 0x6041, sub_index: 0 } # status word
         - { index: 0x6061, sub_index: 0 } # mode of operaiton display
+        - { index: 0x6077, sub_index: 0 } # Torque Actual Value
     2:
       enabled: true
       cob_id: "auto"
@@ -115,6 +116,7 @@ nanotec2:
       mapping:
         - { index: 0x6041, sub_index: 0 } # status word
         - { index: 0x6061, sub_index: 0 } # mode of operaiton display
+        - { index: 0x6077, sub_index: 0 } # Torque Actual Value
     2:
       enabled: true
       cob_id: "auto"
@@ -179,6 +181,7 @@ nanotec3:
       mapping:
         - { index: 0x6041, sub_index: 0 } # status word
         - { index: 0x6061, sub_index: 0 } # mode of operaiton display
+        - { index: 0x6077, sub_index: 0 } # Torque Actual Value
     2:
       enabled: true
       cob_id: "auto"
@@ -243,6 +246,7 @@ nanotec4:
       mapping:
         - { index: 0x6041, sub_index: 0 } # status word
         - { index: 0x6061, sub_index: 0 } # mode of operaiton display
+        - { index: 0x6077, sub_index: 0 } # Torque Actual Value
     2:
       enabled: true
       cob_id: "auto"
