@@ -55,7 +55,6 @@ public:
   virtual bool setTarget(const double & val)
   {
     if (std::isnan(val)) {
-      // std::cout << "canopen_402 target command is not a number" << std::endl;
       return false;
     }
 
@@ -65,16 +64,11 @@ public:
 
     try {
       target_ = numeric_cast<T>(val);
-      // } catch (negative_overflow &) {
-      //   std::cout << "canopen_402 Command " << val
-      //             << " does not fit into target, clamping to min limit" << std::endl;
+    } catch (negative_overflow &) {
       target_ = std::numeric_limits<T>::min();
     } catch (positive_overflow &) {
-      // std::cout << "canopen_402 Command " << val
-      //           << " does not fit into target, clamping to max limit" << std::endl;
       target_ = std::numeric_limits<T>::max();
     } catch (...) {
-      // std::cout << "canopen_402 Was not able to cast command " << val << std::endl;
       return false;
     }
 
