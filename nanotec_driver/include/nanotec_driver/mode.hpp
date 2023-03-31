@@ -13,7 +13,7 @@
 
 namespace nanotec_driver
 {
-enum class Mode
+enum class Mode : int8_t
 {
   Auto_Setup = -2,
   No_Mode = 0,

@@ -144,7 +144,7 @@ std::shared_ptr<ModeHelper> MotorNanotec::get_mode_helper(Mode mode)
 bool MotorNanotec::set_mode(Mode mode)
 {
   RCLCPP_INFO_STREAM(
-    logger_, "Setting mode to: " << static_cast<int>(mode) << " (" << MODE_TO_STRING.at(
+    logger_, "Setting mode to: " << static_cast<int8_t>(mode) << " (" << MODE_TO_STRING.at(
       mode) << ")");
 
   if (mode == Mode::No_Mode) {
