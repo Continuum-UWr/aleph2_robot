@@ -115,4 +115,11 @@ void LelyNanotecBridge::validate_objs()
   }
 }
 
+void LelyNanotecBridge::trigger_tpdo_event(std::shared_ptr<RemoteObject> obj)
+{
+  if (obj->tpdo_mapped) {
+    this->tpdo_mapped[obj->index][obj->subindex].WriteEvent();
+  }
+}
+
 }  // namespace nanotec_driver

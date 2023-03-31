@@ -91,5 +91,6 @@ public:
   }
 
   void validate_objs();
+  void trigger_tpdo_event(std::shared_ptr<RemoteObject> obj);
 };
 }  // namespace nanotec_driver

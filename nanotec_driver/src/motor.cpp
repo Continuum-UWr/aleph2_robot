@@ -304,10 +304,14 @@ void MotorNanotec::write()
     this->driver->set_remote_obj<uint16_t>(
       control_word_entry_,
       control_word_ & ~(1 << Command402::CW_Fault_Reset));
+    this->driver->trigger_tpdo_event(control_word_entry_);
   } else {
-    RCLCPP_DEBUG_STREAM(logger_, "Control Word: " << std::bitset<16>{control_word_}.to_string());
     this->driver->set_remote_obj<uint16_t>(control_word_entry_, control_word_);
   }
+  RCLCPP_DEBUG_STREAM(
+    logger_,
+    "Control Word: " << std::bitset<16>{this->driver->get_remote_obj_cached<uint16_t>(
+        control_word_entry_)}.to_string());
 }
 
 bool MotorNanotec::switch_off()
