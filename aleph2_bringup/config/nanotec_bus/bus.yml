@@ -64,12 +64,14 @@ nanotec1:
     1:
       enabled: true
       cob_id: "auto"
+      transmission: 0x01
       mapping:
         - { index: 0x6040, sub_index: 0 } # controlword
         - { index: 0x6060, sub_index: 0 } # mode of operation
     2:
       enabled: true
       cob_id: "auto"
+      transmission: 0x01
       mapping:
         - { index: 0x607A, sub_index: 0 } # target position
         - { index: 0x60FF, sub_index: 0 } # target velocity
@@ -128,12 +130,14 @@ nanotec2:
     1:
       enabled: true
       cob_id: "auto"
+      transmission: 0x01
       mapping:
         - { index: 0x6040, sub_index: 0 } # controlword
         - { index: 0x6060, sub_index: 0 } # mode of operation
     2:
       enabled: true
       cob_id: "auto"
+      transmission: 0x01
       mapping:
         - { index: 0x607A, sub_index: 0 } # target position
         - { index: 0x60FF, sub_index: 0 } # target velocity
@@ -193,12 +197,14 @@ nanotec3:
     1:
       enabled: true
       cob_id: "auto"
+      transmission: 0x01
       mapping:
         - { index: 0x6040, sub_index: 0 } # controlword
         - { index: 0x6060, sub_index: 0 } # mode of operation
     2:
       enabled: true
       cob_id: "auto"
+      transmission: 0x01
       mapping:
         - { index: 0x607A, sub_index: 0 } # target position
         - { index: 0x60FF, sub_index: 0 } # target velocity
@@ -258,12 +264,14 @@ nanotec4:
     1:
       enabled: true
       cob_id: "auto"
+      transmission: 0x01
       mapping:
         - { index: 0x6040, sub_index: 0 } # controlword
         - { index: 0x6060, sub_index: 0 } # mode of operation
     2:
       enabled: true
       cob_id: "auto"
+      transmission: 0x01
       mapping:
         - { index: 0x607A, sub_index: 0 } # target position
         - { index: 0x60FF, sub_index: 0 } # target velocity
