@@ -2,7 +2,10 @@
 
 #include <cstdint>
 #include <memory>
+#include <limits>
+
 #include "canopen_402_driver/lely_motion_controller_bridge.hpp"
+
 #include "mode.hpp"
 
 namespace nanotec_driver
@@ -29,7 +32,7 @@ public:
     CW_Immediate = Command402::CW_Operation_mode_specific1,
     CW_Blending = Command402::CW_Operation_mode_specific3,
   };
-  ProfiledPositionMode(std::shared_ptr<LelyMotionControllerBridge> driver)
+  explicit ProfiledPositionMode(std::shared_ptr<LelyMotionControllerBridge> driver)
   : ModeTargetHelper(Mode::Profiled_Position)
   {
     this->driver = driver;

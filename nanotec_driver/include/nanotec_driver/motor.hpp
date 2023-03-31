@@ -3,9 +3,9 @@
 #include <memory>
 #include <unordered_map>
 
-// #include "canopen_402_driver/motor.hpp"
+#include "canopen_402_driver/lely_motion_controller_bridge.hpp"
 
-#include "nanotec_driver/auto_setup.hpp"
+#include "mode.hpp"
 
 namespace nanotec_driver
 {

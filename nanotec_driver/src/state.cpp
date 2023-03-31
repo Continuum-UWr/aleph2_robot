@@ -1,6 +1,8 @@
 #include "nanotec_driver/state.hpp"
 #include <mutex>
-using namespace nanotec_driver;
+
+namespace nanotec_driver
+{
 
 State402::InternalState State402::getState()
 {
@@ -82,3 +84,5 @@ bool State402::waitForNewState(
   state = state_;
   return res;
 }
+
+}  // namespace nanotec_driver

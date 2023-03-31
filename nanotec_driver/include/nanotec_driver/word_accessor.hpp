@@ -10,7 +10,7 @@ class WordAccessor
   uint16_t & word_;
 
 public:
-  WordAccessor(uint16_t & word)
+  explicit WordAccessor(uint16_t & word)
   : word_(word) {}
   bool set(uint8_t bit)
   {

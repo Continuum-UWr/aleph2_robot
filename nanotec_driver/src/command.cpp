@@ -1,5 +1,7 @@
 #include "nanotec_driver/command.hpp"
-using namespace nanotec_driver;
+
+namespace nanotec_driver
+{
 
 const Command402::TransitionTable Command402::transitions_;
 
@@ -94,3 +96,5 @@ bool Command402::setTransition(
   }
   return false;
 }
+
+}   // namespace nanotec_driver

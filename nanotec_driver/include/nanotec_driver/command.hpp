@@ -1,8 +1,10 @@
 #pragma once
 
-#include <boost/container/flat_map.hpp>
 #include <cstdint>
 #include <utility>
+
+#include <boost/container/flat_map.hpp>
+
 #include "state.hpp"
 
 namespace nanotec_driver

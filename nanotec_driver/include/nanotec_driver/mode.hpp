@@ -2,8 +2,10 @@
 
 #include <cstdint>
 #include <memory>
+#include <limits>
 
 #include "canopen_core/exchange.hpp"
+#include "canopen_402_driver/lely_motion_controller_bridge.hpp"
 
 #include "command.hpp"
 #include "state.hpp"
@@ -24,7 +26,7 @@ class ModeHelper
 {
 public:
   const Mode mode;
-  ModeHelper(Mode mode)
+  explicit ModeHelper(Mode mode)
   : mode(mode) {}
   typedef WordAccessor<
       (1 << Command402::CW_Operation_mode_specific0) |
@@ -46,7 +48,7 @@ class ModeTargetHelper : public ModeHelper
   std::atomic<bool> has_target_;
 
 public:
-  ModeTargetHelper(Mode mode)
+  explicit ModeTargetHelper(Mode mode)
   : ModeHelper(mode) {}
   bool hasTarget() {return has_target_;}
   T getTarget() {return target_;}
@@ -94,7 +96,7 @@ class ModeForwardHelper : public ModeTargetHelper<TYPE>
   std::shared_ptr<RemoteObject> obj;
 
 public:
-  ModeForwardHelper(std::shared_ptr<LelyMotionControllerBridge> driver)
+  explicit ModeForwardHelper(std::shared_ptr<LelyMotionControllerBridge> driver)
   : ModeTargetHelper<TYPE>(MODE)
   {
     this->obj = driver->create_remote_obj(OBJ, SUB, TPY);

@@ -1,6 +1,7 @@
 #include <bitset>
 
 #include "nanotec_driver/motor.hpp"
+#include "nanotec_driver/auto_setup.hpp"
 #include "nanotec_driver/profiled_position_mode.hpp"
 
 namespace nanotec_driver
