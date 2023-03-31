@@ -251,10 +251,15 @@ void MotorNanotec::read()
     }
 
     if (new_mode != current_mode_) {
+      std::string mode_str;
+      if (MODE_TO_STRING.find(new_mode) == MODE_TO_STRING.end()) {
+        mode_str = "UNKNOWN";
+      } else {
+        mode_str = MODE_TO_STRING.at(new_mode);
+      }
       RCLCPP_INFO_STREAM(
         logger_,
-        "New mode detected: " << static_cast<int8_t>(new_mode) << " (" << MODE_TO_STRING.at(
-          new_mode) << ")");
+        "New mode detected: " << static_cast<int8_t>(new_mode) << " (" << mode_str << ")");
 
       current_mode_ = new_mode;
       mode_cond_.notify_all();
