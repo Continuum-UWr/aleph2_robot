@@ -71,7 +71,7 @@ static const std::unordered_map<uint8_t, std::string> ERROR_NUMBER_TO_DESCRIPTIO
 
 
 MotorNanotec::MotorNanotec(
-  std::shared_ptr<LelyMotionControllerBridge> driver,
+  std::shared_ptr<LelyNanotecBridge> driver,
   rclcpp::Logger logger)
 : logger_(logger), selected_mode_(Mode::No_Mode), state_switch_timeout_(5)
 {

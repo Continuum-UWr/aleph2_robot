@@ -3,8 +3,7 @@
 #include <memory>
 #include <unordered_map>
 
-#include "canopen_402_driver/lely_motion_controller_bridge.hpp"
-
+#include "lely_nanotec_bridge.hpp"
 #include "mode.hpp"
 
 namespace nanotec_driver
@@ -13,7 +12,7 @@ namespace nanotec_driver
 class MotorNanotec
 {
 public:
-  MotorNanotec(std::shared_ptr<LelyMotionControllerBridge> driver, rclcpp::Logger logger);
+  MotorNanotec(std::shared_ptr<LelyNanotecBridge> driver, rclcpp::Logger logger);
 
   double get_position() {return position_;}
   double get_velocity() {return velocity_;}
@@ -83,7 +82,7 @@ private:
   std::mutex mode_mutex_;
   const std::chrono::seconds state_switch_timeout_;
 
-  std::shared_ptr<LelyMotionControllerBridge> driver;
+  std::shared_ptr<LelyNanotecBridge> driver;
   std::shared_ptr<RemoteObject> status_word_entry_;
   std::shared_ptr<RemoteObject> control_word_entry_;
   std::shared_ptr<RemoteObject> op_mode_display_;

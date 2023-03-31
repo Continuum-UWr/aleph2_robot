@@ -5,9 +5,9 @@
 #include <limits>
 
 #include "canopen_core/exchange.hpp"
-#include "canopen_402_driver/lely_motion_controller_bridge.hpp"
 
 #include "command.hpp"
+#include "lely_nanotec_bridge.hpp"
 #include "state.hpp"
 #include "word_accessor.hpp"
 
@@ -92,11 +92,11 @@ template<Mode MODE, typename TYPE, ros2_canopen::CODataTypes TPY, uint16_t OBJ, 
   uint16_t CW_MASK>
 class ModeForwardHelper : public ModeTargetHelper<TYPE>
 {
-  std::shared_ptr<LelyMotionControllerBridge> driver;
+  std::shared_ptr<LelyNanotecBridge> driver;
   std::shared_ptr<RemoteObject> obj;
 
 public:
-  explicit ModeForwardHelper(std::shared_ptr<LelyMotionControllerBridge> driver)
+  explicit ModeForwardHelper(std::shared_ptr<LelyNanotecBridge> driver)
   : ModeTargetHelper<TYPE>(MODE)
   {
     this->obj = driver->create_remote_obj(OBJ, SUB, TPY);

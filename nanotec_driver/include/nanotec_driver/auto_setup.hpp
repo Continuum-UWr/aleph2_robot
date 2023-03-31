@@ -2,8 +2,6 @@
 
 #include <memory>
 
-#include "canopen_402_driver/lely_motion_controller_bridge.hpp"
-
 #include "mode.hpp"
 
 namespace nanotec_driver
@@ -12,7 +10,7 @@ namespace nanotec_driver
 class AutoSetupMode : public ModeHelper
 {
 protected:
-  std::shared_ptr<LelyMotionControllerBridge> driver;
+  std::shared_ptr<LelyNanotecBridge> driver;
   std::atomic_bool execute_;
 
   std::mutex status_mutex_;
@@ -30,7 +28,7 @@ protected:
   };
 
 public:
-  explicit AutoSetupMode(std::shared_ptr<LelyMotionControllerBridge> driver);
+  explicit AutoSetupMode(std::shared_ptr<LelyNanotecBridge> driver);
 
   bool start() override;
   bool read(const uint16_t & sw) override;
