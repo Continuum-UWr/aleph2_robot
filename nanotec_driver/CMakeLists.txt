@@ -22,10 +22,12 @@ generate_dcf(nanotec_cl3)
 
 add_library(${PROJECT_NAME} SHARED
   src/node_interfaces/node_canopen_nanotec_driver.cpp
-  src/nanotec_driver.cpp
-  src/motor.cpp
   src/auto_setup.cpp
+  src/command.cpp
+  src/motor.cpp
+  src/nanotec_driver.cpp
   src/nanotec_system.cpp
+  src/state.cpp
 )
 target_include_directories(${PROJECT_NAME} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

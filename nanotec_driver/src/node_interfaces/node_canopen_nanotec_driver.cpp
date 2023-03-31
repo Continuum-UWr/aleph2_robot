@@ -271,7 +271,7 @@ void NodeCanopenNanotecDriver::handle_set_mode_position(
   std_srvs::srv::Trigger::Response::SharedPtr response)
 {
   (void)request;
-  response->success = motor_->set_mode(MotorBase::Profiled_Position);
+  response->success = motor_->set_mode(Mode::Profiled_Position);
 }
 
 void NodeCanopenNanotecDriver::handle_set_mode_velocity(
@@ -279,7 +279,7 @@ void NodeCanopenNanotecDriver::handle_set_mode_velocity(
   std_srvs::srv::Trigger::Response::SharedPtr response)
 {
   (void)request;
-  response->success = motor_->set_mode(MotorBase::Profiled_Velocity);
+  response->success = motor_->set_mode(Mode::Profiled_Velocity);
 }
 
 void NodeCanopenNanotecDriver::handle_set_mode_torque(
@@ -287,7 +287,7 @@ void NodeCanopenNanotecDriver::handle_set_mode_torque(
   std_srvs::srv::Trigger::Response::SharedPtr response)
 {
   (void)request;
-  response->success = motor_->set_mode(MotorBase::Profiled_Torque);
+  response->success = motor_->set_mode(Mode::Profiled_Torque);
 }
 
 void NodeCanopenNanotecDriver::handle_set_target(

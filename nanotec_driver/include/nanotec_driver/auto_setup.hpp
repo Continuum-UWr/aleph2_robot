@@ -2,12 +2,14 @@
 
 #include <memory>
 
-#include "canopen_402_driver/motor.hpp"
+#include "canopen_402_driver/lely_motion_controller_bridge.hpp"
+
+#include "mode.hpp"
 
 namespace nanotec_driver
 {
 
-class AutoSetupMode : public ros2_canopen::Mode
+class AutoSetupMode : public ModeHelper
 {
 protected:
   std::shared_ptr<LelyMotionControllerBridge> driver;
