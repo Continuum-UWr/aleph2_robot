@@ -98,7 +98,7 @@ NanotecSystem::on_configure(const rclcpp_lifecycle::State &)
 
     RCLCPP_INFO(logger_, "Sending NMT Reset command...");
     nanotec_driver->reset_node_nmt_command();
-   
+
     // TODO(blazej) Find some better way to wait for Device reset
     std::this_thread::sleep_for(2000ms);
 
