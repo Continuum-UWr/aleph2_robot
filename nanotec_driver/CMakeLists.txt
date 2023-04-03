@@ -8,6 +8,7 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(ament_index_cpp REQUIRED)
+find_package(Boost REQUIRED)
 find_package(canopen_interfaces REQUIRED)
 find_package(canopen_proxy_driver REQUIRED)
 find_package(hardware_interface REQUIRED)
@@ -33,6 +34,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
 target_link_libraries(${PROJECT_NAME}
+  Boost::boost
   canopen_proxy_driver::node_canopen_proxy_driver
   rclcpp_components::component
   ament_index_cpp::ament_index_cpp
