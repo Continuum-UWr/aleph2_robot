@@ -22,8 +22,6 @@ protected:
   std::shared_ptr<LelyNanotecBridge> mc_driver_;
   std::shared_ptr<MotorNanotec> motor_;
 
-  rclcpp::TimerBase::SharedPtr update_timer_;
-  rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr pub_joint_state_;
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_switch_off_;
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_switch_enabled_;
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_switch_operational_;
@@ -45,11 +43,6 @@ protected:
 
   rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr
     on_set_parameter_callback_handle_;
-
-  uint32_t period_ms_;
-
-  void update();
-  void publish();
 
   void handle_switch_off(
     const std_srvs::srv::Trigger::Request::SharedPtr request,

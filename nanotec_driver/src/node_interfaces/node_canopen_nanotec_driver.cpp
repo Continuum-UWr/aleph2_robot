@@ -19,8 +19,6 @@ void NodeCanopenNanotecDriver::init(bool called_from_base)
 
   NodeCanopenProxyDriver<rclcpp::Node>::init(false);
 
-  pub_joint_state_ =
-    this->node_->create_publisher<sensor_msgs::msg::JointState>("~/joint_states", 1);
   srv_switch_off_ = this->node_->create_service<std_srvs::srv::Trigger>(
     "~/switch_off", std::bind(&NodeCanopenNanotecDriver::handle_switch_off, this, _1, _2));
   srv_switch_enabled_ = this->node_->create_service<std_srvs::srv::Trigger>(
@@ -59,8 +57,6 @@ void NodeCanopenNanotecDriver::configure(bool called_from_base)
   RCLCPP_INFO(node_->get_logger(), "configure");
 
   NodeCanopenProxyDriver<rclcpp::Node>::configure(false);
-
-  period_ms_ = this->config_["period"].as<uint32_t>();
 }
 
 void NodeCanopenNanotecDriver::activate(bool called_from_base)
@@ -71,11 +67,6 @@ void NodeCanopenNanotecDriver::activate(bool called_from_base)
   NodeCanopenProxyDriver<rclcpp::Node>::activate(false);
 
   mc_driver_->validate_objs();
-
-  update_timer_ = this->node_->create_wall_timer(
-    std::chrono::milliseconds(period_ms_),
-    std::bind(&NodeCanopenNanotecDriver::update, this),
-    this->timer_cbg_);
 
   this->node_->set_parameter(
     rclcpp::Parameter(
@@ -119,26 +110,6 @@ void NodeCanopenNanotecDriver::deactivate(bool called_from_base)
   on_set_parameter_callback_handle_.reset();
 
   this->motor_->switch_off();
-
-  update_timer_->cancel();
-}
-
-void NodeCanopenNanotecDriver::update()
-{
-  motor_->read();
-  motor_->write();
-  publish();
-}
-
-void NodeCanopenNanotecDriver::publish()
-{
-  sensor_msgs::msg::JointState js_msg;
-  js_msg.header.stamp = this->node_->get_clock()->now();
-  js_msg.name.push_back(this->node_->get_name());
-  js_msg.position.push_back(this->motor_->get_position());
-  js_msg.velocity.push_back(this->motor_->get_velocity());
-  js_msg.effort.push_back(this->motor_->get_torque());
-  pub_joint_state_->publish(js_msg);
 }
 
 void NodeCanopenNanotecDriver::add_to_master()
