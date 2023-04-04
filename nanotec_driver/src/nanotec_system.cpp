@@ -119,6 +119,15 @@ NanotecSystem::on_configure(const rclcpp_lifecycle::State &)
     }
   }
 
+  auto master = device_container_->get_can_master();
+  master->get_master()->OnSync(
+    [this](uint8_t, const lely::canopen::Node::time_point &) {
+      for (auto & joint : joints_) {
+        joint.motor->read();
+        joint.motor->write();
+      }
+    });
+
   return CallbackReturn::SUCCESS;
 }
 
