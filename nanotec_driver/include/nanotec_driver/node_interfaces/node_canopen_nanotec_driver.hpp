@@ -3,12 +3,12 @@
 #include <memory>
 #include <vector>
 
-#include "nanotec_driver/motor.hpp"
-
 #include "canopen_proxy_driver/node_interfaces/node_canopen_proxy_driver.hpp"
-#include "canopen_402_driver/lely_motion_controller_bridge.hpp"
 #include "canopen_interfaces/srv/co_target_double.hpp"
 #include "sensor_msgs/msg/joint_state.hpp"
+
+#include "nanotec_driver/lely_nanotec_bridge.hpp"
+#include "nanotec_driver/motor.hpp"
 
 namespace nanotec_driver
 {
@@ -19,7 +19,7 @@ class NodeCanopenNanotecDriver
   : public ros2_canopen::node_interfaces::NodeCanopenProxyDriver<rclcpp::Node>
 {
 protected:
-  std::shared_ptr<LelyMotionControllerBridge> mc_driver_;
+  std::shared_ptr<LelyNanotecBridge> mc_driver_;
   std::shared_ptr<MotorNanotec> motor_;
 
   rclcpp::TimerBase::SharedPtr update_timer_;

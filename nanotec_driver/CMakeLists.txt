@@ -8,7 +8,7 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(ament_index_cpp REQUIRED)
-find_package(canopen_402_driver REQUIRED)
+find_package(Boost REQUIRED)
 find_package(canopen_interfaces REQUIRED)
 find_package(canopen_proxy_driver REQUIRED)
 find_package(hardware_interface REQUIRED)
@@ -22,16 +22,19 @@ generate_dcf(nanotec_cl3)
 
 add_library(${PROJECT_NAME} SHARED
   src/node_interfaces/node_canopen_nanotec_driver.cpp
-  src/nanotec_driver.cpp
-  src/motor.cpp
   src/auto_setup.cpp
+  src/command.cpp
+  src/lely_nanotec_bridge.cpp
+  src/motor.cpp
+  src/nanotec_driver.cpp
   src/nanotec_system.cpp
+  src/state.cpp
 )
 target_include_directories(${PROJECT_NAME} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
 target_link_libraries(${PROJECT_NAME}
-  canopen_402_driver::lely_motion_controller_bridge
+  Boost::boost
   canopen_proxy_driver::node_canopen_proxy_driver
   rclcpp_components::component
   ament_index_cpp::ament_index_cpp

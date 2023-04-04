@@ -1,4 +1,8 @@
+#include <bitset>
+
 #include "nanotec_driver/motor.hpp"
+#include "nanotec_driver/auto_setup.hpp"
+#include "nanotec_driver/profiled_position_mode.hpp"
 
 namespace nanotec_driver
 {
@@ -15,18 +19,12 @@ static const std::unordered_map<State402::InternalState, std::string> STATE_TO_S
   {State402::Fault, "Fault"},
 };
 
-static const std::unordered_map<int8_t, std::string> MODE_TO_STRING = {
-  {MotorNanotec::Auto_Setup, "Auto Setup"},
-  {MotorBase::No_Mode, "No Mode"},
-  {MotorBase::Profiled_Position, "Profile Position"},
-  {MotorBase::Velocity, "Velocity"},
-  {MotorBase::Profiled_Velocity, "Profile Velocity"},
-  {MotorBase::Profiled_Torque, "Profile Torque"},
-  {MotorBase::Homing, "Homing"},
-  {MotorBase::Interpolated_Position, "Interpolated Position"},
-  {MotorBase::Cyclic_Synchronous_Position, "Cyclic Synchronous Position"},
-  {MotorBase::Cyclic_Synchronous_Velocity, "Cyclic Synchronous Velocity"},
-  {MotorBase::Cyclic_Synchronous_Torque, "Cyclic Synchronous Torque"},
+static const std::unordered_map<Mode, std::string> MODE_TO_STRING = {
+  {Mode::Auto_Setup, "Auto Setup"},
+  {Mode::No_Mode, "No Mode"},
+  {Mode::Profiled_Position, "Profile Position"},
+  {Mode::Profiled_Velocity, "Profile Velocity"},
+  {Mode::Profiled_Torque, "Profile Torque"},
 };
 
 static const std::unordered_map<uint8_t, std::string> ERROR_NUMBER_TO_DESCRIPTION = {
@@ -73,9 +71,9 @@ static const std::unordered_map<uint8_t, std::string> ERROR_NUMBER_TO_DESCRIPTIO
 
 
 MotorNanotec::MotorNanotec(
-  std::shared_ptr<LelyMotionControllerBridge> driver,
+  std::shared_ptr<LelyNanotecBridge> driver,
   rclcpp::Logger logger)
-: logger_(logger), selected_mode_id_(0), state_switch_timeout_(5)
+: logger_(logger), selected_mode_(Mode::No_Mode), state_switch_timeout_(5)
 {
   this->driver = driver;
   status_word_entry_ =
@@ -104,15 +102,15 @@ bool MotorNanotec::set_target(double val)
 {
   if (state_handler_.getState() == State402::Operation_Enable) {
     std::scoped_lock lock(mode_mutex_);
-    return selected_mode_ && selected_mode_->setTarget(val);
+    return selected_mode_helper_ && selected_mode_helper_->setTarget(val);
   }
   return false;
 }
 
-int8_t MotorNanotec::get_mode_id()
+Mode MotorNanotec::get_mode()
 {
   std::scoped_lock lock(mode_mutex_);
-  return selected_mode_ ? selected_mode_->mode_id_ : (int8_t)MotorBase::No_Mode;
+  return selected_mode_;
 }
 
 void MotorNanotec::on_emcy(ros2_canopen::COEmcy emcy)
@@ -126,16 +124,16 @@ void MotorNanotec::on_emcy(ros2_canopen::COEmcy emcy)
   }
 }
 
-void MotorNanotec::register_mode(const ModeSharedPtr & m)
+void MotorNanotec::register_mode(const std::shared_ptr<ModeHelper> & m)
 {
-  modes_.insert(std::make_pair(m->mode_id_, m));
+  modes_.insert(std::make_pair(m->mode, m));
 }
 
-ModeSharedPtr MotorNanotec::get_mode(int8_t mode)
+std::shared_ptr<ModeHelper> MotorNanotec::get_mode_helper(Mode mode)
 {
-  ModeSharedPtr res;
+  std::shared_ptr<ModeHelper> res;
 
-  std::unordered_map<int8_t, ModeSharedPtr>::iterator it = modes_.find(mode);
+  auto it = modes_.find(mode);
   if (it != modes_.end()) {
     res = it->second;
   }
@@ -143,32 +141,32 @@ ModeSharedPtr MotorNanotec::get_mode(int8_t mode)
   return res;
 }
 
-bool MotorNanotec::set_mode(int8_t mode_id)
+bool MotorNanotec::set_mode(Mode mode)
 {
   RCLCPP_INFO_STREAM(
-    logger_, "Setting mode to: " << (int)mode_id << " (" << MODE_TO_STRING.at(
-      mode_id) << ")");
+    logger_, "Setting mode to: " << static_cast<int>(mode) << " (" << MODE_TO_STRING.at(
+      mode) << ")");
 
-  if (mode_id == MotorBase::No_Mode) {
+  if (mode == Mode::No_Mode) {
     std::scoped_lock lock(mode_mutex_);
 
     State402::InternalState state = state_handler_.getState();
 
     if (state == State402::Operation_Enable) {switch_enabled();}
 
-    selected_mode_.reset();
-    selected_mode_id_ = mode_id;
-    driver->set_remote_obj<int8_t>(op_mode_, mode_id);
+    selected_mode_helper_.reset();
+    selected_mode_ = mode;
+    driver->set_remote_obj<int8_t>(op_mode_, static_cast<int8_t>(mode));
     return true;
   }
 
-  ModeSharedPtr next_mode = get_mode(mode_id);
-  if (!next_mode) {
+  std::shared_ptr<ModeHelper> next_mode_helper = get_mode_helper(mode);
+  if (!next_mode_helper) {
     RCLCPP_ERROR(logger_, "Could not set mode: Mode is not supported");
     return false;
   }
 
-  if (!next_mode->start()) {
+  if (!next_mode_helper->start()) {
     RCLCPP_ERROR(logger_, "Could not set mode: Failed to start mode");
     return false;
   }
@@ -176,25 +174,25 @@ bool MotorNanotec::set_mode(int8_t mode_id)
   {
     std::unique_lock lock(mode_mutex_);
 
-    if (current_mode_id_ == mode_id && selected_mode_id_ == mode_id) {
+    if (current_mode_ == mode && selected_mode_ == mode) {
       // nothing to do
       return true;
     }
 
-    selected_mode_ = next_mode;
-    selected_mode_id_ = mode_id;
+    selected_mode_ = mode;
+    selected_mode_helper_ = next_mode_helper;
 
-    driver->set_remote_obj<int8_t>(op_mode_, mode_id);
+    driver->set_remote_obj<int8_t>(op_mode_, static_cast<int8_t>(mode));
 
     std::chrono::steady_clock::time_point abstime = std::chrono::steady_clock::now() +
       std::chrono::seconds(5);
 
-    while (current_mode_id_ != mode_id &&
+    while (current_mode_ != mode &&
       mode_cond_.wait_until(lock, abstime) == std::cv_status::no_timeout) {}
 
-    if (current_mode_id_ != mode_id) {
+    if (current_mode_ != mode) {
       RCLCPP_ERROR(logger_, "Could not set mode: Timed out");
-      driver->set_remote_obj<int8_t>(op_mode_, current_mode_id_);
+      driver->set_remote_obj<int8_t>(op_mode_, static_cast<int8_t>(current_mode_));
       return false;
     }
   }
@@ -243,26 +241,34 @@ void MotorNanotec::read()
   {
     std::unique_lock lock(mode_mutex_);
 
-    int8_t new_mode_id = driver->get_remote_obj<int8_t>(op_mode_display_);
+    Mode new_mode =
+      static_cast<Mode>(driver->get_remote_obj<int8_t>(op_mode_display_));
 
-    if (selected_mode_id_ == new_mode_id && selected_mode_id_ != MotorBase::No_Mode) {
-      if (!selected_mode_->read(sw)) {
+    if (selected_mode_ == new_mode && selected_mode_ != Mode::No_Mode) {
+      if (!selected_mode_helper_->read(sw)) {
         RCLCPP_ERROR(logger_, "Mode handler read error");
       }
     }
 
-    if (new_mode_id != current_mode_id_) {
+    if (new_mode != current_mode_) {
+      std::string mode_str;
+      if (MODE_TO_STRING.find(new_mode) == MODE_TO_STRING.end()) {
+        mode_str = "UNKNOWN";
+      } else {
+        mode_str = MODE_TO_STRING.at(new_mode);
+      }
       RCLCPP_INFO_STREAM(
         logger_,
-        "New mode detected: " << (int)new_mode_id << " (" << MODE_TO_STRING.at(new_mode_id) << ")");
+        "New mode detected: " << static_cast<int>(new_mode) << " (" << mode_str << ")");
 
-      current_mode_id_ = new_mode_id;
+      current_mode_ = new_mode;
       mode_cond_.notify_all();
 
-      if (selected_mode_id_ != current_mode_id_) {
+      if (selected_mode_ != current_mode_) {
         RCLCPP_WARN_STREAM(
           logger_, "Mode does not match with the selected: " <<
-            (int)selected_mode_id_ << " (" << MODE_TO_STRING.at(selected_mode_id_) << ")");
+            static_cast<int8_t>(selected_mode_) << " (" << MODE_TO_STRING.at(selected_mode_) <<
+            ")");
       }
     }
   }
@@ -282,10 +288,10 @@ void MotorNanotec::write()
   control_word_ |= (1 << Command402::CW_Halt);
   if (state_handler_.getState() == State402::Operation_Enable) {
     std::scoped_lock lock(mode_mutex_);
-    Mode::OpModeAccesser cwa(control_word_);
+    ModeHelper::OpModeAccesser cwa(control_word_);
     bool okay = false;
-    if (selected_mode_ && selected_mode_->mode_id_ == current_mode_id_) {
-      okay = selected_mode_->write(cwa);
+    if (selected_mode_helper_ && selected_mode_ == current_mode_) {
+      okay = selected_mode_helper_->write(cwa);
     } else {
       cwa = 0;
     }
@@ -298,10 +304,14 @@ void MotorNanotec::write()
     this->driver->set_remote_obj<uint16_t>(
       control_word_entry_,
       control_word_ & ~(1 << Command402::CW_Fault_Reset));
+    this->driver->trigger_tpdo_event(control_word_entry_);
   } else {
-    RCLCPP_DEBUG_STREAM(logger_, "Control Word: " << std::bitset<16>{control_word_}.to_string());
     this->driver->set_remote_obj<uint16_t>(control_word_entry_, control_word_);
   }
+  RCLCPP_DEBUG_STREAM(
+    logger_,
+    "Control Word: " << std::bitset<16>{this->driver->get_remote_obj_cached<uint16_t>(
+        control_word_entry_)}.to_string());
 }
 
 bool MotorNanotec::switch_off()
@@ -359,7 +369,7 @@ bool MotorNanotec::switch_operational()
     return false;
   }
 
-  if (!selected_mode_) {
+  if (!selected_mode_helper_) {
     RCLCPP_ERROR(logger_, "Could not enable operation: No operation mode selected");
     return false;
   }
@@ -377,7 +387,7 @@ bool MotorNanotec::recover()
   start_fault_reset_ = true;
   {
     std::scoped_lock lock(mode_mutex_);
-    if (selected_mode_ && !selected_mode_->start()) {
+    if (selected_mode_helper_ && !selected_mode_helper_->start()) {
       RCLCPP_ERROR(logger_, "Could not recover from fault: Failed to restart mode");
       return false;
     }
@@ -396,7 +406,7 @@ bool MotorNanotec::recover()
 
 bool MotorNanotec::auto_setup()
 {
-  if (!set_mode(MotorNanotec::Auto_Setup)) {
+  if (!set_mode(Mode::Auto_Setup)) {
     RCLCPP_ERROR(logger_, "Failed to set mode to auto setup");
     return false;
   }
@@ -405,8 +415,8 @@ bool MotorNanotec::auto_setup()
     return false;
   }
 
-  AutoSetupMode * auto_setup = dynamic_cast<AutoSetupMode *>(selected_mode_.get());
-  return auto_setup->execute_auto_setup() && switch_enabled() && set_mode(MotorBase::No_Mode);
+  AutoSetupMode * auto_setup = dynamic_cast<AutoSetupMode *>(selected_mode_helper_.get());
+  return auto_setup->execute_auto_setup() && switch_enabled() && set_mode(Mode::No_Mode);
 }
 
 }  // namespace nanotec_driver

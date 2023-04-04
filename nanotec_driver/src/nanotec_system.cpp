@@ -96,6 +96,13 @@ NanotecSystem::on_configure(const rclcpp_lifecycle::State &)
       }
     }
 
+    RCLCPP_INFO(logger_, "Sending NMT Reset command...");
+    nanotec_driver->reset_node_nmt_command();
+
+    // TODO(blazej) Find some better way to wait for Device reset
+    std::this_thread::sleep_for(2000ms);
+
+    RCLCPP_INFO(logger_, "Sending NMT Start command...");
     nanotec_driver->start_node_nmt_command();
 
     if (!joint_found) {
@@ -149,7 +156,7 @@ NanotecSystem::perform_command_mode_switch(
   for (auto & interface : start_interfaces) {
     for (auto & joint : joints_) {
       if (interface == joint.name + "/" + hardware_interface::HW_IF_POSITION) {
-        if (!joint.motor->set_mode(MotorBase::Profiled_Position) ||
+        if (!joint.motor->set_mode(Mode::Profiled_Position) ||
           !joint.motor->switch_operational())
         {
           return hardware_interface::return_type::ERROR;
@@ -158,7 +165,7 @@ NanotecSystem::perform_command_mode_switch(
         break;
       }
       if (interface == joint.name + "/" + hardware_interface::HW_IF_VELOCITY) {
-        if (!joint.motor->set_mode(MotorBase::Profiled_Velocity) ||
+        if (!joint.motor->set_mode(Mode::Profiled_Velocity) ||
           !joint.motor->switch_operational())
         {
           return hardware_interface::return_type::ERROR;
@@ -167,7 +174,7 @@ NanotecSystem::perform_command_mode_switch(
         break;
       }
       if (interface == joint.name + "/" + hardware_interface::HW_IF_EFFORT) {
-        if (!joint.motor->set_mode(MotorBase::Profiled_Torque) ||
+        if (!joint.motor->set_mode(Mode::Profiled_Torque) ||
           !joint.motor->switch_operational())
         {
           return hardware_interface::return_type::ERROR;

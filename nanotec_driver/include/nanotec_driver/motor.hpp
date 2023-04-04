@@ -3,13 +3,8 @@
 #include <memory>
 #include <unordered_map>
 
-#include "canopen_402_driver/motor.hpp"
-
-#include "nanotec_driver/auto_setup.hpp"
-
-using ros2_canopen::State402;
-using ros2_canopen::Command402;
-using ros2_canopen::MotorBase;
+#include "lely_nanotec_bridge.hpp"
+#include "mode.hpp"
 
 namespace nanotec_driver
 {
@@ -17,20 +12,15 @@ namespace nanotec_driver
 class MotorNanotec
 {
 public:
-  enum OperationMode
-  {
-    Auto_Setup = -2,
-  };
-
-  MotorNanotec(std::shared_ptr<LelyMotionControllerBridge> driver, rclcpp::Logger logger);
+  MotorNanotec(std::shared_ptr<LelyNanotecBridge> driver, rclcpp::Logger logger);
 
   double get_position() {return position_;}
   double get_velocity() {return velocity_;}
   double get_torque() {return torque_;}
 
-  bool set_mode(int8_t mode);
+  bool set_mode(Mode mode);
   bool set_target(double val);
-  int8_t get_mode_id();
+  Mode get_mode();
   void on_emcy(ros2_canopen::COEmcy emcy);
   bool auto_setup();
   bool switch_off();
@@ -66,8 +56,8 @@ public:
 
 private:
   bool switch_state(const State402::InternalState & target);
-  void register_mode(const ModeSharedPtr & m);
-  ModeSharedPtr get_mode(int8_t mode_id);
+  void register_mode(const std::shared_ptr<ModeHelper> & m);
+  std::shared_ptr<ModeHelper> get_mode_helper(Mode mode);
 
   double position_;
   double velocity_;
@@ -83,16 +73,16 @@ private:
 
   State402 state_handler_;
 
-  std::unordered_map<int8_t, ModeSharedPtr> modes_;
+  std::unordered_map<Mode, std::shared_ptr<ModeHelper>> modes_;
 
-  ModeSharedPtr selected_mode_;
-  int8_t selected_mode_id_;
-  int8_t current_mode_id_;
+  Mode selected_mode_;
+  std::shared_ptr<ModeHelper> selected_mode_helper_;
+  Mode current_mode_;
   std::condition_variable mode_cond_;
   std::mutex mode_mutex_;
   const std::chrono::seconds state_switch_timeout_;
 
-  std::shared_ptr<LelyMotionControllerBridge> driver;
+  std::shared_ptr<LelyNanotecBridge> driver;
   std::shared_ptr<RemoteObject> status_word_entry_;
   std::shared_ptr<RemoteObject> control_word_entry_;
   std::shared_ptr<RemoteObject> op_mode_display_;

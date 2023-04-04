@@ -145,16 +145,16 @@ void NodeCanopenNanotecDriver::add_to_master()
 {
   RCLCPP_INFO(node_->get_logger(), "add_to_master");
 
-  std::shared_ptr<std::promise<std::shared_ptr<ros2_canopen::LelyMotionControllerBridge>>> prom;
+  std::shared_ptr<std::promise<std::shared_ptr<LelyNanotecBridge>>> prom;
   prom =
-    std::make_shared<std::promise<std::shared_ptr<ros2_canopen::LelyMotionControllerBridge>>>();
-  std::future<std::shared_ptr<ros2_canopen::LelyMotionControllerBridge>> f = prom->get_future();
+    std::make_shared<std::promise<std::shared_ptr<LelyNanotecBridge>>>();
+  std::future<std::shared_ptr<LelyNanotecBridge>> f = prom->get_future();
   this->exec_->post(
     [this, prom]()
     {
       std::scoped_lock<std::mutex> lock(this->driver_mutex_);
       mc_driver_ =
-      std::make_shared<LelyMotionControllerBridge>(
+      std::make_shared<LelyNanotecBridge>(
         *(this->exec_), *(this->master_),
         this->node_id_, this->node_->get_name());
       mc_driver_->Boot();
@@ -163,7 +163,7 @@ void NodeCanopenNanotecDriver::add_to_master()
   auto future_status = f.wait_for(this->non_transmit_timeout_);
   if (future_status != std::future_status::ready) {
     RCLCPP_ERROR(this->node_->get_logger(), "Adding timed out.");
-    throw DriverException("add_to_master: Adding timed out.");
+    throw ros2_canopen::DriverException("add_to_master: Adding timed out.");
   }
   this->mc_driver_ = f.get();
   this->motor_ =
@@ -182,7 +182,7 @@ void NodeCanopenNanotecDriver::add_to_master()
   position_controller_kp_ = this->mc_driver_->create_remote_obj(0x321C, 1U, CODataTypes::COData32);
   position_controller_ti_ = this->mc_driver_->create_remote_obj(0x321C, 2U, CODataTypes::COData32);
 
-  this->lely_driver_ = std::static_pointer_cast<LelyDriverBridge>(mc_driver_);
+  this->lely_driver_ = std::static_pointer_cast<ros2_canopen::LelyDriverBridge>(mc_driver_);
   this->driver_ = std::static_pointer_cast<lely::canopen::BasicDriver>(mc_driver_);
   if (!this->mc_driver_->IsReady()) {
     RCLCPP_WARN(this->node_->get_logger(), "Wait for device to boot.");
@@ -193,7 +193,7 @@ void NodeCanopenNanotecDriver::add_to_master()
       std::string msg;
       msg.append("add_to_master: ");
       msg.append(e.what());
-      throw DriverException(msg);
+      throw ros2_canopen::DriverException(msg);
     }
   }
   RCLCPP_INFO(this->node_->get_logger(), "Driver booted and ready.");
@@ -217,7 +217,7 @@ void NodeCanopenNanotecDriver::remove_from_master()
 
   auto future_status = f.wait_for(this->non_transmit_timeout_);
   if (future_status != std::future_status::ready) {
-    throw DriverException("remove_from_master: removing timed out");
+    throw ros2_canopen::DriverException("remove_from_master: removing timed out");
   }
 }
 
@@ -271,7 +271,7 @@ void NodeCanopenNanotecDriver::handle_set_mode_position(
   std_srvs::srv::Trigger::Response::SharedPtr response)
 {
   (void)request;
-  response->success = motor_->set_mode(MotorBase::Profiled_Position);
+  response->success = motor_->set_mode(Mode::Profiled_Position);
 }
 
 void NodeCanopenNanotecDriver::handle_set_mode_velocity(
@@ -279,7 +279,7 @@ void NodeCanopenNanotecDriver::handle_set_mode_velocity(
   std_srvs::srv::Trigger::Response::SharedPtr response)
 {
   (void)request;
-  response->success = motor_->set_mode(MotorBase::Profiled_Velocity);
+  response->success = motor_->set_mode(Mode::Profiled_Velocity);
 }
 
 void NodeCanopenNanotecDriver::handle_set_mode_torque(
@@ -287,7 +287,7 @@ void NodeCanopenNanotecDriver::handle_set_mode_torque(
   std_srvs::srv::Trigger::Response::SharedPtr response)
 {
   (void)request;
-  response->success = motor_->set_mode(MotorBase::Profiled_Torque);
+  response->success = motor_->set_mode(Mode::Profiled_Torque);
 }
 
 void NodeCanopenNanotecDriver::handle_set_target(
