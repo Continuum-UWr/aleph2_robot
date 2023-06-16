@@ -13,7 +13,7 @@ nanotec11:
   dcf: "CL3-E-2-0F.eds"
   driver: "nanotec_driver::NanotecDriver"
   package: "nanotec_driver"
-  period: 20
+  polling: false
   boot: true
   heartbeat_consumer: true
   enable_lazy_load: false

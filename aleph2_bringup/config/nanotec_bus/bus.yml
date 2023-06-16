@@ -15,7 +15,7 @@ nanotec1:
   dcf: "C5-E-2-09.eds"
   driver: "nanotec_driver::NanotecDriver"
   package: "nanotec_driver"
-  period: 20
+  polling: false
   boot: true
   heartbeat_consumer: true
   enable_lazy_load: false
@@ -81,7 +81,7 @@ nanotec2:
   dcf: "C5-E-2-09.eds"
   driver: "nanotec_driver::NanotecDriver"
   package: "nanotec_driver"
-  period: 20
+  polling: false
   boot: true
   heartbeat_consumer: true
   enable_lazy_load: false
@@ -147,7 +147,7 @@ nanotec3:
   dcf: "C5-E-2-09.eds"
   driver: "nanotec_driver::NanotecDriver"
   package: "nanotec_driver"
-  period: 20
+  polling: false
   boot: true
   heartbeat_consumer: true
   enable_lazy_load: false
@@ -214,7 +214,7 @@ nanotec4:
   dcf: "C5-E-2-09.eds"
   driver: "nanotec_driver::NanotecDriver"
   package: "nanotec_driver"
-  period: 20
+  polling: false
   boot: true
   heartbeat_consumer: true
   enable_lazy_load: false
