@@ -4,7 +4,7 @@
 namespace nanotec_driver
 {
 
-AutoSetupMode::AutoSetupMode(std::shared_ptr<LelyNanotecBridge> driver)
+AutoSetupMode::AutoSetupMode(std::shared_ptr<ros2_canopen::LelyDriverBridge> driver)
 : ModeHelper(Mode::Auto_Setup)
 {
   this->driver = driver;

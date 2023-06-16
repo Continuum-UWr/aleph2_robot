@@ -5,11 +5,11 @@
 #include <limits>
 
 #include "canopen_core/exchange.hpp"
+#include "canopen_base_driver/lely_driver_bridge.hpp"
 
-#include "command.hpp"
-#include "lely_nanotec_bridge.hpp"
-#include "state.hpp"
-#include "word_accessor.hpp"
+#include "nanotec_driver/command.hpp"
+#include "nanotec_driver/state.hpp"
+#include "nanotec_driver/word_accessor.hpp"
 
 namespace nanotec_driver
 {
@@ -82,18 +82,15 @@ public:
   }
 };
 
-template<Mode MODE, typename TYPE, ros2_canopen::CODataTypes TPY, uint16_t OBJ, uint8_t SUB,
-  uint16_t CW_MASK>
+template<Mode MODE, typename TYPE, uint16_t OBJ, uint8_t SUB, uint16_t CW_MASK>
 class ModeForwardHelper : public ModeTargetHelper<TYPE>
 {
-  std::shared_ptr<LelyNanotecBridge> driver;
-  std::shared_ptr<RemoteObject> obj;
+  std::shared_ptr<ros2_canopen::LelyDriverBridge> driver;
 
 public:
-  explicit ModeForwardHelper(std::shared_ptr<LelyNanotecBridge> driver)
+  explicit ModeForwardHelper(std::shared_ptr<ros2_canopen::LelyDriverBridge> driver)
   : ModeTargetHelper<TYPE>(MODE)
   {
-    this->obj = driver->create_remote_obj(OBJ, SUB, TPY);
     this->driver = driver;
   }
   virtual bool write(ModeHelper::OpModeAccesser & cw)
@@ -101,7 +98,7 @@ public:
     if (this->hasTarget()) {
       cw = cw.get() | CW_MASK;
 
-      driver->set_remote_obj(obj, this->getTarget());
+      driver->universal_set_value<TYPE>(OBJ, SUB, this->getTarget());
       return true;
     } else {
       cw = cw.get() & ~CW_MASK;
@@ -110,10 +107,7 @@ public:
   }
 };
 
-typedef ModeForwardHelper<
-    Mode::Profiled_Velocity, int32_t, ros2_canopen::COData32, 0x60FF, 0, 0>
-  ProfiledVelocityMode;
-typedef ModeForwardHelper<Mode::Profiled_Torque, int16_t, ros2_canopen::COData16, 0x6071, 0, 0>
-  ProfiledTorqueMode;
+typedef ModeForwardHelper<Mode::Profiled_Velocity, int32_t, 0x60FF, 0, 0> ProfiledVelocityMode;
+typedef ModeForwardHelper<Mode::Profiled_Torque, int16_t, 0x6071, 0, 0> ProfiledTorqueMode;
 
 }  // namespace nanotec_driver

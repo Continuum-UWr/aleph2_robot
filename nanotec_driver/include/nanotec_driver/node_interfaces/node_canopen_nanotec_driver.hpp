@@ -7,7 +7,6 @@
 #include "canopen_interfaces/srv/co_target_double.hpp"
 #include "sensor_msgs/msg/joint_state.hpp"
 
-#include "nanotec_driver/lely_nanotec_bridge.hpp"
 #include "nanotec_driver/motor.hpp"
 
 namespace nanotec_driver
@@ -19,7 +18,6 @@ class NodeCanopenNanotecDriver
   : public ros2_canopen::node_interfaces::NodeCanopenProxyDriver<rclcpp::Node>
 {
 protected:
-  std::shared_ptr<LelyNanotecBridge> mc_driver_;
   std::shared_ptr<MotorNanotec> motor_;
 
   rclcpp::TimerBase::SharedPtr update_timer_;
@@ -33,15 +31,6 @@ protected:
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_set_mode_velocity_;
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_set_mode_torque_;
   rclcpp::Service<canopen_interfaces::srv::COTargetDouble>::SharedPtr srv_set_target_;
-
-  std::shared_ptr<RemoteObject> current_controller_kp_for_iq_;
-  std::shared_ptr<RemoteObject> current_controller_ti_for_iq_;
-  std::shared_ptr<RemoteObject> current_controller_kp_for_id_;
-  std::shared_ptr<RemoteObject> current_controller_ti_for_id_;
-  std::shared_ptr<RemoteObject> velocity_controller_kp_;
-  std::shared_ptr<RemoteObject> velocity_controller_ti_;
-  std::shared_ptr<RemoteObject> position_controller_kp_;
-  std::shared_ptr<RemoteObject> position_controller_ti_;
 
   rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr
     on_set_parameter_callback_handle_;
@@ -100,7 +89,6 @@ public:
   void activate(bool called_from_base) override;
   void deactivate(bool called_from_base) override;
   void add_to_master() override;
-  void remove_from_master() override;
 
   std::shared_ptr<MotorNanotec> get_motor();
 };

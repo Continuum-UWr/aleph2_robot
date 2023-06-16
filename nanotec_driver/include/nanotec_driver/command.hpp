@@ -5,7 +5,7 @@
 
 #include <boost/container/flat_map.hpp>
 
-#include "state.hpp"
+#include "nanotec_driver/state.hpp"
 
 namespace nanotec_driver
 {
