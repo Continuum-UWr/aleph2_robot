@@ -20,7 +20,6 @@ class NodeCanopenNanotecDriver
 protected:
   std::shared_ptr<MotorNanotec> motor_;
 
-  rclcpp::TimerBase::SharedPtr update_timer_;
   rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr pub_joint_state_;
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_switch_off_;
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_switch_enabled_;
@@ -35,9 +34,6 @@ protected:
   rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr
     on_set_parameter_callback_handle_;
 
-  uint32_t period_ms_;
-
-  void update();
   void publish();
 
   void handle_switch_off(
@@ -89,6 +85,7 @@ public:
   void activate(bool called_from_base) override;
   void deactivate(bool called_from_base) override;
   void add_to_master() override;
+  void poll_timer_callback() override;
 
   std::shared_ptr<MotorNanotec> get_motor();
 };

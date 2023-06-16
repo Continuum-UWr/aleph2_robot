@@ -59,8 +59,6 @@ void NodeCanopenNanotecDriver::configure(bool called_from_base)
   RCLCPP_INFO(node_->get_logger(), "configure");
 
   NodeCanopenProxyDriver<rclcpp::Node>::configure(false);
-
-  period_ms_ = this->config_["period"].as<uint32_t>();
 }
 
 void NodeCanopenNanotecDriver::activate(bool called_from_base)
@@ -69,11 +67,6 @@ void NodeCanopenNanotecDriver::activate(bool called_from_base)
   RCLCPP_INFO(node_->get_logger(), "activate");
 
   NodeCanopenProxyDriver<rclcpp::Node>::activate(false);
-
-  update_timer_ = this->node_->create_wall_timer(
-    std::chrono::milliseconds(period_ms_),
-    std::bind(&NodeCanopenNanotecDriver::update, this),
-    this->timer_cbg_);
 
   this->node_->set_parameter(
     rclcpp::Parameter(
@@ -117,12 +110,11 @@ void NodeCanopenNanotecDriver::deactivate(bool called_from_base)
   on_set_parameter_callback_handle_.reset();
 
   this->motor_->switch_off();
-
-  update_timer_->cancel();
 }
 
-void NodeCanopenNanotecDriver::update()
+void NodeCanopenNanotecDriver::poll_timer_callback()
 {
+  NodeCanopenProxyDriver<rclcpp::Node>::poll_timer_callback();
   motor_->read();
   motor_->write();
   publish();
