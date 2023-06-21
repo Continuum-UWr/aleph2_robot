@@ -14,7 +14,6 @@ build:
   before_script:
   - apt update
   - apt upgrade -y
-  - apt install python3-wheel python3-pip -y
   - rosdep update
   - git clone https://gitlab.continuum.ii.uni.wroc.pl/continuum/software/aleph2_common
 
