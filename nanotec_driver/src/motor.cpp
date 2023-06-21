@@ -262,8 +262,10 @@ void MotorNanotec::read()
     RCLCPP_WARN(logger_, "Internal limit active");
   }
 
-  position_ = static_cast<double>(driver->universal_get_value<int32_t>(position_actual_value_index, 0));
-  velocity_ = static_cast<double>(driver->universal_get_value<int32_t>(velocity_actual_value_index, 0));
+  position_ =
+    static_cast<double>(driver->universal_get_value<int32_t>(position_actual_value_index, 0));
+  velocity_ =
+    static_cast<double>(driver->universal_get_value<int32_t>(velocity_actual_value_index, 0));
   torque_ = static_cast<double>(driver->universal_get_value<int16_t>(torque_actual_value_index, 0));
 }
 
@@ -284,19 +286,17 @@ void MotorNanotec::write()
       control_word_ &= ~(1 << Command402::CW_Halt);
     }
   }
+
+  uint16_t control_word_to_set = control_word_;
   if (start_fault_reset_.exchange(false)) {
     RCLCPP_INFO(logger_, "Fault reset");
-    this->driver->universal_set_value<uint16_t>(
-      control_word_entry_index, 0,
-      control_word_ & ~(1 << Command402::CW_Fault_Reset));
-    // this->driver->trigger_tpdo_event(control_word_entry_);
-  } else {
-    this->driver->universal_set_value<uint16_t>(control_word_entry_index, 0, control_word_);
+    control_word_to_set &= ~(1 << Command402::CW_Fault_Reset);
   }
+
+  this->driver->universal_set_value<uint16_t>(control_word_entry_index, 0, control_word_);
+
   RCLCPP_DEBUG_STREAM(
-    logger_,
-    "Control Word: " << std::bitset<16>{this->driver->universal_get_value<uint16_t>(
-        control_word_entry_index, 0)}.to_string());
+    logger_, "Control Word: " << std::bitset<16>{control_word_to_set}.to_string());
 }
 
 bool MotorNanotec::switch_off()
