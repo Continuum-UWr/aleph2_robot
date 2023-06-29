@@ -68,6 +68,7 @@ nanotec1:
       mapping:
         - { index: 0x6040, sub_index: 0 } # controlword
         - { index: 0x6060, sub_index: 0 } # mode of operation
+        - { index: 0x6071, sub_index: 0 } # target torque
     2:
       enabled: true
       cob_id: "auto"
@@ -134,6 +135,7 @@ nanotec2:
       mapping:
         - { index: 0x6040, sub_index: 0 } # controlword
         - { index: 0x6060, sub_index: 0 } # mode of operation
+        - { index: 0x6071, sub_index: 0 } # target torque
     2:
       enabled: true
       cob_id: "auto"
@@ -201,6 +203,7 @@ nanotec3:
       mapping:
         - { index: 0x6040, sub_index: 0 } # controlword
         - { index: 0x6060, sub_index: 0 } # mode of operation
+        - { index: 0x6071, sub_index: 0 } # target torque
     2:
       enabled: true
       cob_id: "auto"
@@ -268,6 +271,7 @@ nanotec4:
       mapping:
         - { index: 0x6040, sub_index: 0 } # controlword
         - { index: 0x6060, sub_index: 0 } # mode of operation
+        - { index: 0x6071, sub_index: 0 } # target torque
     2:
       enabled: true
       cob_id: "auto"
