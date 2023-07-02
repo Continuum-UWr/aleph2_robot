@@ -7,6 +7,18 @@ namespace nanotec_driver
 namespace node_interfaces
 {
 
+constexpr uint16_t currect_controller_parameters_index = 0x321A;
+constexpr uint8_t currect_controller_parameters_kp_for_iq_subindex = 1;
+constexpr uint8_t currect_controller_parameters_ti_for_iq_subindex = 2;
+constexpr uint8_t currect_controller_parameters_kp_for_id_subindex = 3;
+constexpr uint8_t currect_controller_parameters_ti_for_id_subindex = 4;
+constexpr uint16_t velocity_controller_parameters_index = 0x321B;
+constexpr uint8_t velocity_controller_parameters_kp_subindex = 1;
+constexpr uint8_t velocity_controller_parameters_ti_subindex = 2;
+constexpr uint16_t position_controller_parameters_index = 0x321C;
+constexpr uint8_t position_controller_parameters_kp_subindex = 1;
+constexpr uint8_t position_controller_parameters_ti_subindex = 2;
+
 NodeCanopenNanotecDriver::NodeCanopenNanotecDriver(rclcpp::Node * node)
 : ros2_canopen::node_interfaces::NodeCanopenProxyDriver<rclcpp::Node>(node)
 {
@@ -71,27 +83,33 @@ void NodeCanopenNanotecDriver::activate(bool called_from_base)
   this->node_->set_parameter(
     rclcpp::Parameter(
       "current_controller_kp",
-      static_cast<int>(this->lely_driver_->universal_get_value<uint32_t>(0x321A, 1))));
+      static_cast<int>(this->lely_driver_->universal_get_value<uint32_t>(
+        currect_controller_parameters_index, currect_controller_parameters_kp_for_iq_subindex))));
   this->node_->set_parameter(
     rclcpp::Parameter(
       "current_controller_ti",
-      static_cast<int>(this->lely_driver_->universal_get_value<uint32_t>(0x321A, 2))));
+      static_cast<int>(this->lely_driver_->universal_get_value<uint32_t>(
+        currect_controller_parameters_index, currect_controller_parameters_ti_for_iq_subindex))));
   this->node_->set_parameter(
     rclcpp::Parameter(
       "velocity_controller_kp",
-      static_cast<int>(this->lely_driver_->universal_get_value<uint32_t>(0x321B, 1))));
+      static_cast<int>(this->lely_driver_->universal_get_value<uint32_t>(
+        velocity_controller_parameters_index, velocity_controller_parameters_kp_subindex))));
   this->node_->set_parameter(
     rclcpp::Parameter(
       "velocity_controller_ti",
-      static_cast<int>(this->lely_driver_->universal_get_value<uint32_t>(0x321B, 2))));
+      static_cast<int>(this->lely_driver_->universal_get_value<uint32_t>(
+        velocity_controller_parameters_index, velocity_controller_parameters_ti_subindex))));
   this->node_->set_parameter(
     rclcpp::Parameter(
       "position_controller_kp",
-      static_cast<int>(this->lely_driver_->universal_get_value<uint32_t>(0x321C, 1))));
+      static_cast<int>(this->lely_driver_->universal_get_value<uint32_t>(
+        position_controller_parameters_index, position_controller_parameters_kp_subindex))));
   this->node_->set_parameter(
     rclcpp::Parameter(
       "position_controller_ti",
-      static_cast<int>(this->lely_driver_->universal_get_value<uint32_t>(0x321C, 2))));
+      static_cast<int>(this->lely_driver_->universal_get_value<uint32_t>(
+        position_controller_parameters_index, position_controller_parameters_ti_subindex))));
 
   on_set_parameter_callback_handle_ =
     this->node_->add_on_set_parameters_callback(
@@ -226,26 +244,34 @@ rcl_interfaces::msg::SetParametersResult NodeCanopenNanotecDriver::handle_on_set
   for (auto & param : parameters) {
     if (param.get_name() == "current_controller_kp") {
       this->lely_driver_->universal_set_value<uint32_t>(
-        0x321A, 1, (uint32_t)param.as_int());
+        currect_controller_parameters_index, currect_controller_parameters_kp_for_iq_subindex,
+        (uint32_t)param.as_int());
       this->lely_driver_->universal_set_value<uint32_t>(
-        0x321A, 3, (uint32_t)param.as_int());
+        currect_controller_parameters_index, currect_controller_parameters_kp_for_id_subindex,
+        (uint32_t)param.as_int());
     } else if (param.get_name() == "current_controller_ti") {
       this->lely_driver_->universal_set_value<uint32_t>(
-        0x321A, 2, (uint32_t)param.as_int());
+        currect_controller_parameters_index, currect_controller_parameters_ti_for_iq_subindex,
+        (uint32_t)param.as_int());
       this->lely_driver_->universal_set_value<uint32_t>(
-        0x321A, 4, (uint32_t)param.as_int());
+        currect_controller_parameters_index, currect_controller_parameters_ti_for_id_subindex,
+        (uint32_t)param.as_int());
     } else if (param.get_name() == "velocity_controller_kp") {
       this->lely_driver_->universal_set_value<uint32_t>(
-        0x321B, 1, (uint32_t)param.as_int());
+        velocity_controller_parameters_index, velocity_controller_parameters_kp_subindex,
+        (uint32_t)param.as_int());
     } else if (param.get_name() == "velocity_controller_ti") {
       this->lely_driver_->universal_set_value<uint32_t>(
-        0x321B, 2, (uint32_t)param.as_int());
+        velocity_controller_parameters_index, velocity_controller_parameters_ti_subindex,
+        (uint32_t)param.as_int());
     } else if (param.get_name() == "position_controller_kp") {
       this->lely_driver_->universal_set_value<uint32_t>(
-        0x321C, 1, (uint32_t)param.as_int());
+        position_controller_parameters_index, position_controller_parameters_kp_subindex,
+        (uint32_t)param.as_int());
     } else if (param.get_name() == "position_controller_ti") {
       this->lely_driver_->universal_set_value<uint32_t>(
-        0x321C, 2, (uint32_t)param.as_int());
+        position_controller_parameters_index, position_controller_parameters_ti_subindex,
+        (uint32_t)param.as_int());
     }
 
     RCLCPP_INFO_STREAM(
