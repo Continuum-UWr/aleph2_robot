@@ -7,6 +7,14 @@
 namespace nanotec_driver
 {
 
+constexpr uint16_t status_word_entry_index = 0x6041;
+constexpr uint16_t control_word_entry_index = 0x6040;
+constexpr uint16_t op_mode_display_index = 0x6061;
+constexpr uint16_t op_mode_index = 0x6060;
+constexpr uint16_t position_actual_value_index = 0x6064;
+constexpr uint16_t velocity_actual_value_index = 0x606C;
+constexpr uint16_t torque_actual_value_index = 0x6077;
+
 static const std::unordered_map<State402::InternalState, std::string> STATE_TO_STRING = {
   {State402::Start, "Start"},
   {State402::Not_Ready_To_Switch_On, "Not ready to switch on"},
