@@ -7,6 +7,18 @@ namespace nanotec_driver
 namespace node_interfaces
 {
 
+constexpr uint16_t currect_controller_parameters_index = 0x321A;
+constexpr uint8_t currect_controller_parameters_kp_for_iq_subindex = 1;
+constexpr uint8_t currect_controller_parameters_ti_for_iq_subindex = 2;
+constexpr uint8_t currect_controller_parameters_kp_for_id_subindex = 3;
+constexpr uint8_t currect_controller_parameters_ti_for_id_subindex = 4;
+constexpr uint16_t velocity_controller_parameters_index = 0x321B;
+constexpr uint8_t velocity_controller_parameters_kp_subindex = 1;
+constexpr uint8_t velocity_controller_parameters_ti_subindex = 2;
+constexpr uint16_t position_controller_parameters_index = 0x321C;
+constexpr uint8_t position_controller_parameters_kp_subindex = 1;
+constexpr uint8_t position_controller_parameters_ti_subindex = 2;
+
 NodeCanopenNanotecDriver::NodeCanopenNanotecDriver(rclcpp::Node * node)
 : ros2_canopen::node_interfaces::NodeCanopenProxyDriver<rclcpp::Node>(node)
 {
@@ -59,8 +71,6 @@ void NodeCanopenNanotecDriver::configure(bool called_from_base)
   RCLCPP_INFO(node_->get_logger(), "configure");
 
   NodeCanopenProxyDriver<rclcpp::Node>::configure(false);
-
-  period_ms_ = this->config_["period"].as<uint32_t>();
 }
 
 void NodeCanopenNanotecDriver::activate(bool called_from_base)
@@ -70,37 +80,36 @@ void NodeCanopenNanotecDriver::activate(bool called_from_base)
 
   NodeCanopenProxyDriver<rclcpp::Node>::activate(false);
 
-  mc_driver_->validate_objs();
-
-  update_timer_ = this->node_->create_wall_timer(
-    std::chrono::milliseconds(period_ms_),
-    std::bind(&NodeCanopenNanotecDriver::update, this),
-    this->timer_cbg_);
-
   this->node_->set_parameter(
     rclcpp::Parameter(
       "current_controller_kp",
-      static_cast<int>(this->mc_driver_->get_remote_obj<uint32_t>(current_controller_kp_for_iq_))));
+      static_cast<int>(this->lely_driver_->universal_get_value<uint32_t>(
+        currect_controller_parameters_index, currect_controller_parameters_kp_for_iq_subindex))));
   this->node_->set_parameter(
     rclcpp::Parameter(
       "current_controller_ti",
-      static_cast<int>(this->mc_driver_->get_remote_obj<uint32_t>(current_controller_ti_for_iq_))));
+      static_cast<int>(this->lely_driver_->universal_get_value<uint32_t>(
+        currect_controller_parameters_index, currect_controller_parameters_ti_for_iq_subindex))));
   this->node_->set_parameter(
     rclcpp::Parameter(
       "velocity_controller_kp",
-      static_cast<int>(this->mc_driver_->get_remote_obj<uint32_t>(velocity_controller_kp_))));
+      static_cast<int>(this->lely_driver_->universal_get_value<uint32_t>(
+        velocity_controller_parameters_index, velocity_controller_parameters_kp_subindex))));
   this->node_->set_parameter(
     rclcpp::Parameter(
       "velocity_controller_ti",
-      static_cast<int>(this->mc_driver_->get_remote_obj<uint32_t>(velocity_controller_ti_))));
+      static_cast<int>(this->lely_driver_->universal_get_value<uint32_t>(
+        velocity_controller_parameters_index, velocity_controller_parameters_ti_subindex))));
   this->node_->set_parameter(
     rclcpp::Parameter(
       "position_controller_kp",
-      static_cast<int>(this->mc_driver_->get_remote_obj<uint32_t>(position_controller_kp_))));
+      static_cast<int>(this->lely_driver_->universal_get_value<uint32_t>(
+        position_controller_parameters_index, position_controller_parameters_kp_subindex))));
   this->node_->set_parameter(
     rclcpp::Parameter(
       "position_controller_ti",
-      static_cast<int>(this->mc_driver_->get_remote_obj<uint32_t>(position_controller_ti_))));
+      static_cast<int>(this->lely_driver_->universal_get_value<uint32_t>(
+        position_controller_parameters_index, position_controller_parameters_ti_subindex))));
 
   on_set_parameter_callback_handle_ =
     this->node_->add_on_set_parameters_callback(
@@ -119,12 +128,11 @@ void NodeCanopenNanotecDriver::deactivate(bool called_from_base)
   on_set_parameter_callback_handle_.reset();
 
   this->motor_->switch_off();
-
-  update_timer_->cancel();
 }
 
-void NodeCanopenNanotecDriver::update()
+void NodeCanopenNanotecDriver::poll_timer_callback()
 {
+  NodeCanopenProxyDriver<rclcpp::Node>::poll_timer_callback();
   motor_->read();
   motor_->write();
   publish();
@@ -144,81 +152,11 @@ void NodeCanopenNanotecDriver::publish()
 void NodeCanopenNanotecDriver::add_to_master()
 {
   RCLCPP_INFO(node_->get_logger(), "add_to_master");
-
-  std::shared_ptr<std::promise<std::shared_ptr<LelyNanotecBridge>>> prom;
-  prom =
-    std::make_shared<std::promise<std::shared_ptr<LelyNanotecBridge>>>();
-  std::future<std::shared_ptr<LelyNanotecBridge>> f = prom->get_future();
-  this->exec_->post(
-    [this, prom]()
-    {
-      std::scoped_lock<std::mutex> lock(this->driver_mutex_);
-      mc_driver_ =
-      std::make_shared<LelyNanotecBridge>(
-        *(this->exec_), *(this->master_),
-        this->node_id_, this->node_->get_name());
-      mc_driver_->Boot();
-      prom->set_value(mc_driver_);
-    });
-  auto future_status = f.wait_for(this->non_transmit_timeout_);
-  if (future_status != std::future_status::ready) {
-    RCLCPP_ERROR(this->node_->get_logger(), "Adding timed out.");
-    throw ros2_canopen::DriverException("add_to_master: Adding timed out.");
-  }
-  this->mc_driver_ = f.get();
+  NodeCanopenProxyDriver<rclcpp::Node>::add_to_master();
   this->motor_ =
-    std::make_shared<MotorNanotec>(mc_driver_, node_->get_logger().get_child("MotorNanotec"));
-
-  current_controller_kp_for_iq_ = this->mc_driver_->create_remote_obj(
-    0x321A, 1U, CODataTypes::COData32);
-  current_controller_ti_for_iq_ = this->mc_driver_->create_remote_obj(
-    0x321A, 2U, CODataTypes::COData32);
-  current_controller_kp_for_id_ = this->mc_driver_->create_remote_obj(
-    0x321A, 3U, CODataTypes::COData32);
-  current_controller_ti_for_id_ = this->mc_driver_->create_remote_obj(
-    0x321A, 4U, CODataTypes::COData32);
-  velocity_controller_kp_ = this->mc_driver_->create_remote_obj(0x321B, 1U, CODataTypes::COData32);
-  velocity_controller_ti_ = this->mc_driver_->create_remote_obj(0x321B, 2U, CODataTypes::COData32);
-  position_controller_kp_ = this->mc_driver_->create_remote_obj(0x321C, 1U, CODataTypes::COData32);
-  position_controller_ti_ = this->mc_driver_->create_remote_obj(0x321C, 2U, CODataTypes::COData32);
-
-  this->lely_driver_ = std::static_pointer_cast<ros2_canopen::LelyDriverBridge>(mc_driver_);
-  this->driver_ = std::static_pointer_cast<lely::canopen::BasicDriver>(mc_driver_);
-  if (!this->mc_driver_->IsReady()) {
-    RCLCPP_WARN(this->node_->get_logger(), "Wait for device to boot.");
-    try {
-      this->mc_driver_->wait_for_boot();
-    } catch (const std::exception & e) {
-      RCLCPP_ERROR(this->node_->get_logger(), e.what());
-      std::string msg;
-      msg.append("add_to_master: ");
-      msg.append(e.what());
-      throw ros2_canopen::DriverException(msg);
-    }
-  }
-  RCLCPP_INFO(this->node_->get_logger(), "Driver booted and ready.");
-}
-
-void NodeCanopenNanotecDriver::remove_from_master()
-{
-  RCLCPP_INFO(node_->get_logger(), "remove_from_master");
-
-  std::shared_ptr<std::promise<void>> prom = std::make_shared<std::promise<void>>();
-  auto f = prom->get_future();
-  this->exec_->post(
-    [this, prom]()
-    {
-      this->motor_.reset();
-      this->driver_.reset();
-      this->lely_driver_.reset();
-      this->mc_driver_.reset();
-      prom->set_value();
-    });
-
-  auto future_status = f.wait_for(this->non_transmit_timeout_);
-  if (future_status != std::future_status::ready) {
-    throw ros2_canopen::DriverException("remove_from_master: removing timed out");
-  }
+    std::make_shared<MotorNanotec>(
+    this->lely_driver_,
+    node_->get_logger().get_child("MotorNanotec"));
 }
 
 void NodeCanopenNanotecDriver::on_emcy(ros2_canopen::COEmcy emcy)
@@ -305,27 +243,35 @@ rcl_interfaces::msg::SetParametersResult NodeCanopenNanotecDriver::handle_on_set
 
   for (auto & param : parameters) {
     if (param.get_name() == "current_controller_kp") {
-      this->mc_driver_->set_remote_obj<uint32_t>(
-        current_controller_kp_for_id_, (uint32_t)param.as_int());
-      this->mc_driver_->set_remote_obj<uint32_t>(
-        current_controller_kp_for_iq_, (uint32_t)param.as_int());
+      this->lely_driver_->universal_set_value<uint32_t>(
+        currect_controller_parameters_index, currect_controller_parameters_kp_for_iq_subindex,
+        (uint32_t)param.as_int());
+      this->lely_driver_->universal_set_value<uint32_t>(
+        currect_controller_parameters_index, currect_controller_parameters_kp_for_id_subindex,
+        (uint32_t)param.as_int());
     } else if (param.get_name() == "current_controller_ti") {
-      this->mc_driver_->set_remote_obj<uint32_t>(
-        current_controller_ti_for_id_, (uint32_t)param.as_int());
-      this->mc_driver_->set_remote_obj<uint32_t>(
-        current_controller_ti_for_iq_, (uint32_t)param.as_int());
+      this->lely_driver_->universal_set_value<uint32_t>(
+        currect_controller_parameters_index, currect_controller_parameters_ti_for_iq_subindex,
+        (uint32_t)param.as_int());
+      this->lely_driver_->universal_set_value<uint32_t>(
+        currect_controller_parameters_index, currect_controller_parameters_ti_for_id_subindex,
+        (uint32_t)param.as_int());
     } else if (param.get_name() == "velocity_controller_kp") {
-      this->mc_driver_->set_remote_obj<uint32_t>(
-        velocity_controller_kp_, (uint32_t)param.as_int());
+      this->lely_driver_->universal_set_value<uint32_t>(
+        velocity_controller_parameters_index, velocity_controller_parameters_kp_subindex,
+        (uint32_t)param.as_int());
     } else if (param.get_name() == "velocity_controller_ti") {
-      this->mc_driver_->set_remote_obj<uint32_t>(
-        velocity_controller_ti_, (uint32_t)param.as_int());
+      this->lely_driver_->universal_set_value<uint32_t>(
+        velocity_controller_parameters_index, velocity_controller_parameters_ti_subindex,
+        (uint32_t)param.as_int());
     } else if (param.get_name() == "position_controller_kp") {
-      this->mc_driver_->set_remote_obj<uint32_t>(
-        position_controller_kp_, (uint32_t)param.as_int());
+      this->lely_driver_->universal_set_value<uint32_t>(
+        position_controller_parameters_index, position_controller_parameters_kp_subindex,
+        (uint32_t)param.as_int());
     } else if (param.get_name() == "position_controller_ti") {
-      this->mc_driver_->set_remote_obj<uint32_t>(
-        position_controller_ti_, (uint32_t)param.as_int());
+      this->lely_driver_->universal_set_value<uint32_t>(
+        position_controller_parameters_index, position_controller_parameters_ti_subindex,
+        (uint32_t)param.as_int());
     }
 
     RCLCPP_INFO_STREAM(

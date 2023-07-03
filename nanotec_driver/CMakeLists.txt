@@ -24,7 +24,6 @@ add_library(${PROJECT_NAME} SHARED
   src/node_interfaces/node_canopen_nanotec_driver.cpp
   src/auto_setup.cpp
   src/command.cpp
-  src/lely_nanotec_bridge.cpp
   src/motor.cpp
   src/nanotec_driver.cpp
   src/nanotec_system.cpp

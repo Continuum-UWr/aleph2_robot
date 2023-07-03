@@ -13,7 +13,7 @@ nanotec3:
   dcf: "C5-E-2-09.eds"
   driver: "nanotec_driver::NanotecDriver"
   package: "nanotec_driver"
-  period: 20
+  polling: false
   boot: true
   heartbeat_consumer: true
   enable_lazy_load: false
@@ -64,9 +64,10 @@ nanotec3:
       mapping:
         - { index: 0x6040, sub_index: 0 } # controlword
         - { index: 0x6060, sub_index: 0 } # mode of operation
+        - { index: 0x6071, sub_index: 0 } # target torque
     2:
       enabled: true
       cob_id: "auto"
       mapping:
         - { index: 0x607A, sub_index: 0 } # target position
-        - { index: 0x6042, sub_index: 0 } # target velocity
+        - { index: 0x60FF, sub_index: 0 } # target velocity

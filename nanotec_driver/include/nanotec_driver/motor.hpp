@@ -3,8 +3,8 @@
 #include <memory>
 #include <unordered_map>
 
-#include "lely_nanotec_bridge.hpp"
-#include "mode.hpp"
+#include "canopen_base_driver/lely_driver_bridge.hpp"
+#include "nanotec_driver/mode.hpp"
 
 namespace nanotec_driver
 {
@@ -12,7 +12,7 @@ namespace nanotec_driver
 class MotorNanotec
 {
 public:
-  MotorNanotec(std::shared_ptr<LelyNanotecBridge> driver, rclcpp::Logger logger);
+  MotorNanotec(std::shared_ptr<ros2_canopen::LelyDriverBridge> driver, rclcpp::Logger logger);
 
   double get_position() {return position_;}
   double get_velocity() {return velocity_;}
@@ -82,22 +82,7 @@ private:
   std::mutex mode_mutex_;
   const std::chrono::seconds state_switch_timeout_;
 
-  std::shared_ptr<LelyNanotecBridge> driver;
-  std::shared_ptr<RemoteObject> status_word_entry_;
-  std::shared_ptr<RemoteObject> control_word_entry_;
-  std::shared_ptr<RemoteObject> op_mode_display_;
-  std::shared_ptr<RemoteObject> op_mode_;
-  std::shared_ptr<RemoteObject> position_actual_value_;
-  std::shared_ptr<RemoteObject> velocity_actual_value_;
-  std::shared_ptr<RemoteObject> torque_actual_value_;
-
-  const uint16_t status_word_entry_index = 0x6041;
-  const uint16_t control_word_entry_index = 0x6040;
-  const uint16_t op_mode_display_index = 0x6061;
-  const uint16_t op_mode_index = 0x6060;
-  const uint16_t position_actual_value_index = 0x6064;
-  const uint16_t velocity_actual_value_index = 0x606C;
-  const uint16_t torque_actual_value_index = 0x6077;
+  std::shared_ptr<ros2_canopen::LelyDriverBridge> driver;
 };
 
 }  // namespace nanotec_driver

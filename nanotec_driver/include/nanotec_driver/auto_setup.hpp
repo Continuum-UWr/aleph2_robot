@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include "mode.hpp"
+#include "nanotec_driver/mode.hpp"
 
 namespace nanotec_driver
 {
@@ -10,7 +10,7 @@ namespace nanotec_driver
 class AutoSetupMode : public ModeHelper
 {
 protected:
-  std::shared_ptr<LelyNanotecBridge> driver;
+  std::shared_ptr<ros2_canopen::LelyDriverBridge> driver;
   std::atomic_bool execute_;
 
   std::mutex status_mutex_;
@@ -28,7 +28,7 @@ protected:
   };
 
 public:
-  explicit AutoSetupMode(std::shared_ptr<LelyNanotecBridge> driver);
+  explicit AutoSetupMode(std::shared_ptr<ros2_canopen::LelyDriverBridge> driver);
 
   bool start() override;
   bool read(const uint16_t & sw) override;

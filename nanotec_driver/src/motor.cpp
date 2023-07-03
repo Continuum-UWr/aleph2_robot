@@ -7,6 +7,14 @@
 namespace nanotec_driver
 {
 
+constexpr uint16_t status_word_entry_index = 0x6041;
+constexpr uint16_t control_word_entry_index = 0x6040;
+constexpr uint16_t op_mode_display_index = 0x6061;
+constexpr uint16_t op_mode_index = 0x6060;
+constexpr uint16_t position_actual_value_index = 0x6064;
+constexpr uint16_t velocity_actual_value_index = 0x606C;
+constexpr uint16_t torque_actual_value_index = 0x6077;
+
 static const std::unordered_map<State402::InternalState, std::string> STATE_TO_STRING = {
   {State402::Start, "Start"},
   {State402::Not_Ready_To_Switch_On, "Not ready to switch on"},
@@ -71,26 +79,11 @@ static const std::unordered_map<uint8_t, std::string> ERROR_NUMBER_TO_DESCRIPTIO
 
 
 MotorNanotec::MotorNanotec(
-  std::shared_ptr<LelyNanotecBridge> driver,
+  std::shared_ptr<ros2_canopen::LelyDriverBridge> driver,
   rclcpp::Logger logger)
 : logger_(logger), selected_mode_(Mode::No_Mode), state_switch_timeout_(5)
 {
   this->driver = driver;
-  status_word_entry_ =
-    driver->create_remote_obj(status_word_entry_index, 0U, CODataTypes::COData16);
-  control_word_entry_ = driver->create_remote_obj(
-    control_word_entry_index, 0U, CODataTypes::COData16);
-  op_mode_display_ = driver->create_remote_obj(op_mode_display_index, 0U, CODataTypes::COData8);
-  op_mode_ = driver->create_remote_obj(op_mode_index, 0U, CODataTypes::COData8);
-  position_actual_value_ = driver->create_remote_obj(
-    position_actual_value_index, 0U,
-    CODataTypes::COData32);
-  velocity_actual_value_ = driver->create_remote_obj(
-    velocity_actual_value_index, 0U,
-    CODataTypes::COData32);
-  torque_actual_value_ = driver->create_remote_obj(
-    torque_actual_value_index, 0U,
-    CODataTypes::COData16);
 
   register_mode(std::make_shared<AutoSetupMode>(driver));
   register_mode(std::make_shared<ProfiledPositionMode>(driver));
@@ -156,7 +149,7 @@ bool MotorNanotec::set_mode(Mode mode)
 
     selected_mode_helper_.reset();
     selected_mode_ = mode;
-    driver->set_remote_obj<int8_t>(op_mode_, static_cast<int8_t>(mode));
+    driver->universal_set_value<int8_t>(op_mode_index, 0, static_cast<int8_t>(mode));
     return true;
   }
 
@@ -182,7 +175,7 @@ bool MotorNanotec::set_mode(Mode mode)
     selected_mode_ = mode;
     selected_mode_helper_ = next_mode_helper;
 
-    driver->set_remote_obj<int8_t>(op_mode_, static_cast<int8_t>(mode));
+    driver->universal_set_value<int8_t>(op_mode_index, 0, static_cast<int8_t>(mode));
 
     std::chrono::steady_clock::time_point abstime = std::chrono::steady_clock::now() +
       std::chrono::seconds(5);
@@ -192,7 +185,7 @@ bool MotorNanotec::set_mode(Mode mode)
 
     if (current_mode_ != mode) {
       RCLCPP_ERROR(logger_, "Could not set mode: Timed out");
-      driver->set_remote_obj<int8_t>(op_mode_, static_cast<int8_t>(current_mode_));
+      driver->universal_set_value<int8_t>(op_mode_index, 0, static_cast<int8_t>(current_mode_));
       return false;
     }
   }
@@ -225,7 +218,7 @@ bool MotorNanotec::switch_state(const State402::InternalState & target)
 
 void MotorNanotec::read()
 {
-  uint16_t old_sw, sw = driver->get_remote_obj<uint16_t>(status_word_entry_);
+  uint16_t old_sw, sw = driver->universal_get_value<uint16_t>(status_word_entry_index, 0);
   old_sw = status_word_.exchange(sw);
 
   RCLCPP_DEBUG_STREAM(logger_, "Status Word: " << std::bitset<16>{sw}.to_string());
@@ -242,7 +235,7 @@ void MotorNanotec::read()
     std::unique_lock lock(mode_mutex_);
 
     Mode new_mode =
-      static_cast<Mode>(driver->get_remote_obj<int8_t>(op_mode_display_));
+      static_cast<Mode>(driver->universal_get_value<int8_t>(op_mode_display_index, 0));
 
     if (selected_mode_ == new_mode && selected_mode_ != Mode::No_Mode) {
       if (!selected_mode_helper_->read(sw)) {
@@ -277,9 +270,11 @@ void MotorNanotec::read()
     RCLCPP_WARN(logger_, "Internal limit active");
   }
 
-  position_ = static_cast<double>(driver->get_remote_obj<int32_t>(position_actual_value_));
-  velocity_ = static_cast<double>(driver->get_remote_obj<int32_t>(velocity_actual_value_));
-  torque_ = static_cast<double>(driver->get_remote_obj<int16_t>(torque_actual_value_));
+  position_ =
+    static_cast<double>(driver->universal_get_value<int32_t>(position_actual_value_index, 0));
+  velocity_ =
+    static_cast<double>(driver->universal_get_value<int32_t>(velocity_actual_value_index, 0));
+  torque_ = static_cast<double>(driver->universal_get_value<int16_t>(torque_actual_value_index, 0));
 }
 
 void MotorNanotec::write()
@@ -299,19 +294,17 @@ void MotorNanotec::write()
       control_word_ &= ~(1 << Command402::CW_Halt);
     }
   }
+
+  uint16_t control_word_to_set = control_word_;
   if (start_fault_reset_.exchange(false)) {
     RCLCPP_INFO(logger_, "Fault reset");
-    this->driver->set_remote_obj<uint16_t>(
-      control_word_entry_,
-      control_word_ & ~(1 << Command402::CW_Fault_Reset));
-    this->driver->trigger_tpdo_event(control_word_entry_);
-  } else {
-    this->driver->set_remote_obj<uint16_t>(control_word_entry_, control_word_);
+    control_word_to_set &= ~(1 << Command402::CW_Fault_Reset);
   }
+
+  this->driver->universal_set_value<uint16_t>(control_word_entry_index, 0, control_word_);
+
   RCLCPP_DEBUG_STREAM(
-    logger_,
-    "Control Word: " << std::bitset<16>{this->driver->get_remote_obj_cached<uint16_t>(
-        control_word_entry_)}.to_string());
+    logger_, "Control Word: " << std::bitset<16>{control_word_to_set}.to_string());
 }
 
 bool MotorNanotec::switch_off()
