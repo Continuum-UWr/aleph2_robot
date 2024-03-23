@@ -1,5 +1,7 @@
 #include "nanotec_driver/command.hpp"
 
+#include <stdexcept>
+
 namespace nanotec_driver
 {
 
