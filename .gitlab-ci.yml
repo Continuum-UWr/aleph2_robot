@@ -14,3 +14,14 @@ build:
   - rosdep install --from-paths . --ignore-src -y
   - colcon build 
   - colcon test --return-code-on-test-failure --event-handlers desktop_notification- status- terminal_title- console_cohesion+
+
+nix_build:
+  tags: ["nix"]
+  stage: build
+  script:
+  - nix build .#aleph2_bringup --verbose
+nix_fmt:
+  tags: ["nix"]
+  stage: build
+  script:
+  - nix fmt -- -c .
