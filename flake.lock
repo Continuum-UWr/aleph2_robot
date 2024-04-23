@@ -1,0 +1,117 @@
+{
+  "nodes": {
+    "aleph2_common": {
+      "inputs": {
+        "flake-utils": "flake-utils",
+        "nix-ros-overlay": "nix-ros-overlay",
+        "nixpkgs": "nixpkgs"
+      },
+      "locked": {
+        "lastModified": 1713873046,
+        "narHash": "sha256-q59HeL2FQw3FIKwgkcEe9DezZcQIIH/ME5XRMnOVJT8=",
+        "ref": "refs/heads/rolling",
+        "rev": "9580bbda542f2540cf2363c8b170f68032d185f9",
+        "revCount": 54,
+        "type": "git",
+        "url": "https://gitlab.continuum.ii.uni.wroc.pl/continuum/software/aleph2_common"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://gitlab.continuum.ii.uni.wroc.pl/continuum/software/aleph2_common"
+      }
+    },
+    "flake-utils": {
+      "inputs": {
+        "systems": "systems"
+      },
+      "locked": {
+        "lastModified": 1710146030,
+        "narHash": "sha256-SZ5L6eA7HJ/nmkzGG7/ISclqe6oZdOZTNoesiInkXPQ=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "b1d9ab70662946ef0850d488da1c9019f3a9752a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "nix-ros-overlay": {
+      "inputs": {
+        "flake-utils": [
+          "aleph2_common",
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "aleph2_common",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1713706382,
+        "narHash": "sha256-bILwH6H0Z6kkRWWM719gUJHY1AW1S3qAum6tpO+QtYI=",
+        "ref": "continuum",
+        "rev": "11506ecb7f42f6db4c17a7fce0a0458e4d7aa348",
+        "revCount": 921,
+        "type": "git",
+        "url": "https://gitlab.continuum.ii.uni.wroc.pl/continuum/software/nix-ros-overlay"
+      },
+      "original": {
+        "ref": "continuum",
+        "type": "git",
+        "url": "https://gitlab.continuum.ii.uni.wroc.pl/continuum/software/nix-ros-overlay"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1713706936,
+        "narHash": "sha256-b8Z5ibOlbLvW4EuTeW11NZEi2B8AMdP06bqVOBWPtio=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "62f7c1ff246c42a8a4277bb1bea12529f357e2bb",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "aleph2_common": "aleph2_common",
+        "flake-utils": [
+          "aleph2_common",
+          "flake-utils"
+        ],
+        "nix-ros-overlay": [
+          "aleph2_common",
+          "nix-ros-overlay"
+        ],
+        "nixpkgs": [
+          "aleph2_common",
+          "nixpkgs"
+        ]
+      }
+    },
+    "systems": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
