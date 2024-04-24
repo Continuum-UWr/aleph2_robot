@@ -15,11 +15,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1713986964,
-        "narHash": "sha256-kiu/pochXGGtc/b2zAO53mtgmtY6+goz41jt0RRQ2e0=",
+        "lastModified": 1713990697,
+        "narHash": "sha256-gP1P4FiXMhWrcJ4DgpWD1wxhsk9TMhpemuirA6p4AHE=",
         "ref": "nix-update",
-        "rev": "db42d398ec816ef71ec8f7d5cb4929e9cbe94ee6",
-        "revCount": 57,
+        "rev": "222ac85c6e0ccdcb832f1e1e9bca3c53678e7019",
+        "revCount": 59,
         "type": "git",
         "url": "https://gitlab.continuum.ii.uni.wroc.pl/continuum/software/aleph2_common"
       },
@@ -34,11 +34,11 @@
         "systems": "systems"
       },
       "locked": {
-        "lastModified": 1710146030,
-        "narHash": "sha256-SZ5L6eA7HJ/nmkzGG7/ISclqe6oZdOZTNoesiInkXPQ=",
+        "lastModified": 1705309234,
+        "narHash": "sha256-uNRRNRKmJyCRC/8y1RqBkqWBLM034y4qN7EprSdmgyA=",
         "owner": "numtide",
         "repo": "flake-utils",
-        "rev": "b1d9ab70662946ef0850d488da1c9019f3a9752a",
+        "rev": "1ef2e671c3b0c19053962c07dbda38332dcebf26",
         "type": "github"
       },
       "original": {
@@ -53,11 +53,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1713706382,
-        "narHash": "sha256-bILwH6H0Z6kkRWWM719gUJHY1AW1S3qAum6tpO+QtYI=",
+        "lastModified": 1713986063,
+        "narHash": "sha256-WodSJKI/iQn9r228oAGEvA2Q7xApPSh0eQJB+tFomo8=",
         "ref": "continuum",
-        "rev": "11506ecb7f42f6db4c17a7fce0a0458e4d7aa348",
-        "revCount": 921,
+        "rev": "34e1047aa87dace32bca6a165b6b1237fb1ed875",
+        "revCount": 922,
         "type": "git",
         "url": "https://gitlab.continuum.ii.uni.wroc.pl/continuum/software/nix-ros-overlay"
       },
@@ -69,11 +69,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1712608508,
-        "narHash": "sha256-vMZ5603yU0wxgyQeHJryOI+O61yrX2AHwY6LOFyV1gM=",
+        "lastModified": 1707268954,
+        "narHash": "sha256-2en1kvde3cJVc3ZnTy8QeD2oKcseLFjYPLKhIGDanQ0=",
         "owner": "lopsided98",
         "repo": "nixpkgs",
-        "rev": "4cba8b53da471aea2ab2b0c1f30a81e7c451f4b6",
+        "rev": "f8e2ebd66d097614d51a56a755450d4ae1632df1",
         "type": "github"
       },
       "original": {
