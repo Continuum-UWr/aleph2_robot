@@ -1,7 +1,8 @@
 image: docker.io/ros:rolling
 stages:
   - build
-build:
+
+aleph2_robot build:
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
   stage: build
@@ -10,7 +11,21 @@ build:
   - apt upgrade -y
   - rosdep update
   - git clone https://gitlab.continuum.ii.uni.wroc.pl/continuum/software/aleph2_common
+  except:
+    changes:
+    - '*.nix'
   script:
   - rosdep install --from-paths . --ignore-src -y
   - colcon build 
   - colcon test --return-code-on-test-failure --event-handlers desktop_notification- status- terminal_title- console_cohesion+
+
+nix_build:
+  tags: ["nix"]
+  stage: build
+  script:
+  - nix build .#aleph2-bringup .#nanotec-driver --verbose
+nix_fmt:
+  tags: ["nix"]
+  stage: build
+  script:
+  - nix fmt -- -c .
