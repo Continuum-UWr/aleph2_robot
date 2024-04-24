@@ -15,16 +15,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1713990697,
-        "narHash": "sha256-gP1P4FiXMhWrcJ4DgpWD1wxhsk9TMhpemuirA6p4AHE=",
-        "ref": "nix-update",
-        "rev": "222ac85c6e0ccdcb832f1e1e9bca3c53678e7019",
-        "revCount": 59,
+        "lastModified": 1713995395,
+        "narHash": "sha256-8VrW1eXmvCURLHPm8afp25ZpZ9D6yk3PIenkYFdKnDw=",
+        "ref": "refs/heads/rolling",
+        "rev": "ed6d9b7fddd9fc8874eb1b97e425d169d6c1eda8",
+        "revCount": 56,
         "type": "git",
         "url": "https://gitlab.continuum.ii.uni.wroc.pl/continuum/software/aleph2_common"
       },
       "original": {
-        "ref": "nix-update",
         "type": "git",
         "url": "https://gitlab.continuum.ii.uni.wroc.pl/continuum/software/aleph2_common"
       }

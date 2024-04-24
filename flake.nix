@@ -4,7 +4,7 @@
     flake-utils.follows = "aleph2-common/flake-utils";
     nix-ros-overlay.follows = "aleph2-common/nix-ros-overlay";
     aleph2-common.url =
-      "git+https://gitlab.continuum.ii.uni.wroc.pl/continuum/software/aleph2_common?ref=nix-update";
+      "git+https://gitlab.continuum.ii.uni.wroc.pl/continuum/software/aleph2_common";
   };
   outputs = { self, nixpkgs, flake-utils, nix-ros-overlay, aleph2-common }:
     flake-utils.lib.eachDefaultSystem (system:
