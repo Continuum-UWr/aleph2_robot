@@ -1,7 +1,8 @@
 image: docker.io/ros:rolling
 stages:
   - build
-build:
+
+aleph2_robot build:
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
   stage: build
@@ -10,6 +11,9 @@ build:
   - apt upgrade -y
   - rosdep update
   - git clone https://gitlab.continuum.ii.uni.wroc.pl/continuum/software/aleph2_common
+  except:
+    changes:
+    - '*.nix'
   script:
   - rosdep install --from-paths . --ignore-src -y
   - colcon build 
