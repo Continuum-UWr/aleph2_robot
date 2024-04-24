@@ -1,12 +1,12 @@
 {
   inputs = {
-    nixpkgs.follows = "aleph2_common/nixpkgs";
-    flake-utils.follows = "aleph2_common/flake-utils";
-    nix-ros-overlay.follows = "aleph2_common/nix-ros-overlay";
-    aleph2_common.url =
-      "git+https://gitlab.continuum.ii.uni.wroc.pl/continuum/software/aleph2_common";
+    nixpkgs.follows = "aleph2-common/nixpkgs";
+    flake-utils.follows = "aleph2-common/flake-utils";
+    nix-ros-overlay.follows = "aleph2-common/nix-ros-overlay";
+    aleph2-common.url =
+      "git+https://gitlab.continuum.ii.uni.wroc.pl/continuum/software/aleph2_common?ref=nix-update";
   };
-  outputs = { self, nixpkgs, flake-utils, nix-ros-overlay, aleph2_common }:
+  outputs = { self, nixpkgs, flake-utils, nix-ros-overlay, aleph2-common }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = (import nixpkgs {
@@ -18,22 +18,22 @@
           overlays = [ nix-ros-overlay.overlays.default ];
         }).pkgs.rosPackages.rolling;
 
-        aleph2_description =
-          aleph2_common.packages.${system}.aleph2_description;
+        aleph2-description =
+          aleph2-common.packages.${system}.aleph2-description;
 
-        nanotec_driver = ros.callPackage (import ./nanotec_driver) { };
-        aleph2_bringup = ros.callPackage (import ./aleph2_bringup) {
-          inherit aleph2_description nanotec_driver;
+        nanotec-driver = ros.callPackage (import ./nanotec_driver) { };
+        aleph2-bringup = ros.callPackage (import ./aleph2_bringup) {
+          inherit aleph2-description nanotec-driver;
         };
 
       in {
         packages = {
-          inherit aleph2_bringup nanotec_driver;
-          default = aleph2_bringup;
+          inherit aleph2-bringup nanotec-driver;
+          default = aleph2-bringup;
         };
         devShells.default = pkgs.mkShell {
-          inputsFrom = [ aleph2_bringup ];
-          packages = [ ros.ros-core aleph2_bringup ];
+          inputsFrom = [ aleph2-bringup ];
+          packages = [ ros.ros-core aleph2-bringup ];
         };
         formatter = pkgs.nixfmt-classic;
       });

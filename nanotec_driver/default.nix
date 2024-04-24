@@ -5,7 +5,7 @@
 , forward-command-controller, ament-lint-auto, ament-cmake-cpplint
 , ament-cmake-lint-cmake, ament-cmake-uncrustify }:
 buildRosPackage {
-  pname = "nanotec_driver";
+  pname = "nanotec-driver";
   version = "0.0.0";
 
   src = ./.;

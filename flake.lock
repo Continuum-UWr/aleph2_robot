@@ -1,21 +1,30 @@
 {
   "nodes": {
-    "aleph2_common": {
+    "aleph2-common": {
       "inputs": {
-        "flake-utils": "flake-utils",
+        "flake-utils": [
+          "aleph2-common",
+          "nix-ros-overlay",
+          "flake-utils"
+        ],
         "nix-ros-overlay": "nix-ros-overlay",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": [
+          "aleph2-common",
+          "nix-ros-overlay",
+          "nixpkgs"
+        ]
       },
       "locked": {
-        "lastModified": 1713873046,
-        "narHash": "sha256-q59HeL2FQw3FIKwgkcEe9DezZcQIIH/ME5XRMnOVJT8=",
-        "ref": "refs/heads/rolling",
-        "rev": "9580bbda542f2540cf2363c8b170f68032d185f9",
-        "revCount": 54,
+        "lastModified": 1713986964,
+        "narHash": "sha256-kiu/pochXGGtc/b2zAO53mtgmtY6+goz41jt0RRQ2e0=",
+        "ref": "nix-update",
+        "rev": "db42d398ec816ef71ec8f7d5cb4929e9cbe94ee6",
+        "revCount": 57,
         "type": "git",
         "url": "https://gitlab.continuum.ii.uni.wroc.pl/continuum/software/aleph2_common"
       },
       "original": {
+        "ref": "nix-update",
         "type": "git",
         "url": "https://gitlab.continuum.ii.uni.wroc.pl/continuum/software/aleph2_common"
       }
@@ -40,14 +49,8 @@
     },
     "nix-ros-overlay": {
       "inputs": {
-        "flake-utils": [
-          "aleph2_common",
-          "flake-utils"
-        ],
-        "nixpkgs": [
-          "aleph2_common",
-          "nixpkgs"
-        ]
+        "flake-utils": "flake-utils",
+        "nixpkgs": "nixpkgs"
       },
       "locked": {
         "lastModified": 1713706382,
@@ -66,32 +69,33 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1713706936,
-        "narHash": "sha256-b8Z5ibOlbLvW4EuTeW11NZEi2B8AMdP06bqVOBWPtio=",
-        "owner": "NixOS",
+        "lastModified": 1712608508,
+        "narHash": "sha256-vMZ5603yU0wxgyQeHJryOI+O61yrX2AHwY6LOFyV1gM=",
+        "owner": "lopsided98",
         "repo": "nixpkgs",
-        "rev": "62f7c1ff246c42a8a4277bb1bea12529f357e2bb",
+        "rev": "4cba8b53da471aea2ab2b0c1f30a81e7c451f4b6",
         "type": "github"
       },
       "original": {
-        "owner": "NixOS",
+        "owner": "lopsided98",
+        "ref": "nix-ros",
         "repo": "nixpkgs",
         "type": "github"
       }
     },
     "root": {
       "inputs": {
-        "aleph2_common": "aleph2_common",
+        "aleph2-common": "aleph2-common",
         "flake-utils": [
-          "aleph2_common",
+          "aleph2-common",
           "flake-utils"
         ],
         "nix-ros-overlay": [
-          "aleph2_common",
+          "aleph2-common",
           "nix-ros-overlay"
         ],
         "nixpkgs": [
-          "aleph2_common",
+          "aleph2-common",
           "nixpkgs"
         ]
       }
