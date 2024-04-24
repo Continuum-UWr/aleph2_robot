@@ -23,7 +23,7 @@ nix_build:
   tags: ["nix"]
   stage: build
   script:
-  - nix build .#aleph2_bringup --verbose
+  - nix build .#aleph2-bringup --verbose
 nix_fmt:
   tags: ["nix"]
   stage: build
