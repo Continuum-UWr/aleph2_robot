@@ -35,7 +35,7 @@
           inputsFrom = [ aleph2-bringup ];
           packages = [ ros.ros-core aleph2-bringup ];
         };
-        formatter = pkgs.nixfmt-classic;
+        formatter = pkgs.nixfmt;
       });
 }
 
