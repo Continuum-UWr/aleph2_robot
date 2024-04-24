@@ -32,8 +32,8 @@
           default = aleph2-bringup;
         };
         devShells.default = pkgs.mkShell {
-          inputsFrom = [ aleph2-bringup ];
-          packages = [ ros.ros-core aleph2-bringup ];
+          inputsFrom = [ aleph2-bringup nanotec-driver ];
+          packages = [ ros.ros-core aleph2-bringup nanotec-driver ];
         };
         formatter = pkgs.nixfmt;
       });
