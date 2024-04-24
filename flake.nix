@@ -18,11 +18,17 @@
           overlays = [ nix-ros-overlay.overlays.default ];
         }).pkgs.rosPackages.rolling;
 
-        aleph2_bringup = ros.callPackage (import ./aleph2_bringup) { };
+        aleph2_description =
+          aleph2_common.packages.${system}.aleph2_description;
+
+        nanotec_driver = ros.callPackage (import ./nanotec_driver) { };
+        aleph2_bringup = ros.callPackage (import ./aleph2_bringup) {
+          inherit aleph2_description nanotec_driver;
+        };
 
       in {
         packages = {
-          inherit aleph2_bringup;
+          inherit aleph2_bringup nanotec_driver;
           default = aleph2_bringup;
         };
         devShells.default = pkgs.mkShell {
