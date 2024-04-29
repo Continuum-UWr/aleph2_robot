@@ -11,12 +11,10 @@
       let
         pkgs = (import nixpkgs {
           system = system;
-          overlays = [ ];
-        }).pkgs;
-        ros = (import nixpkgs {
-          system = system;
           overlays = [ nix-ros-overlay.overlays.default ];
-        }).pkgs.rosPackages.rolling;
+        }).pkgs;
+        ros = pkgs.rosPackages.rolling;
+        aleph2-common-packages = aleph2-common.packages.${system};
 
         aleph2-description =
           aleph2-common.packages.${system}.aleph2-description;
@@ -25,18 +23,16 @@
         aleph2-bringup = ros.callPackage (import ./aleph2_bringup) {
           inherit aleph2-description nanotec-driver;
         };
+        devEnv = ros.buildEnv { paths = [ aleph2-bringup nanotec-driver ]; };
 
       in {
         packages = {
-          inherit aleph2-bringup nanotec-driver;
+          inherit aleph2-bringup nanotec-driver devEnv;
           default = aleph2-bringup;
         };
+
         devShells.default = pkgs.mkShell {
-          nativeBuildInputs = [
-            (ros.buildEnv {
-              paths = [ ros.ros-core aleph2-bringup nanotec-driver ];
-            })
-          ];
+          nativeBuildInputs = [ aleph2-common-packages.devEnv devEnv ];
         };
         formatter = pkgs.nixfmt;
       });
