@@ -15,11 +15,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1753404387,
-        "narHash": "sha256-80O4aYSl+X8q0vdMDmpDuSObKIpxCZol/ByOaLCg9aQ=",
+        "lastModified": 1765317336,
+        "narHash": "sha256-cY1WuKURzC5LCEDMqrSiqjDbK71WSD11/HAftaBMBrk=",
         "ref": "jazzy",
-        "rev": "57c005a6ef1bbfb821358b491d3f52566fad122f",
-        "revCount": 69,
+        "rev": "6a4f4f0d1850c83e1817c7f8ed8e629ce32647cd",
+        "revCount": 70,
         "type": "git",
         "url": "https://gitlab.continuum.ii.uni.wroc.pl/continuum/software/aleph2_common"
       },
@@ -53,11 +53,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1753404346,
-        "narHash": "sha256-2znUEdAWjFcW/mTEIo02v15JxDib+12KHiqqTrfXjxA=",
+        "lastModified": 1765317272,
+        "narHash": "sha256-VdGAvs7Uuy2V0AXPYwkU75HfhKHtyfmbVFavLLsBvxE=",
         "ref": "continuum-update",
-        "rev": "dd89579a62b8f831cdca3d10fd4dd3bc0e415ff7",
-        "revCount": 1194,
+        "rev": "512c04fce1a3e58d04c8dc49c37828f8745a7468",
+        "revCount": 1195,
         "type": "git",
         "url": "https://gitlab.continuum.ii.uni.wroc.pl/continuum/software/nix-ros-overlay"
       },
