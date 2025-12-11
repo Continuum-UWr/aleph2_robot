@@ -24,6 +24,8 @@ nix_build:
   stage: build
   script:
   - nix build .#aleph2-bringup .#nanotec-driver --verbose
+  - find . -maxdepth 1  -name 'result*' -exec readlink {} \; | nix copy  --to s3://nix-continuum?endpoint=s3.uwukado.me\&region=garage\&secret-key=/var/lib/private/gitlab-runner/cache-priv-key.pem\&compression=none --verbose --stdin
+
 nix_fmt:
   tags: ["nix"]
   stage: build
