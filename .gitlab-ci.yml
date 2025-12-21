@@ -1,4 +1,4 @@
-image: docker.io/ros:rolling
+image: docker.io/ros:jazzy
 stages:
   - build
 
