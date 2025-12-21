@@ -1,9 +1,25 @@
-{ buildRosPackage, ament-cmake, boost, ament-index-cpp, canopen-core
-, canopen-interfaces, canopen-proxy-driver, controller-manager
-, hardware-interface, lely-core-libraries, pluginlib, rclcpp-components
-, sensor-msgs, robot-state-publisher, joint-state-broadcaster
-, forward-command-controller, ament-lint-auto, ament-cmake-cpplint
-, ament-cmake-lint-cmake, ament-cmake-uncrustify }:
+{
+  buildRosPackage,
+  ament-cmake,
+  boost,
+  ament-index-cpp,
+  canopen-core,
+  canopen-interfaces,
+  canopen-proxy-driver,
+  controller-manager,
+  hardware-interface,
+  lely-core-libraries,
+  pluginlib,
+  rclcpp-components,
+  sensor-msgs,
+  robot-state-publisher,
+  joint-state-broadcaster,
+  forward-command-controller,
+  ament-lint-auto,
+  ament-cmake-cpplint,
+  ament-cmake-lint-cmake,
+  ament-cmake-uncrustify,
+}:
 buildRosPackage {
   pname = "nanotec-driver";
   version = "0.0.0";
