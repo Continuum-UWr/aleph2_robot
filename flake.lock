@@ -15,16 +15,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1765317336,
-        "narHash": "sha256-cY1WuKURzC5LCEDMqrSiqjDbK71WSD11/HAftaBMBrk=",
-        "ref": "jazzy",
-        "rev": "6a4f4f0d1850c83e1817c7f8ed8e629ce32647cd",
+        "lastModified": 1766332271,
+        "narHash": "sha256-x3G2CeZx9iVER00cVX7OwB1u3aToIR2+GtbtLwy9Un8=",
+        "ref": "update-upstream-overlay",
+        "rev": "72ebd78cf84d8b389653b28776a0c4fdacc6d0e6",
         "revCount": 70,
         "type": "git",
         "url": "https://gitlab.continuum.ii.uni.wroc.pl/continuum/software/aleph2_common"
       },
       "original": {
-        "ref": "jazzy",
+        "ref": "update-upstream-overlay",
         "type": "git",
         "url": "https://gitlab.continuum.ii.uni.wroc.pl/continuum/software/aleph2_common"
       }
@@ -53,27 +53,26 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1765317272,
-        "narHash": "sha256-VdGAvs7Uuy2V0AXPYwkU75HfhKHtyfmbVFavLLsBvxE=",
-        "ref": "continuum-update",
-        "rev": "512c04fce1a3e58d04c8dc49c37828f8745a7468",
-        "revCount": 1195,
-        "type": "git",
-        "url": "https://gitlab.continuum.ii.uni.wroc.pl/continuum/software/nix-ros-overlay"
+        "lastModified": 1766273162,
+        "narHash": "sha256-ss+lSHnNMV9+ZEJonwK1hXchxV/Q4zSU+JnavGaHHIE=",
+        "owner": "lopsided98",
+        "repo": "nix-ros-overlay",
+        "rev": "0daaa7fd4e4c33947a2466f12870e9bd491b7952",
+        "type": "github"
       },
       "original": {
-        "ref": "continuum-update",
-        "type": "git",
-        "url": "https://gitlab.continuum.ii.uni.wroc.pl/continuum/software/nix-ros-overlay"
+        "owner": "lopsided98",
+        "repo": "nix-ros-overlay",
+        "type": "github"
       }
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1744849697,
-        "narHash": "sha256-S9hqvanPSeRu6R4cw0OhvH1rJ+4/s9xIban9C4ocM/0=",
-        "owner": "lopsided98",
+        "lastModified": 1759381078,
+        "narHash": "sha256-gTrEEp5gEspIcCOx9PD8kMaF1iEmfBcTbO0Jag2QhQs=",
+        "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "6318f538166fef9f5118d8d78b9b43a04bb049e4",
+        "rev": "7df7ff7d8e00218376575f0acdcc5d66741351ee",
         "type": "github"
       },
       "original": {
