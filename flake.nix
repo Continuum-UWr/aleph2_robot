@@ -3,7 +3,7 @@
     nixpkgs.follows = "aleph2-common/nixpkgs";
     flake-utils.follows = "aleph2-common/flake-utils";
     nix-ros-overlay.follows = "aleph2-common/nix-ros-overlay";
-    aleph2-common.url = "git+https://gitlab.continuum.ii.uni.wroc.pl/continuum/software/aleph2_common?ref=update-upstream-overlay";
+    aleph2-common.url = "git+https://gitlab.continuum.ii.uni.wroc.pl/continuum/software/aleph2_common";
   };
   outputs =
     {
