@@ -15,16 +15,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1766332271,
-        "narHash": "sha256-x3G2CeZx9iVER00cVX7OwB1u3aToIR2+GtbtLwy9Un8=",
-        "ref": "update-upstream-overlay",
-        "rev": "72ebd78cf84d8b389653b28776a0c4fdacc6d0e6",
-        "revCount": 70,
+        "lastModified": 1766334133,
+        "narHash": "sha256-UzE+RPPf4xoC1VYJXoW0UesdID6oV4MFIDPU4J+64SM=",
+        "ref": "refs/heads/jazzy",
+        "rev": "92eac0b72e2d71a1ba75787b58590b7582673177",
+        "revCount": 76,
         "type": "git",
         "url": "https://gitlab.continuum.ii.uni.wroc.pl/continuum/software/aleph2_common"
       },
       "original": {
-        "ref": "update-upstream-overlay",
         "type": "git",
         "url": "https://gitlab.continuum.ii.uni.wroc.pl/continuum/software/aleph2_common"
       }
